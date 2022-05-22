@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+    font-family: Pixel;
+    src: url("../fonts/MP16OSF.ttf") format("truetype");
+  }
