@@ -1,24 +1,25 @@
 //Main application
 const app = new PIXI.Application({
     view: document.getElementById("myCanvas"),
-    backgroundColor: 0xB9D980
 });
+
+let background = new PIXI.Sprite(new PIXI.Texture.from('images/backgrnd.png'));
+background.x = 0;
+background.y = 0;
+background.scale.set(3, 3);
+background.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+app.stage.addChild(background);
 
 // -------------------------------------------------------------------------------
 
 //Main textstyle for the game
 var font = new FontFaceObserver('Pixel');
-
-font.load().then(function () {
-  console.log('Output Sans has loaded.');
-}).catch(function () {
-  console.log('Output Sans failed to load.');
-});
+font.load();
 
 const textStyle = new PIXI.TextStyle({
     fontFamily: "Pixel",
     fontSize: 16,
-    fill: "0x235823",
+    fill: "0x00FF2A",
     dropShadow: true,
     dropShadowAlpha: 0.1
 });
@@ -34,9 +35,7 @@ const drawText = (text, x, y, container, isAnchored = false) => {
 // -------------------------------------------------------------------------------
 
 var xCentral = app.renderer.width / 2;
-var yCentral = app.renderer.height / 2;
-var xNudge = 16;
-var yNudge= 16;
+var yCentral = 2 * app.renderer.height / 3;
 
 //Common classes
 class gameObject {
