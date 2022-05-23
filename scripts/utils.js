@@ -75,8 +75,11 @@ class gameObject {
         container.addChild(this.sprite);
     }
 
-    updateLocation() {
-        throw new Error("method updateLocation() not implemented.");
+    update(container) {
+        container.removeChild(this.sprite);
+        this.sprite.x = this.x;
+        this.sprite.y = this.y;
+        container.addChild(this.sprite);
     }
 }
 

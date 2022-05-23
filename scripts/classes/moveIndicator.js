@@ -1,17 +1,20 @@
+import { updateAP } from "../pages/gamePage.js";
+
 export class moveIndicator {
     constructor(x, y, ap) {
-        this.curX = realPositionX(x);
-        this.curY = realPositionY(y);
+        this.curX = x;
+        this.curY = y;
         this.moves = [];
         this.movePointer = [];
         this.helper = 0;
         this.helpertext = 0;
         this.ap = ap;
         app.stage.addChild(moveContainer);
+        mIndicator = this;
     }
 
     update(str) {
-        if (this.moves.length > 0 && this.moves[this.moves.length - 1] == str) {
+        if (this.moves.length > 0 && this.backCheck(str)) {
             this.removeHelper();
             this.moves.pop();
             moveContainer.removeChild(this.movePointer.pop());
@@ -20,7 +23,7 @@ export class moveIndicator {
             if (this.moves.length) {
                 this.drawHelper();
             } 
-        } else if (this.ap) {
+        } else if (this.ap && this.borderCheck(str)) {
             this.removeHelper();
             let line = new PIXI.Graphics();
             line.position.set(this.curX, this.curY);
@@ -28,19 +31,19 @@ export class moveIndicator {
             switch (str) {
                 case "up":
                     line.lineTo(0, -48)
-                    this.moves.push("down");
+                    this.moves.push("up");
                     break;
                 case "down":
                     line.lineTo(0, 48);
-                    this.moves.push("up");
+                    this.moves.push("down");
                     break;
                 case "right":
                     line.lineTo(48, 0);
-                    this.moves.push("left");
+                    this.moves.push("right");
                     break;
                 case "left":
                     line.lineTo(-48, 0);
-                    this.moves.push("right");
+                    this.moves.push("left");
                     break;
             }
             this.updateCoord(str);
@@ -51,6 +54,32 @@ export class moveIndicator {
         }
     }
 
+    backCheck(str) {
+        switch (str) {
+            case "up":
+                 return this.moves[this.moves.length - 1] == "down";
+            case "down":
+                return this.moves[this.moves.length - 1] == "up";
+            case "right":
+                return this.moves[this.moves.length - 1] == "left";
+            case "left":
+                return this.moves[this.moves.length - 1] == "right";
+        }
+    }
+
+    borderCheck(str) {
+        switch (str) {
+            case "up":
+                return this.curY - 48 >= yCentral - 2 * 48;
+            case "down":
+                return this.curY + 48 <= yCentral + 2 * 48;
+            case "right":
+                return this.curX + 48 <= xCentral + 4 * 48;
+            case "left":
+                return this.curX - 48 >= xCentral - 4 * 48;
+        }
+    }
+
     drawHelper() {
         //Draw box
         this.helper = new PIXI.Graphics();
@@ -58,6 +87,8 @@ export class moveIndicator {
         this.helper.beginFill(0x808080);
         this.helper.drawRect(this.curX + 5, this.curY + 5, 100, 50);
         this.helper.endFill();
+        this.helper.interactive = true;
+        this.helper.on('pointerdown', function () {  confirmMove(); });
         moveContainer.addChild(this.helper);
 
         //Draw text
@@ -88,4 +119,25 @@ export class moveIndicator {
                 break; 
         }
     }
+
+    cleanup() {
+        while (moveContainer.children[0]) {
+            moveContainer.removeChild(moveContainer.children[0]);
+        }
+        while (this.moves[0]) {
+            this.moves.pop();
+            this.movePointer.pop();
+        }
+        this.helper = 0;
+        this.helpertext = 0;
+    }
+}
+
+var mIndicator = 0;
+
+function confirmMove() {
+    playerVal.ap = mIndicator.ap;
+    player.move(mIndicator.curX, mIndicator.curY, mIndicator.moves);
+    mIndicator.cleanup();
+    updateAP();
 }

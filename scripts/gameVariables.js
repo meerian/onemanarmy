@@ -1,6 +1,9 @@
 //User reference and functions
 var player = 0;
-var playerAP = 3;
+const playerVal = {
+    ap: 3,
+    health: 10,
+}
 
 //For Desktop
 document.getElementById('myCanvas').addEventListener("keydown", keyDownHandler, false);
@@ -23,3 +26,6 @@ function keyDownHandler(e) {
         player.displayMove("down");
     }
 }
+
+//Turn handling
+var isPlayerturn = true;
