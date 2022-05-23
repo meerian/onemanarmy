@@ -1,9 +1,13 @@
+import { moveIndicator } from "./moveIndicator.js";
+
 class user extends gameObject {
     constructor(x, y, health, ap, weapon) {
         super(x, y, health, ap, new PIXI.Sprite(PIXI.Texture.from("../images/user.png")), weapon);
+        this.mIndicator = new moveIndicator(x, y, ap);
     }
 
-    updateLocation() {
+    displayMove(direction) {
+        this.mIndicator.update(direction);
     }
 
     takeDamage() {

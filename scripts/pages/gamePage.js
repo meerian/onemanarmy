@@ -21,6 +21,8 @@ export class gamePage extends page {
         healthbar.x = xCentral - 278;
         healthbar.y = yCentral + 160;
         this.container.addChild(healthbar);
+        drawText(new PIXI.Text("AP:", textStyle), xCentral - 150, yCentral + 150, this.container, true);
+        drawText(new PIXI.Text(playerAP, textStyle), xCentral - 130, yCentral + 148, this.container, true);
     }
 }
 

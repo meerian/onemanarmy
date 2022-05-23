@@ -3,6 +3,8 @@ const app = new PIXI.Application({
     view: document.getElementById("myCanvas"),
 });
 
+const moveContainer = new PIXI.Container();
+
 let background = new PIXI.Sprite(new PIXI.Texture.from('images/backgrnd.png'));
 background.x = 0;
 background.y = 0;
@@ -24,6 +26,14 @@ const textStyle = new PIXI.TextStyle({
     dropShadowAlpha: 0.1
 });
 
+const textStyleHelper = new PIXI.TextStyle({
+    fontFamily: "Pixel",
+    fontSize: 16,
+    fill: "0xFFFFFF",
+    dropShadow: true,
+    dropShadowAlpha: 0.1
+});
+
 //Default method to draw text with or without anchor
 const drawText = (text, x, y, container, isAnchored = false) => {
     text.x = x;
@@ -36,6 +46,14 @@ const drawText = (text, x, y, container, isAnchored = false) => {
 
 var xCentral = app.renderer.width / 2;
 var yCentral = 2 * app.renderer.height / 3;
+
+function realPositionX(x) {
+    return xCentral + (x - 4) * 48;
+}
+
+function realPositionY(y) {
+    return yCentral + (y - 2) * 48;
+}
 
 //Common classes
 class gameObject {
