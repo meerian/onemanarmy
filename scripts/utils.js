@@ -55,18 +55,93 @@ function realPositionY(y) {
     return yCentral + (y - 2) * 48;
 }
 
+function distApartObj(obj1, obj2) {
+    let dist = 0;
+    let curX = obj2.x + obj1.xNudge - obj2.xNudge;
+    let curY = obj2.y + obj1.yNudge - obj2.yNudge;
+    while (obj1.x != curX || obj1.y != curY) {
+        dist++;
+        if (obj1.x != curX) {
+            if (obj1.x < curX) {
+                curX -= 48;
+            } else {
+                curX += 48;
+            }
+            continue;
+        }
+        else if (obj1.y < curY) {
+            curY -= 48;
+        } else {
+            curY += 48;
+        }
+    }
+    return dist;
+}
+
+function distApartCoord(obj1, x, y) {
+    let dist = 0;
+    let curX = x;
+    let curY = y;
+    if (curX > obj1.x) {
+        while (curX - obj1.x > 0) {
+            dist++;
+            curX -= 48;
+        }
+    } else {
+        while (obj1.x - curX > 0) {
+            dist++;
+            curX += 48;
+        }
+    }
+    if (curY > obj1.y) {
+        while (curY - obj1.y > 0) {
+            dist++;
+            curY -= 48;
+        }
+    } else {
+        while (obj1.y - curY > 0) {
+            dist++;
+            curY += 48;
+        }
+    }
+    return dist;
+}
+
+// -------------------------------------------------------------------------------
+
+//User textures and animations
+const userssheet = new PIXI.BaseTexture.from("images/user_spritesheet.png");
+const rw = 16;
+const rh = 16;
+
+//enemy textures and animations
+const houndssheet = new PIXI.BaseTexture.from("images/enemy/hound_spritesheet.png");
+
+
+        
+
+
+// -------------------------------------------------------------------------------
+
 //Common classes
 class gameObject {
-    constructor(x, y, health, ap, sprite, weapon) {
-        this.x = xCentral + (x - 4) * 48;
-        this.y = yCentral + (y - 2) * 48;
+    constructor(x, y, health, ap, sprite, weapon, xNudge = 0, yNudge = 0) {
+        this.x = xCentral + (x - 4) * 48 + xNudge;
+        this.y = yCentral + (y - 2) * 48 + yNudge;
+        this.xNudge = xNudge;
+        this.yNudge = yNudge;
         this.ap = ap;
         this.health = health;
         this.sprite = sprite;
+        this.sprite.animationSpeed = .5;
+        this.sprite.loop = false;
         this.sprite.anchor.set(0.5);
-        this.sprite.scale.set(2, 2);;
+        this.sprite.scale.set(3, 3);;
+        this.sprite.autoUpdate = true;
+        this.sprite.loop = true;
         this.sprite.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
         this.weapon = weapon;
+        this.sprite.play();
     }
 
     draw(container) {
@@ -74,18 +149,14 @@ class gameObject {
         this.sprite.y = this.y;
         container.addChild(this.sprite);
     }
-
-    update(container) {
-        container.removeChild(this.sprite);
-        this.sprite.x = this.x;
-        this.sprite.y = this.y;
-        container.addChild(this.sprite);
-    }
 }
 
 class weapon {
-    constructor(damage, clip, range) {
-        this.damage = damage;
+    constructor(name, mindmg, maxdmg, clip, range) {
+        this.name = name;
+        this.weapontext = "(damage:" + mindmg + "-" + maxdmg + ", range:" + range + ")";
+        this.mindmg = mindmg;
+        this.maxdmg = maxdmg;
         this.clip = clip;
         this.range = range;
     }

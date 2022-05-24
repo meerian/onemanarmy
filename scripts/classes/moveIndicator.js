@@ -3,7 +3,7 @@ import { updateAP } from "../pages/gamePage.js";
 export class moveIndicator {
     constructor(x, y, ap) {
         this.curX = x;
-        this.curY = y;
+        this.curY = y + 15;
         this.moves = [];
         this.movePointer = [];
         this.helper = 0;
@@ -137,7 +137,7 @@ var mIndicator = 0;
 
 function confirmMove() {
     playerVal.ap = mIndicator.ap;
-    player.move(mIndicator.curX, mIndicator.curY, mIndicator.moves);
+    player.move(mIndicator.curX, mIndicator.curY - 15, mIndicator.moves);
     mIndicator.cleanup();
     updateAP();
 }

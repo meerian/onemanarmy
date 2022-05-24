@@ -5,6 +5,8 @@ const playerVal = {
     health: 10,
 }
 
+var enemies = [];
+
 //For Desktop
 document.getElementById('myCanvas').addEventListener("keydown", keyDownHandler, false);
 document.getElementById('myCanvas').setAttribute("tabindex", 0);
