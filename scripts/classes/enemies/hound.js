@@ -1,49 +1,53 @@
-import { updateActionText } from "../../pages/gamePage.js";
 import { enemy } from "./enemy.js";
 
 class hound extends enemy{
-    constructor(x, y, health, ap, weapon) {
+    constructor(x, y) {
         createSpriteSheet();
-        super(x, y, health, ap, new PIXI.AnimatedSprite(spritesheet.idle), weapon, -2, -15);
-        this.distAway = distApartObj(player, this);
-        this.sprite.on("pointerdown", function (event) {
-            console.log();
-        })
-        this.sprite.on("mouseover", function (event) {
-            mouseover(this.x, this.y);
-        });
-
-        this.sprite.on("mouseout", function (event) {
-            mouseout();
-        });
-        //Draw box
-        let helper = new PIXI.Graphics();
-        helper.lineStyle(2, 0x5a5a5a, 1);
-        helper.beginFill(0x808080);
-        helper.drawRect(this.x + 5, this.y + 5, 110, 50);
-        helper.endFill();
-        detailContainer.addChild(helper);
-
-        //Draw text
-        let helpertext = new PIXI.Text("Hound\nRange:1 Dmg:2", textStyleHelper);
-        helpertext.x = this.x + 10;
-        helpertext.y = this.y + 10;
-        detailContainer.addChild(helpertext);
+        super(x, y, 5, 3, new PIXI.AnimatedSprite(spritesheet.idle), new weapon("claw", 1, 1, -1, 1), -2, -15);
+        this.helpertext.text = "Hound (" + this.health + "HP)\nRange:1 Dmg:2 \nAP:3";    
     }
 
     nextMove() {
+        let curX = this.x;
+        let curY = this.y
         let curAP = this.ap;
         while (curAP) {
             curAP--;
-            if (player.x != this.x) {
-                if (player.x > this.x) {
+            if (this.weapon.range >= distApartCoord(player, curX, curY)) {
+                this.moves.push("attack");
+                continue;
+            }
+            if (player.x != curX) {
+                if (player.x > curX) {
+                    curX += 1;
                     this.moves.push("right");
                 } else {
-                    this.moves.push("left");
-                    continue;
+                    curX -= 1;
+                    this.moves.push("left");   
                 }
+                continue;
+            }
+            if (player.y != curY) {
+                if (player.y > curY) {
+                    curY += 1;
+                    this.moves.push("down");
+                } else {
+                    curY -= 1;
+                    this.moves.push("up");
+                }
+                continue;
             }
         }
+        this.move(curX, curY, this.moves);
+    }
+
+    move(x, y, moves) {
+        this.x = x;
+        this.y = y;
+        let movesCopy = [...moves];
+        ResolveMoves(this, movesCopy);
+        this.moves = [];
+        this.updateHelper();
     }
 }
 
@@ -52,23 +56,67 @@ export function addHound(x, y, health, ap, weapon) {
 }
 
 var spritesheet = [];
-var detailContainer = new PIXI.Container();
 
-function mouseover(x, y) {
-    app.stage.addChild(detailContainer);
-    if (player.weapon.range >= distApartCoord(player, x, y)) {
-        updateActionText("In Range, Click enemy to confirm attack");
-    } else {
-        updateActionText("Out of Range");
-    }
-}
 
-function mouseout() {
-    app.stage.removeChild(detailContainer);
-    
-    updateActionText("");
-}
+
 
 function createSpriteSheet() {
     spritesheet["idle"] = [new PIXI.Texture(houndssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh))];
+    spritesheet["walk"] = [new PIXI.Texture(houndssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh)), new PIXI.Texture(houndssheet, new PIXI.Rectangle(1 * rw, 0 * rh, rw, rh))];
+    spritesheet["attack"] = [new PIXI.Texture(houndssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh)), new PIXI.Texture(houndssheet, new PIXI.Rectangle(2 * rw, 0 * rh, rw, rh))];
+}
+
+function ResolveMoves(enemy, moves) {
+    if (moves[0]) {
+        let str = moves.shift();
+        if (str == "attack") {
+            enemy.sprite.textures = spritesheet.attack;
+            player.takeDamage(enemy.weapon.attack());
+        } else {
+            enemy.sprite.textures = spritesheet.walk;
+        }
+        let total = 48;
+        const step = () => {
+            if (total == 0) {
+                enemy.sprite.textures = spritesheet.idle;
+            }
+            if (total) {
+                enemy.sprite.play();
+                total--;
+                switch (str) {
+                    case "up":
+                        enemy.sprite.y -= 1;
+                        requestAnimationFrame(() => {
+                            step();
+                        })
+                        return;
+                    case "down":
+                        enemy.sprite.y += 1;
+                        requestAnimationFrame(() => {
+                            step();
+                        })
+                        return;
+                    case "right":
+                        enemy.sprite.x += 1;
+                        requestAnimationFrame(() => {
+                            step();
+                        })
+                        return;
+                    case "left":
+                        enemy.sprite.x -= 1;
+                        requestAnimationFrame(() => {
+                            step();
+                        })
+                        return;
+                    case "attack":
+                        requestAnimationFrame(() => {
+                            step();
+                        })
+                }
+            }
+        }
+        step();
+        setTimeout(function () { ResolveMoves(enemy, moves) }, 170);
+    }
+
 }

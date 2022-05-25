@@ -3,10 +3,9 @@ import { updateAP } from "../pages/gamePage.js";
 export class moveIndicator {
     constructor(x, y, ap) {
         this.curX = x;
-        this.curY = y + 15;
+        this.curY = y;
         this.moves = [];
         this.movePointer = [];
-        this.helper = 0;
         this.helpertext = 0;
         this.ap = ap;
         app.stage.addChild(moveContainer);
@@ -26,7 +25,7 @@ export class moveIndicator {
         } else if (this.ap && this.borderCheck(str)) {
             this.removeHelper();
             let line = new PIXI.Graphics();
-            line.position.set(this.curX, this.curY);
+            line.position.set(this.actualX(), this.actualY());
             line.lineStyle(1, 0x00FF2A);
             switch (str) {
                 case "up":
@@ -70,52 +69,52 @@ export class moveIndicator {
     borderCheck(str) {
         switch (str) {
             case "up":
-                return this.curY - 48 >= yCentral - 2 * 48;
+                return this.actualY() - 48 >= yCentral - 2 * 48;
             case "down":
-                return this.curY + 48 <= yCentral + 2 * 48;
+                return this.actualY() + 48 <= yCentral + 2 * 48;
             case "right":
-                return this.curX + 48 <= xCentral + 4 * 48;
+                return this.actualX() + 48 <= xCentral + 5 * 48;
             case "left":
-                return this.curX - 48 >= xCentral - 4 * 48;
+                return this.actualX() - 48 >= xCentral - 4 * 48;
         }
     }
 
+    actualY() {
+        return yCentral + (this.curY - 2) * 48 + player.yNudge + 15;
+    }
+
+    actualX() {
+        return xCentral + (this.curX - 4) * 48 + player.xNudge;
+    }
+
     drawHelper() {
-        //Draw box
-        this.helper = new PIXI.Graphics();
-        this.helper.lineStyle(2, 0x5a5a5a, 1);
-        this.helper.beginFill(0x808080);
-        this.helper.drawRect(this.curX + 5, this.curY + 5, 100, 50);
-        this.helper.endFill();
-        this.helper.interactive = true;
-        this.helper.on('pointerdown', function () {  confirmMove(); });
-        moveContainer.addChild(this.helper);
 
         //Draw text
         this.helpertext = new PIXI.Text("AP Left:" + this.ap + "\nConfirm?", textStyleHelper);
-        this.helpertext.x = this.curX + 10;
-        this.helpertext.y = this.curY + 10;
+        this.helpertext.x = this.actualX() + 15;
+        this.helpertext.y = this.actualY() - 5;
+        this.helpertext.interactive = true;
+        this.helpertext.on('pointerdown', function () {  confirmMove(); });
         moveContainer.addChild(this.helpertext);
     }
 
     removeHelper() {
-        moveContainer.removeChild(this.helper);
         moveContainer.removeChild(this.helpertext);
     }
     
     updateCoord(str) {
         switch (str) {
             case "up":
-                this.curY -= 48;
+                this.curY -= 1;
                 break;
             case "down":
-                this.curY += 48;
+                this.curY += 1;
                 break;
             case "right":
-                this.curX += 48;
+                this.curX += 1;
                 break;
             case "left":
-                this.curX -= 48;
+                this.curX -= 1;
                 break; 
         }
     }
@@ -137,7 +136,7 @@ var mIndicator = 0;
 
 function confirmMove() {
     playerVal.ap = mIndicator.ap;
-    player.move(mIndicator.curX, mIndicator.curY - 15, mIndicator.moves);
+    player.move(mIndicator.curX, mIndicator.curY, mIndicator.moves);
     mIndicator.cleanup();
     updateAP();
 }

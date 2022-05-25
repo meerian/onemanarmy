@@ -22,25 +22,36 @@ export class gamePage extends page {
         player.draw(this.container);
 
         //add enemies
-        addHound(7, 2, 5, 3, 0);
+        addHound(7, 2);
         for (let i = 0; i < enemies.length; i++) {
             enemies[i].draw(this.container);
         }
        
         //Draw user health
-        drawText(new PIXI.Text("Health:", textStyle), xCentral - 250, yCentral + 155, this.container, true);
+        drawText(new PIXI.Text("Health:", textStyle), xCentral - 300, yCentral + 155, this.container, true);
         healthText = new PIXI.Text(playerVal.health, textStyle);
-        drawText(healthText, xCentral - 250, yCentral + 175, this.container, true);
+        drawText(healthText, xCentral - 300, yCentral + 175, this.container, true);
 
         //Draw user AP
-        drawText(new PIXI.Text("AP:", textStyle), xCentral - 150, yCentral + 155, this.container, true);
+        drawText(new PIXI.Text("AP:", textStyle), xCentral - 225, yCentral + 155, this.container, true);
         apText = new PIXI.Text(playerVal.ap, textStyle);
-        drawText(apText, xCentral - 153, yCentral + 175, this.container, true);
+        drawText(apText, xCentral - 228, yCentral + 175, this.container, true);
 
         //Draw user weapon
-        drawText(new PIXI.Text("Weapon: " + player.weapon.name, textStyle), xCentral, yCentral + 155, this.container, true);
+        drawText(new PIXI.Text("Weapon: " + player.weapon.name, textStyle), xCentral - 100, yCentral + 155, this.container, true);
         weaponText = new PIXI.Text(player.weapon.weapontext, textStyle);
-        drawText(weaponText, xCentral - 3, yCentral + 175, this.container, true);
+        drawText(weaponText, xCentral - 103, yCentral + 175, this.container, true);
+
+        //Draw clip
+        let bTextContainer = new PIXI.Container();
+        bTextContainer.interactive = true;
+        bTextContainer.on("pointerdown", function (event) {
+            player.reload();
+        })
+        bulletText = new PIXI.Text("Ammo: " + player.weapon.bullets, textStyle);
+        drawText(bulletText, xCentral + 50, yCentral + 155, bTextContainer, true);
+        drawText(new PIXI.Text("(Click to reload)", textStyle), xCentral + 50, yCentral + 175,bTextContainer, true);
+        gameContainer.addChild(bTextContainer);
 
         //Draw Action
         drawText(new PIXI.Text("Action:", textStyle), xCentral + 250, yCentral + 155, this.container, true);
@@ -59,15 +70,51 @@ var healthText = 0;
 var turnText = 0;
 var weaponText = 0;
 var actionText = 0;
+var bulletText = 0;
 
 export function updateAP() {
     apText.text = playerVal.ap;
 }
 
-export function updateHealth() {
+export function updateHealth(val) {
     healthText.text = playerVal.health;
+    let dmgText = new PIXI.Text("-" + val, textStyle);
+    drawText(dmgText, player.sprite.x, player.sprite.y - 20, gameContainer, true);
+    drawAnimation(dmgText);
+
 }
 
+export function takeDamage(enemy, val) {
+    let dmgText = new PIXI.Text("-" + val, textStyle);
+    drawText(dmgText, enemy.sprite.x, enemy.sprite.y - 20, gameContainer, true);
+    drawAnimation(dmgText);
+}
+
+function drawAnimation(text) {
+        let total = 100;
+        const step = () => {
+            total--;
+            if (total == 0) {
+                gameContainer.removeChild(text);
+                return;
+            }
+            if (total) {
+                text.y-=0.25;
+            }
+            requestAnimationFrame(() => {
+                step();
+            })
+        }
+        step();
+}
 export function updateActionText(text) {
     actionText.text = text;
+}
+
+export function updateBulletText() {
+    bulletText.text = "Ammo: " + player.weapon.bullets;
+}
+
+export function removeItem(item) {
+    gameContainer.removeChild(item.sprite);
 }

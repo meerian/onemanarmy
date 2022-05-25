@@ -3,9 +3,19 @@ var player = 0;
 const playerVal = {
     ap: 3,
     health: 10,
+    ammo: 3,
 }
 
 var enemies = [];
+
+function findEnemy(x, y) {
+    for (let i = 0; i < enemies.length; i++) {
+        if (enemies[i].sprite.x == x && enemies[i].sprite.y == y) {
+            return enemies[i];
+        }
+    }
+    console.log("none found");
+}
 
 //For Desktop
 document.getElementById('myCanvas').addEventListener("keydown", keyDownHandler, false);

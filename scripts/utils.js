@@ -40,7 +40,7 @@ const drawText = (text, x, y, container, isAnchored = false) => {
     text.y = y;
     if (isAnchored) { text.anchor.set(0.5); }
     container.addChild(text);
- };
+};
 
 // -------------------------------------------------------------------------------
 
@@ -57,22 +57,22 @@ function realPositionY(y) {
 
 function distApartObj(obj1, obj2) {
     let dist = 0;
-    let curX = obj2.x + obj1.xNudge - obj2.xNudge;
-    let curY = obj2.y + obj1.yNudge - obj2.yNudge;
+    let curX = obj2.x;
+    let curY = obj2.y;
     while (obj1.x != curX || obj1.y != curY) {
         dist++;
         if (obj1.x != curX) {
             if (obj1.x < curX) {
-                curX -= 48;
+                curX -= 1;
             } else {
-                curX += 48;
+                curX += 1;
             }
             continue;
         }
         else if (obj1.y < curY) {
-            curY -= 48;
+            curY -= 1;
         } else {
-            curY += 48;
+            curY += 1;
         }
     }
     return dist;
@@ -82,26 +82,20 @@ function distApartCoord(obj1, x, y) {
     let dist = 0;
     let curX = x;
     let curY = y;
-    if (curX > obj1.x) {
-        while (curX - obj1.x > 0) {
-            dist++;
-            curX -= 48;
+    while (obj1.x != curX || obj1.y != curY) {
+        dist++;
+        if (obj1.x != curX) {
+            if (obj1.x < curX) {
+                curX -= 1;
+            } else {
+                curX += 1;
+            }
+            continue;
         }
-    } else {
-        while (obj1.x - curX > 0) {
-            dist++;
-            curX += 48;
-        }
-    }
-    if (curY > obj1.y) {
-        while (curY - obj1.y > 0) {
-            dist++;
-            curY -= 48;
-        }
-    } else {
-        while (obj1.y - curY > 0) {
-            dist++;
-            curY += 48;
+        else if (obj1.y < curY) {
+            curY -= 1;
+        } else {
+            curY += 1;
         }
     }
     return dist;
@@ -118,7 +112,7 @@ const rh = 16;
 const houndssheet = new PIXI.BaseTexture.from("images/enemy/hound_spritesheet.png");
 
 
-        
+
 
 
 // -------------------------------------------------------------------------------
@@ -126,8 +120,8 @@ const houndssheet = new PIXI.BaseTexture.from("images/enemy/hound_spritesheet.pn
 //Common classes
 class gameObject {
     constructor(x, y, health, ap, sprite, weapon, xNudge = 0, yNudge = 0) {
-        this.x = xCentral + (x - 4) * 48 + xNudge;
-        this.y = yCentral + (y - 2) * 48 + yNudge;
+        this.x = x;
+        this.y = y;
         this.xNudge = xNudge;
         this.yNudge = yNudge;
         this.ap = ap;
@@ -141,12 +135,11 @@ class gameObject {
         this.sprite.loop = true;
         this.sprite.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
         this.weapon = weapon;
-        this.sprite.play();
     }
 
     draw(container) {
-        this.sprite.x = this.x;
-        this.sprite.y = this.y;
+        this.sprite.x = xCentral + (this.x - 4) * 48 + this.xNudge;
+        this.sprite.y = yCentral + (this.y - 2) * 48 + this.yNudge;
         container.addChild(this.sprite);
     }
 }
@@ -158,7 +151,24 @@ class weapon {
         this.mindmg = mindmg;
         this.maxdmg = maxdmg;
         this.clip = clip;
+        this.bullets = clip;
         this.range = range;
+    }
+
+    attack() {
+        let difference = this.maxdmg - this.mindmg;
+        let rand = Math.random();
+        rand = Math.floor(rand * difference);
+        this.bullets--;
+        return rand + this.mindmg;
+    }
+
+    reload() {
+        this.bullets = this.clip;
+    }
+
+    checkFire() {
+        return this.bullets < 0 || this.clip == -1;
     }
 }
 
