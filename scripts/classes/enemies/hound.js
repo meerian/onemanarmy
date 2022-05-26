@@ -3,8 +3,7 @@ import { enemy } from "./enemy.js";
 class hound extends enemy{
     constructor(x, y) {
         createSpriteSheet();
-        super(x, y, 5, 3, new PIXI.AnimatedSprite(spritesheet.idle), new weapon("claw", 1, 1, -1, 1), -2, -15);
-        this.helpertext.text = "Hound (" + this.health + "HP)\nRange:1 Dmg:2 \nAP:3";    
+        super("Hound", x, y, 5, 3, new PIXI.AnimatedSprite(spritesheet.idle), new weapon("claw", 1, 1, -1, 1), -2, -15);   
     }
 
     nextMove() {

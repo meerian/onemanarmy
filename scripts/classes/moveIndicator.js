@@ -90,7 +90,7 @@ export class moveIndicator {
     drawHelper() {
 
         //Draw text
-        this.helpertext = new PIXI.Text("AP Left:" + this.ap + "\nConfirm?", textStyleHelper);
+        this.helpertext = new PIXI.Text("AP Left:" + this.ap + "\nClick to Confirm", textStyleHelper);
         this.helpertext.x = this.actualX() + 15;
         this.helpertext.y = this.actualY() - 5;
         this.helpertext.interactive = true;
@@ -127,6 +127,8 @@ export class moveIndicator {
             this.moves.pop();
             this.movePointer.pop();
         }
+        this.curX = player.x;
+        this.curY = player.y;
         this.helper = 0;
         this.helpertext = 0;
     }

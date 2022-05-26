@@ -2,8 +2,10 @@
 const app = new PIXI.Application({
     view: document.getElementById("myCanvas"),
 });
-
+const gameContainer = new PIXI.Container();
 const moveContainer = new PIXI.Container();
+const detailContainer = new PIXI.Container();
+
 
 let background = new PIXI.Sprite(new PIXI.Texture.from('images/backgrnd.png'));
 background.x = 0;
@@ -11,6 +13,9 @@ background.y = 0;
 background.scale.set(3, 3);
 background.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
 app.stage.addChild(background);
+app.stage.addChild(gameContainer);
+app.stage.addChild(moveContainer);
+app.stage.addChild(detailContainer);
 
 // -------------------------------------------------------------------------------
 
@@ -187,7 +192,7 @@ class page {
     }
 
     stage() {
-        app.stage.addChild(this.container);
+        //app.stage.addChild(this.container);
     }
 
     cleanup() {

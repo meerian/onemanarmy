@@ -64,7 +64,7 @@ export class gamePage extends page {
     }
 }
 
-export var gameContainer = new PIXI.Container();
+
 var apText = 0;
 var healthText = 0;
 var turnText = 0;
@@ -117,4 +117,14 @@ export function updateBulletText() {
 
 export function removeItem(item) {
     gameContainer.removeChild(item.sprite);
+}
+
+export function updateTurnText() {
+    if (isPlayerturn) {
+        turnText.text = "Player's Turn";
+    } else {
+        console.log("changed");
+        turnText.text = "Enemy's Turn";
+    }
+
 }

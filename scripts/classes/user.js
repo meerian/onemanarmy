@@ -66,6 +66,7 @@ export function playerTurn() {
         playerVal.ap = player.ap;
         if (player.mIndicator != 0) {
             player.mIndicator.ap = playerVal.ap;
+            player.mIndicator.cleanup();
         }
         updateAP();
         isPlayerturn = false;
@@ -75,8 +76,15 @@ export function playerTurn() {
 
 function drawAnimation(moves) {
     if (moves[0]) {
-        player.sprite.textures = spritesheet.walk;
         let str = moves.shift();
+        if (player.sprite.textures == spritesheet.idle) {
+            player.sprite.textures = spritesheet.walkright;
+        }
+        if (str == "left") {
+            player.sprite.textures = spritesheet.walkleft;
+        } else if (str == "right") {
+            player.sprite.textures = spritesheet.walkright;
+        }
         let total = 48;
         const step = () => {
             if (total == 0) {
@@ -123,10 +131,15 @@ var spritesheet = [];
 
 function createSpriteSheet() {
     spritesheet["idle"] = [new PIXI.Texture(userssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh))];
-    spritesheet["walk"] = [new PIXI.Texture(userssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh)),
+    spritesheet["walkright"] = [new PIXI.Texture(userssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh)),
     new PIXI.Texture(userssheet, new PIXI.Rectangle(1 * rw, 0 * rh, rw, rh)),
     new PIXI.Texture(userssheet, new PIXI.Rectangle(2 * rw, 0 * rh, rw, rh)),
     new PIXI.Texture(userssheet, new PIXI.Rectangle(1 * rw, 0 * rh, rw, rh)),
     new PIXI.Texture(userssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh))];
+    spritesheet["walkleft"] = [new PIXI.Texture(userssheet, new PIXI.Rectangle(0 * rw, 1 * rh, rw, rh)),
+        new PIXI.Texture(userssheet, new PIXI.Rectangle(1 * rw, 1 * rh, rw, rh)),
+        new PIXI.Texture(userssheet, new PIXI.Rectangle(2 * rw, 1 * rh, rw, rh)),
+        new PIXI.Texture(userssheet, new PIXI.Rectangle(1 * rw, 1 * rh, rw, rh)),
+        new PIXI.Texture(userssheet, new PIXI.Rectangle(0 * rw, 1 * rh, rw, rh))];
 }
 
