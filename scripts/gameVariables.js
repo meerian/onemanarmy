@@ -7,6 +7,11 @@ const playerVal = {
 }
 
 var enemies = [];
+var enemyTurnCounter = 0;
+
+function resetenemyTurn() {
+    enemyTurnCounter = 0;
+}
 
 function findEnemy(x, y) {
     for (let i = 0; i < enemies.length; i++) {

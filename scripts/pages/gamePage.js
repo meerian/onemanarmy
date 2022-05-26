@@ -23,6 +23,8 @@ export class gamePage extends page {
 
         //add enemies
         addHound(7, 2);
+        addHound(7, 3);
+        resetenemyTurn();
         for (let i = 0; i < enemies.length; i++) {
             enemies[i].draw(this.container);
         }
@@ -61,6 +63,33 @@ export class gamePage extends page {
         //Draw current turn
         turnText = new PIXI.Text("Player's Turn", textStyle);
         drawText(turnText, xCentral, yCentral - 3 * 48, this.container, true);
+
+        //Draw end turn button
+        let endTurnBox = new PIXI.Graphics();
+        endTurnBox.lineStyle(1, 0x00FF2A, 1);
+        endTurnBox.drawRect(xCentral + 308, yCentral + 93, 80, 30);
+        endTurnBox.endFill();
+        this.container.addChild(endTurnBox);
+        let endTurnButton = new PIXI.Text("End Turn", textStyleEndTurn);;
+        endTurnButton.interactive = true;
+        endTurnButton.on("pointerdown", function (event) {
+            player.endTurn();
+        })
+        endTurnButton.on("mouseover", function (event) {
+            endTurnButton.style.fill = "0x160805";
+            endTurnBox.beginFill(0x00FF2A);
+            endTurnBox.drawRect(xCentral + 308, yCentral + 93, 80, 30);
+            endTurnBox.endFill();
+        })
+        endTurnButton.on("mouseout", function (event) {
+            endTurnButton.style.fill = "0x00FF2A";
+            endTurnBox.clear();
+            endTurnBox.lineStyle(1, 0x00FF2A, 1);
+            endTurnBox.drawRect(xCentral + 308, yCentral + 93, 80, 30);
+            endTurnBox.endFill();
+        })
+        drawText(endTurnButton, xCentral + 350, yCentral + 110, this.container, true);
+        
     }
 }
 
@@ -88,6 +117,20 @@ export function takeDamage(enemy, val) {
     let dmgText = new PIXI.Text("-" + val, textStyle);
     drawText(dmgText, enemy.sprite.x, enemy.sprite.y - 20, gameContainer, true);
     drawAnimation(dmgText);
+}
+
+export function showError(str) {
+    switch (str) {
+        case "range":
+            let rangetext = new PIXI.Text("Out of range!", textStyle);
+            drawText(rangetext, player.sprite.x, player.sprite.y - 20, gameContainer, true);
+            drawAnimation(rangetext);
+            return;
+        case "ammo":
+            let ammotext = new PIXI.Text("Out of ammo!", textStyle);
+            drawText(ammotext, player.sprite.x, player.sprite.y - 20, gameContainer, true);
+            drawAnimation(ammotext);
+    }
 }
 
 function drawAnimation(text) {
@@ -123,7 +166,6 @@ export function updateTurnText() {
     if (isPlayerturn) {
         turnText.text = "Player's Turn";
     } else {
-        console.log("changed");
         turnText.text = "Enemy's Turn";
     }
 

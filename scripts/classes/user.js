@@ -5,15 +5,17 @@ import { updateAP, updateBulletText, updateHealth } from "../pages/gamePage.js";
 class user extends gameObject {
     constructor(x, y, health, ap, weapon) {
         createSpriteSheet();
-        super(x, y, health, ap, new PIXI.AnimatedSprite(spritesheet.idle), weapon, 5, -15);
+        super(x, y, health, ap, new PIXI.AnimatedSprite(spritesheet.idleright), weapon, 5, -15);
         this.mIndicator = 0;
     }
 
     displayMove(direction) {
-        if (this.mIndicator == 0) {
-            this.mIndicator = new moveIndicator(this.x, this.y, playerVal.ap);
-        }
-        this.mIndicator.update(direction);
+        if (isPlayerturn) {
+            if (this.mIndicator == 0) {
+                this.mIndicator = new moveIndicator(this.x, this.y, playerVal.ap);
+            }
+            this.mIndicator.update(direction);
+        }   
     }
 
     takeDamage(val) {
@@ -21,17 +23,23 @@ class user extends gameObject {
         updateHealth(val);
     }
 
-    attack() {
+    attack(dir) {
         playerVal.ap--;
+        if (player.mIndicator != 0) {
+            player.mIndicator.ap = playerVal.ap;
+        }
         updateBulletText();
         updateAP();
+        drawShoot(dir);
     }
 
     reload() {
-        playerVal.ap--;
-        this.weapon.reload();
-        updateBulletText();
-        updateAP();
+        if (isPlayerturn) {
+            playerVal.ap--;
+            this.weapon.reload();
+            updateBulletText();
+            updateAP();
+        }
     }
 
     move(x, y, moves) {
@@ -40,6 +48,10 @@ class user extends gameObject {
         let movesCopy = [...moves];
 
         drawAnimation(movesCopy);
+    }
+
+    endTurn() {
+        playerVal.ap = 0;
     }
 }
 
@@ -59,7 +71,7 @@ export function emptyUser() {
 }
 
 export function playerTurn() {
-    if (playerVal.ap > 0) {
+    if (playerVal.ap > 0 || player.sprite.playing) {
         setTimeout(function () { playerTurn(); }, 100);
     } else {
         //End turn
@@ -74,10 +86,40 @@ export function playerTurn() {
     }
 }
 
+function drawShoot(dir) {
+    let total = 30;
+    if (dir == "right") {
+        player.sprite.textures = spritesheet.shootright;
+    } else {
+        player.sprite.textures = spritesheet.shootleft;
+    }
+    
+    player.sprite.play();
+    const step = () => {
+        if (total) {
+            total--;
+            requestAnimationFrame(() => {
+                step();
+            })
+            return;
+        }
+        else {
+            if (dir == "left") {
+                console.log("got it");
+                player.sprite.textures = spritesheet.idleleft;
+            } else if (dir == "right") {
+                player.sprite.textures = spritesheet.idleright;
+            }
+            return;
+        }
+    }
+    step();
+}
+
 function drawAnimation(moves) {
     if (moves[0]) {
         let str = moves.shift();
-        if (player.sprite.textures == spritesheet.idle) {
+        if (player.sprite.textures == spritesheet.idleright) {
             player.sprite.textures = spritesheet.walkright;
         }
         if (str == "left") {
@@ -88,7 +130,11 @@ function drawAnimation(moves) {
         let total = 48;
         const step = () => {
             if (total == 0) {
-                player.sprite.textures = spritesheet.idle;
+                if (str == "left") {
+                    player.sprite.textures = spritesheet.idleleft;
+                } else {
+                    player.sprite.textures = spritesheet.idleright;
+                }
             }
             if (total) {
                 player.sprite.play();
@@ -130,16 +176,29 @@ function drawAnimation(moves) {
 var spritesheet = [];
 
 function createSpriteSheet() {
-    spritesheet["idle"] = [new PIXI.Texture(userssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh))];
+    spritesheet["idleright"] = [new PIXI.Texture(userssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh))];
+    spritesheet["idleleft"] = [new PIXI.Texture(userssheet, new PIXI.Rectangle(0 * rw, 1 * rh, rw, rh))];
     spritesheet["walkright"] = [new PIXI.Texture(userssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh)),
     new PIXI.Texture(userssheet, new PIXI.Rectangle(1 * rw, 0 * rh, rw, rh)),
     new PIXI.Texture(userssheet, new PIXI.Rectangle(2 * rw, 0 * rh, rw, rh)),
     new PIXI.Texture(userssheet, new PIXI.Rectangle(1 * rw, 0 * rh, rw, rh)),
     new PIXI.Texture(userssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh))];
     spritesheet["walkleft"] = [new PIXI.Texture(userssheet, new PIXI.Rectangle(0 * rw, 1 * rh, rw, rh)),
-        new PIXI.Texture(userssheet, new PIXI.Rectangle(1 * rw, 1 * rh, rw, rh)),
-        new PIXI.Texture(userssheet, new PIXI.Rectangle(2 * rw, 1 * rh, rw, rh)),
-        new PIXI.Texture(userssheet, new PIXI.Rectangle(1 * rw, 1 * rh, rw, rh)),
-        new PIXI.Texture(userssheet, new PIXI.Rectangle(0 * rw, 1 * rh, rw, rh))];
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(1 * rw, 1 * rh, rw, rh)),
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(2 * rw, 1 * rh, rw, rh)),
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(1 * rw, 1 * rh, rw, rh)),
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(0 * rw, 1 * rh, rw, rh))];
+    spritesheet["shootright"] = [new PIXI.Texture(userssheet, new PIXI.Rectangle(3 * rw, 0 * rh, rw, rh)),
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(3 * rw, 0 * rh, rw, rh)),
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(4 * rw, 0 * rh, rw, rh)),
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(5 * rw, 0 * rh, rw, rh)),
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(5 * rw, 0 * rh, rw, rh)),
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(3 * rw, 0 * rh, rw, rh))];
+    spritesheet["shootleft"] = [new PIXI.Texture(userssheet, new PIXI.Rectangle(3 * rw, 1 * rh, rw, rh)),
+        new PIXI.Texture(userssheet, new PIXI.Rectangle(3 * rw, 1 * rh, rw, rh)),
+        new PIXI.Texture(userssheet, new PIXI.Rectangle(4 * rw, 1 * rh, rw, rh)),
+        new PIXI.Texture(userssheet, new PIXI.Rectangle(5 * rw, 1 * rh, rw, rh)),
+        new PIXI.Texture(userssheet, new PIXI.Rectangle(5 * rw, 1 * rh, rw, rh)),
+        new PIXI.Texture(userssheet, new PIXI.Rectangle(3 * rw, 1 * rh, rw, rh))];
 }
 

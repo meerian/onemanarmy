@@ -2,20 +2,18 @@ import { playerTurn } from "./classes/user.js";
 import { updateTurnText } from "./pages/gamePage.js";
 
 export function nextTurn() {
-    if (player.sprite.playing) {
-        setTimeout(function () { nextTurn(); }, 100);
-        return;
-    }
     if (isPlayerturn) {
         updateTurnText();
-        playerTurn(); 
+        playerTurn();
     }
     else {
-        updateTurnText();
-        for (let i = 0; i < enemies.length; i++) {
-            enemies[i].nextMove();
+        if (enemyTurnCounter == enemies.length) {
+            isPlayerturn = true;
+            resetenemyTurn();
+            nextTurn();
+            return;
         }
-        isPlayerturn = true;
-        nextTurn();
+        updateTurnText();
+        enemies[enemyTurnCounter].nextMove();
     }
 }

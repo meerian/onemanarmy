@@ -39,6 +39,14 @@ const textStyleHelper = new PIXI.TextStyle({
     dropShadowAlpha: 0.1
 });
 
+const textStyleEndTurn = new PIXI.TextStyle({
+    fontFamily: "Pixel",
+    fontSize: 16,
+    fill: "0x00FF2A",
+    dropShadow: true,
+    dropShadowAlpha: 0.1
+});
+
 //Default method to draw text with or without anchor
 const drawText = (text, x, y, container, isAnchored = false) => {
     text.x = x;

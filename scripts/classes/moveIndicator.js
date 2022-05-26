@@ -22,7 +22,7 @@ export class moveIndicator {
             if (this.moves.length) {
                 this.drawHelper();
             } 
-        } else if (this.ap && this.borderCheck(str)) {
+        } else if (this.ap && this.validityCheck(str)) {
             this.removeHelper();
             let line = new PIXI.Graphics();
             line.position.set(this.actualX(), this.actualY());
@@ -53,6 +53,15 @@ export class moveIndicator {
         }
     }
 
+    enemyCheck(x, y) {
+        for (let i = 0; i < enemies.length; i++) {
+            if (enemies[i].x == x && enemies[i].y == y) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     backCheck(str) {
         switch (str) {
             case "up":
@@ -66,16 +75,16 @@ export class moveIndicator {
         }
     }
 
-    borderCheck(str) {
+    validityCheck(str) {
         switch (str) {
             case "up":
-                return this.actualY() - 48 >= yCentral - 2 * 48;
+                return this.actualY() - 48 >= yCentral - 2 * 48 && this.enemyCheck(this.curX, this.curY - 1);
             case "down":
-                return this.actualY() + 48 <= yCentral + 2 * 48;
+                return this.actualY() + 48 <= yCentral + 2 * 48 && this.enemyCheck(this.curX, this.curY + 1);
             case "right":
-                return this.actualX() + 48 <= xCentral + 5 * 48;
+                return this.actualX() + 48 <= xCentral + 5 * 48 && this.enemyCheck(this.curX + 1, this.curY);
             case "left":
-                return this.actualX() - 48 >= xCentral - 4 * 48;
+                return this.actualX() - 48 >= xCentral - 4 * 48 && this.enemyCheck(this.curX - 1, this.curY);
         }
     }
 

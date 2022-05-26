@@ -1,4 +1,4 @@
-import { updateActionText, takeDamage, removeItem } from "../../pages/gamePage.js";
+import { updateActionText, takeDamage, removeItem, showError } from "../../pages/gamePage.js";
 
 export class enemy extends gameObject {
     constructor(name, x, y, health, ap, sprite, weapon, xNudge = 0, yNudge = 0) {
@@ -13,7 +13,13 @@ export class enemy extends gameObject {
         this.helpertext.y = realPositionY(this.y) + 10;
         this.sprite.on("pointerdown", function (event) {
             let enemy = findEnemy(this.x, this.y);
-            if (distApartObj(player, enemy) <= player.weapon.range && player.weapon.bullets > 0) {
+            if (distApartObj(player, enemy) > player.weapon.range) {
+                showError("range");
+                return;
+            } else if (player.weapon.bullets <= 0) {
+                showError("ammo");
+                return;
+            } else if (isPlayerturn) {
                 enemy.takeDamage(player.weapon.attack());
             }
         })
@@ -32,7 +38,12 @@ export class enemy extends gameObject {
     }
 
     takeDamage(val) {
-        player.attack();
+        if (this.x < player.x) {
+            player.attack("left");
+        } else {
+            player.attack("right");
+        }
+        
         takeDamage(this, val);
         this.health -= val;
         if (this.health <= 0) {
