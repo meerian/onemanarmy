@@ -13,9 +13,6 @@ background.y = 0;
 background.scale.set(3, 3);
 background.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
 app.stage.addChild(background);
-app.stage.addChild(gameContainer);
-app.stage.addChild(moveContainer);
-app.stage.addChild(detailContainer);
 
 // -------------------------------------------------------------------------------
 
@@ -27,22 +24,14 @@ const textStyle = new PIXI.TextStyle({
     fontFamily: "Pixel",
     fontSize: 16,
     fill: "0x00FF2A",
-    dropShadow: true,
-    dropShadowAlpha: 0.1
+    //dropShadow: true,
+    //dropShadowAlpha: 0.1
 });
 
 const textStyleHelper = new PIXI.TextStyle({
     fontFamily: "Pixel",
     fontSize: 16,
     fill: "0xFFFFFF",
-    dropShadow: true,
-    dropShadowAlpha: 0.1
-});
-
-const textStyleEndTurn = new PIXI.TextStyle({
-    fontFamily: "Pixel",
-    fontSize: 16,
-    fill: "0x00FF2A",
     dropShadow: true,
     dropShadowAlpha: 0.1
 });
@@ -185,6 +174,14 @@ class weapon {
     }
 }
 
+class upgrade {
+    constructor(type, name, flavourtext) {
+        this.className = type;
+        this.name = name;
+        this.flavourtext = flavourtext;
+    }
+}
+
 class page {
     constructor(container) {
         this.container = container;
@@ -200,7 +197,7 @@ class page {
     }
 
     stage() {
-        //app.stage.addChild(this.container);
+        app.stage.addChild(this.container);
     }
 
     cleanup() {

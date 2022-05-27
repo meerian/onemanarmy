@@ -1,10 +1,12 @@
 import { addHound } from "../classes/enemies/hound.js";
 import { addUser } from "../classes/user.js";
-import { pistol } from "../classes/weapons/pistol.js";
+import { pistol } from "../classes/mods/pistol.js";
+import { roundEndPage } from "./roundEndPage.js";
 
 export class gamePage extends page {
     constructor() {
         super(gameContainer);
+        curPage = this;
     }
 
     createPage() {
@@ -18,7 +20,7 @@ export class gamePage extends page {
         this.container.addChild(grid);
 
         //add user
-        addUser(1, 2, playerVal.health, playerVal.ap, new pistol());
+        addUser(1, 2, playerVal.maxhealth, playerVal.maxap, new pistol());
         player.draw(this.container);
 
         //add enemies
@@ -28,7 +30,7 @@ export class gamePage extends page {
         for (let i = 0; i < enemies.length; i++) {
             enemies[i].draw(this.container);
         }
-       
+
         //Draw user health
         drawText(new PIXI.Text("Health:", textStyle), xCentral - 300, yCentral + 155, this.container, true);
         healthText = new PIXI.Text(playerVal.health, textStyle);
@@ -52,7 +54,7 @@ export class gamePage extends page {
         })
         bulletText = new PIXI.Text("Ammo: " + player.weapon.bullets, textStyle);
         drawText(bulletText, xCentral + 50, yCentral + 155, bTextContainer, true);
-        drawText(new PIXI.Text("(Click to reload)", textStyle), xCentral + 50, yCentral + 175,bTextContainer, true);
+        drawText(new PIXI.Text("(Click to reload)", textStyle), xCentral + 50, yCentral + 175, bTextContainer, true);
         gameContainer.addChild(bTextContainer);
 
         //Draw Action
@@ -70,7 +72,10 @@ export class gamePage extends page {
         endTurnBox.drawRect(xCentral + 308, yCentral + 93, 80, 30);
         endTurnBox.endFill();
         this.container.addChild(endTurnBox);
-        let endTurnButton = new PIXI.Text("End Turn", textStyleEndTurn);;
+        let textStyleEndTurn = {
+            ...textStyle
+        };
+        let endTurnButton = new PIXI.Text("End Turn", textStyleEndTurn);
         endTurnButton.interactive = true;
         endTurnButton.on("pointerdown", function (event) {
             player.endTurn();
@@ -89,11 +94,15 @@ export class gamePage extends page {
             endTurnBox.endFill();
         })
         drawText(endTurnButton, xCentral + 350, yCentral + 110, this.container, true);
-        
+    }
+    stage() {
+        app.stage.addChild(gameContainer);
+        app.stage.addChild(moveContainer);
+        app.stage.addChild(detailContainer);
     }
 }
 
-
+var curPage = 0;
 var apText = 0;
 var healthText = 0;
 var turnText = 0;
@@ -119,36 +128,28 @@ export function takeDamage(enemy, val) {
     drawAnimation(dmgText);
 }
 
-export function showError(str) {
-    switch (str) {
-        case "range":
-            let rangetext = new PIXI.Text("Out of range!", textStyle);
-            drawText(rangetext, player.sprite.x, player.sprite.y - 20, gameContainer, true);
-            drawAnimation(rangetext);
-            return;
-        case "ammo":
-            let ammotext = new PIXI.Text("Out of ammo!", textStyle);
-            drawText(ammotext, player.sprite.x, player.sprite.y - 20, gameContainer, true);
-            drawAnimation(ammotext);
-    }
+export function showString(str) {
+    let text = new PIXI.Text(str, textStyle);
+    drawText(text, player.sprite.x, player.sprite.y - 20, gameContainer, true);
+    drawAnimation(text);
 }
 
 function drawAnimation(text) {
-        let total = 100;
-        const step = () => {
-            total--;
-            if (total == 0) {
-                gameContainer.removeChild(text);
-                return;
-            }
-            if (total) {
-                text.y-=0.25;
-            }
-            requestAnimationFrame(() => {
-                step();
-            })
+    let total = 100;
+    const step = () => {
+        total--;
+        if (total == 0) {
+            gameContainer.removeChild(text);
+            return;
         }
-        step();
+        if (total) {
+            text.y -= 0.25;
+        }
+        requestAnimationFrame(() => {
+            step();
+        })
+    }
+    step();
 }
 export function updateActionText(text) {
     actionText.text = text;
@@ -169,4 +170,10 @@ export function updateTurnText() {
         turnText.text = "Enemy's Turn";
     }
 
+}
+
+export function levelEnd() {
+    let page = new roundEndPage();
+    curPage.cleanup();
+    page.init();
 }

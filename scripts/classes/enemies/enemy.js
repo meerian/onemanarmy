@@ -1,4 +1,5 @@
-import { updateActionText, takeDamage, removeItem, showError } from "../../pages/gamePage.js";
+import { updateActionText, takeDamage, removeItem, showString } from "../../pages/gamePage.js";
+import { nextTurn } from "../../turnHandler.js";
 
 export class enemy extends gameObject {
     constructor(name, x, y, health, ap, sprite, weapon, xNudge = 0, yNudge = 0) {
@@ -14,10 +15,10 @@ export class enemy extends gameObject {
         this.sprite.on("pointerdown", function (event) {
             let enemy = findEnemy(this.x, this.y);
             if (distApartObj(player, enemy) > player.weapon.range) {
-                showError("range");
+                showString("Out of range!");
                 return;
             } else if (player.weapon.bullets <= 0) {
-                showError("ammo");
+                showString("Out of ammo!");
                 return;
             } else if (isPlayerturn) {
                 enemy.takeDamage(player.weapon.attack());
@@ -50,7 +51,10 @@ export class enemy extends gameObject {
             updateActionText("");
             removeItem(this);
             enemies.splice(enemies.indexOf(this), 1);
-            app.stage.removeChild(detailContainer);
+            detailContainer.removeChild(this.helpertext);
+            if (enemies.length == 0) {
+                nextTurn();
+            }
         } else {
         this.helpertext.text = this.name + " (" + this.health + "HP)\nRange:" + this.weapon.range + " Dmg:" + this.weapon.mindmg + "-" + this.weapon.maxdmg + "\nAP:" + this.ap;
         }

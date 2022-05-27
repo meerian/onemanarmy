@@ -1,9 +1,14 @@
 //User reference and functions
 var player = 0;
 const playerVal = {
+    maxap: 3,
     ap: 3,
+    maxhealth: 10,
     health: 10,
     ammo: 3,
+    rangemodifier: 0,
+    mindmgmodifier: 0,
+    maxdmgmodifier: 0,
 }
 
 var enemies = [];

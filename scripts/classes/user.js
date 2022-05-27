@@ -1,11 +1,13 @@
 import { nextTurn } from "../turnHandler.js";
 import { moveIndicator } from "./moveIndicator.js";
-import { updateAP, updateBulletText, updateHealth } from "../pages/gamePage.js";
+import { showString, updateAP, updateBulletText, updateHealth } from "../pages/gamePage.js";
 
 class user extends gameObject {
     constructor(x, y, health, ap, weapon) {
         createSpriteSheet();
         super(x, y, health, ap, new PIXI.AnimatedSprite(spritesheet.idleright), weapon, 5, -15);
+        playerVal.health = health;
+        playerVal.ap = ap;
         this.mIndicator = 0;
     }
 
@@ -35,10 +37,15 @@ class user extends gameObject {
 
     reload() {
         if (isPlayerturn) {
+            if (player.weapon.bullets == player.weapon.clip) {
+                showString("Ammo Full!");
+                return;
+            }
             playerVal.ap--;
             this.weapon.reload();
             updateBulletText();
             updateAP();
+            showString("Reloaded!");
         }
     }
 
@@ -105,7 +112,6 @@ function drawShoot(dir) {
         }
         else {
             if (dir == "left") {
-                console.log("got it");
                 player.sprite.textures = spritesheet.idleleft;
             } else if (dir == "right") {
                 player.sprite.textures = spritesheet.idleright;
