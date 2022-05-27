@@ -3,11 +3,17 @@ import { enemy } from "./enemy.js";
 
 class hound extends enemy {
     constructor(x, y) {
-        createSpriteSheet();
+        if (spritesheet.length == 0) {
+            createSpriteSheet();
+        }
         super("Hound", x, y, 5, 3, new PIXI.AnimatedSprite(spritesheet.idleleft), new weapon("claw", 1, 1, -1, 1), -2, -15);
     }
 
     nextMove() {
+        if (this.health <= 0) {
+            endTurn(this);
+            return;
+        }
         let curX = this.x;
         let curY = this.y
         let curAP = this.ap;
@@ -69,6 +75,10 @@ class hound extends enemy {
         this.updateHelper();
         endTurn(this);
     }
+
+    death() {
+        deathanimation(this);
+    }
 }
 
 export function addHound(x, y, health, ap, weapon) {
@@ -77,7 +87,7 @@ export function addHound(x, y, health, ap, weapon) {
 
 function checkValidity(x, y) {
     for (let i = 0; i < enemies.length; i++) {
-        if (enemies[i].x == x && enemies[i].y == y) {
+        if (enemies[i].x == x && enemies[i].y == y && enemies[i].health > 0) {
             return false;
         }
     }
@@ -98,10 +108,12 @@ var spritesheet = [];
 function createSpriteSheet() {
     spritesheet["idleleft"] = [new PIXI.Texture(houndssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh))];
     spritesheet["walkleft"] = [new PIXI.Texture(houndssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh)), new PIXI.Texture(houndssheet, new PIXI.Rectangle(1 * rw, 0 * rh, rw, rh))];
-    spritesheet["attackleft"] = [new PIXI.Texture(houndssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh)), new PIXI.Texture(houndssheet, new PIXI.Rectangle(2 * rw, 0 * rh, rw, rh))];
+    spritesheet["attackleft"] = [new PIXI.Texture(houndssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh)), new PIXI.Texture(houndssheet, new PIXI.Rectangle(2 * rw, 0 * rh, rw, rh)), new PIXI.Texture(houndssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh))];
+    spritesheet["dieleft"] = [new PIXI.Texture(houndssheet, new PIXI.Rectangle(3 * rw, 0 * rh, rw, rh)), new PIXI.Texture(houndssheet, new PIXI.Rectangle(4 * rw, 0 * rh, rw, rh)), new PIXI.Texture(houndssheet, new PIXI.Rectangle(5 * rw, 0 * rh, rw, rh))];
     spritesheet["idleright"] = [new PIXI.Texture(houndssheet, new PIXI.Rectangle(0 * rw, 1 * rh, rw, rh))];
     spritesheet["walkright"] = [new PIXI.Texture(houndssheet, new PIXI.Rectangle(0 * rw, 1 * rh, rw, rh)), new PIXI.Texture(houndssheet, new PIXI.Rectangle(1 * rw, 1 * rh, rw, rh))];
-    spritesheet["attackright"] = [new PIXI.Texture(houndssheet, new PIXI.Rectangle(0 * rw, 1 * rh, rw, rh)), new PIXI.Texture(houndssheet, new PIXI.Rectangle(2 * rw, 1 * rh, rw, rh))];
+    spritesheet["attackright"] = [new PIXI.Texture(houndssheet, new PIXI.Rectangle(0 * rw, 1 * rh, rw, rh)), new PIXI.Texture(houndssheet, new PIXI.Rectangle(2 * rw, 1 * rh, rw, rh)), new PIXI.Texture(houndssheet, new PIXI.Rectangle(0 * rw, 1 * rh, rw, rh))];
+    spritesheet["dieright"] = [new PIXI.Texture(houndssheet, new PIXI.Rectangle(3 * rw, 1 * rh, rw, rh)), new PIXI.Texture(houndssheet, new PIXI.Rectangle(4 * rw, 1 * rh, rw, rh)), new PIXI.Texture(houndssheet, new PIXI.Rectangle(5 * rw, 1 * rh, rw, rh))];
 }
 
 function ResolveMoves(enemy, moves) {
@@ -110,24 +122,30 @@ function ResolveMoves(enemy, moves) {
         if (str == "attack") {
             if (player.x > enemy.x) {
                 enemy.sprite.textures = spritesheet.attackright;
+                enemy.sprite.loop = false;
                 str = "attackright";
             } else {
                 enemy.sprite.textures = spritesheet.attackleft;
+                enemy.sprite.loop = false;
                 str = "attackleft";
             }
             player.takeDamage(enemy.weapon.attack());
         } else if (str == "left"){
             enemy.sprite.textures = spritesheet.walkleft;
+            enemy.sprite.loop = true;
         } else {
             enemy.sprite.textures = spritesheet.walkright;
+            enemy.sprite.loop = true;
         }
         let total = 48;
         const step = () => {
-            if (total == 0) {
+            if (total == 0 || !enemy.sprite.playing) {
                 if (str == "left" || str == "attackleft") {
                     enemy.sprite.textures = spritesheet.idleleft;
+                    enemy.sprite.loop = true;
                 } else {
                     enemy.sprite.textures = spritesheet.idleright;
+                    enemy.sprite.loop = true;
                 }
             }
             if (total) {
@@ -169,4 +187,27 @@ function ResolveMoves(enemy, moves) {
         setTimeout(function () { ResolveMoves(enemy, moves) }, 170);
     }
 
+}
+
+function deathanimation(enemy) {
+    if (enemy.sprite.textures == spritesheet.idleleft) {
+        enemy.sprite.textures = spritesheet.dieleft;
+    } else {
+        enemy.sprite.textures = spritesheet.dieright;
+    }
+    enemy.sprite.play = true;
+    enemy.sprite.animationSpeed = .01;
+    let total = 100;
+    
+    const step = () => {
+        total--;
+        if (total == 0) {
+            enemy.remove();
+            return;
+        }
+        requestAnimationFrame(() => {
+            step();
+        })
+    }
+    step();
 }

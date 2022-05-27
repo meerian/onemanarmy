@@ -1,6 +1,6 @@
 import { addHound } from "../classes/enemies/hound.js";
 import { addUser } from "../classes/user.js";
-import { pistol } from "../classes/mods/pistol.js";
+import { pistol } from "../classes/mods/upgradeList.js";
 import { roundEndPage } from "./roundEndPage.js";
 
 export class gamePage extends page {
@@ -20,7 +20,7 @@ export class gamePage extends page {
         this.container.addChild(grid);
 
         //add user
-        addUser(1, 2, playerVal.maxhealth, playerVal.maxap, new pistol());
+        addUser(1, 2, playerVal.maxhealth, playerVal.maxap);
         player.draw(this.container);
 
         //add enemies
@@ -30,6 +30,34 @@ export class gamePage extends page {
         for (let i = 0; i < enemies.length; i++) {
             enemies[i].draw(this.container);
         }
+
+        //Draw Level
+        drawText(new PIXI.Text(`Level ${gamelevel}`, textStyle), xCentral, yCentral - 200, this.container, true);
+
+        //Draw inventory
+        drawText(new PIXI.Text("Inventory:", textStyle), xCentral - 300, yCentral - 115, this.container, true);
+        playerInventory.forEach(function (element, index) {
+            //Create image
+            let text = new PIXI.Text(`${element.name} \n ${element.shortdesc}`, textStyleUpgrade);
+            text.x = xCentral - 300 + index%2 * 50;
+            text.y = yCentral - 80 + Math.floor(index/2) * 40;
+            let image = new PIXI.Sprite(element.texture);
+            image.x = xCentral - 350 + index%2 * 50;
+            image.y = yCentral - 90 + Math.floor(index/2) * 40;
+            image.scale.set(2, 2);
+            image.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+            image.interactive = true;
+            image.on("pointerdown", function (event) {
+                console.log("click");
+            })
+            image.on("mouseover", function (event) {
+                gameContainer.addChild(text);
+            })
+            image.on("mouseout", function (event) {
+                gameContainer.removeChild(text);
+            })
+            gameContainer.addChild(image);
+        });
 
         //Draw user health
         drawText(new PIXI.Text("Health:", textStyle), xCentral - 300, yCentral + 155, this.container, true);
@@ -42,12 +70,12 @@ export class gamePage extends page {
         drawText(apText, xCentral - 228, yCentral + 175, this.container, true);
 
         //Draw user weapon
-        drawText(new PIXI.Text("Weapon: " + player.weapon.name, textStyle), xCentral - 100, yCentral + 155, this.container, true);
+        drawText(new PIXI.Text(`Weapon: ${player.weapon.name}`, textStyle), xCentral - 100, yCentral + 155, this.container, true);
         weaponText = new PIXI.Text(player.weapon.weapontext, textStyle);
         drawText(weaponText, xCentral - 103, yCentral + 175, this.container, true);
 
         //Draw clip
-        let bTextContainer = new PIXI.Container();
+        bTextContainer = new PIXI.Container();
         bTextContainer.interactive = true;
         bTextContainer.on("pointerdown", function (event) {
             player.reload();
@@ -75,7 +103,7 @@ export class gamePage extends page {
         let textStyleEndTurn = {
             ...textStyle
         };
-        let endTurnButton = new PIXI.Text("End Turn", textStyleEndTurn);
+        endTurnButton = new PIXI.Text("End Turn", textStyleEndTurn);
         endTurnButton.interactive = true;
         endTurnButton.on("pointerdown", function (event) {
             player.endTurn();
@@ -102,6 +130,8 @@ export class gamePage extends page {
     }
 }
 
+var bTextContainer = 0
+var endTurnButton = 0;
 var curPage = 0;
 var apText = 0;
 var healthText = 0;
@@ -109,21 +139,32 @@ var turnText = 0;
 var weaponText = 0;
 var actionText = 0;
 var bulletText = 0;
+var cheerflag = false;
 
 export function updateAP() {
     apText.text = playerVal.ap;
 }
 
-export function updateHealth(val) {
+export function updateHealth(val, iscrit) {
     healthText.text = playerVal.health;
-    let dmgText = new PIXI.Text("-" + val, textStyle);
+    let dmgText = 0;
+    if (iscrit) {
+        dmgText = new PIXI.Text(`-${val}!`, textStyleCrit);
+    } else {
+        dmgText = new PIXI.Text(`-${val}`, textStyle);
+    }
     drawText(dmgText, player.sprite.x, player.sprite.y - 20, gameContainer, true);
     drawAnimation(dmgText);
 
 }
 
-export function takeDamage(enemy, val) {
-    let dmgText = new PIXI.Text("-" + val, textStyle);
+export function takeDamage(enemy, val, iscrit) {
+    let dmgText = 0;
+    if (iscrit) {
+        dmgText = new PIXI.Text(`-${val}!`, textStyleCrit);
+    } else {
+        dmgText = new PIXI.Text(`-${val}`, textStyle);
+    }
     drawText(dmgText, enemy.sprite.x, enemy.sprite.y - 20, gameContainer, true);
     drawAnimation(dmgText);
 }
@@ -173,6 +214,18 @@ export function updateTurnText() {
 }
 
 export function levelEnd() {
+    if (!cheerflag) {
+        bTextContainer.interactive = false;
+        endTurnButton.interactive = false;
+        turnText.text = "Level Cleared!"
+        player.cheer();
+        cheerflag = true;
+        return;
+    }
+    enemies = [];
+    enemyTurnCounter = 0;
+    enemyDefeated = 0;
+    isPlayerturn = true;
     let page = new roundEndPage();
     curPage.cleanup();
     page.init();

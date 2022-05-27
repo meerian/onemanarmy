@@ -7,6 +7,7 @@ export class enemy extends gameObject {
         this.name = name;
         this.sprite.interactive = true;
         this.moves = [];
+        this.isAlive = true;
 
         //Draw text
         this.helpertext = new PIXI.Text(this.name + " (" + this.health + "HP)\nRange:" + this.weapon.range + " Dmg:" + this.weapon.mindmg + "-" + this.weapon.maxdmg + "\nAP:" + this.ap, textStyleHelper);
@@ -21,7 +22,8 @@ export class enemy extends gameObject {
                 showString("Out of ammo!");
                 return;
             } else if (isPlayerturn) {
-                enemy.takeDamage(player.weapon.attack());
+                let dmgtaken = player.weapon.attack();
+                enemy.takeDamage(dmgtaken[0], dmgtaken[1]);
             }
         })
         this.sprite.on("mouseover", function (event) {
@@ -38,25 +40,34 @@ export class enemy extends gameObject {
         this.helpertext.y = realPositionY(this.y) + 10;
     }
 
-    takeDamage(val) {
+    takeDamage(val, iscrit) {
         if (this.x < player.x) {
             player.attack("left");
         } else {
             player.attack("right");
         }
-        
-        takeDamage(this, val);
+
+        takeDamage(this, val, iscrit);
         this.health -= val;
-        if (this.health <= 0) {
-            updateActionText("");
-            removeItem(this);
-            enemies.splice(enemies.indexOf(this), 1);
+        if (this.health <= 0 && this.isAlive) {
+            this.isAlive = false;
+            this.sprite.interactive = false;
             detailContainer.removeChild(this.helpertext);
-            if (enemies.length == 0) {
-                nextTurn();
-            }
+            updateActionText("");
+            this.death();
         } else {
-        this.helpertext.text = this.name + " (" + this.health + "HP)\nRange:" + this.weapon.range + " Dmg:" + this.weapon.mindmg + "-" + this.weapon.maxdmg + "\nAP:" + this.ap;
+            this.helpertext.text = this.name + " (" + this.health + "HP)\nRange:" + this.weapon.range + " Dmg:" + this.weapon.mindmg + "-" + this.weapon.maxdmg + "\nAP:" + this.ap;
+        }
+    }
+
+    death() {
+        throw new Error("method death() not implemented.");
+    }
+    remove() {
+        removeItem(this);
+        enemyDefeated++;
+        if (enemies.length == enemyDefeated) {
+            nextTurn();
         }
     }
 }

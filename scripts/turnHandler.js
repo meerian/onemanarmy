@@ -3,8 +3,9 @@ import { updateTurnText, levelEnd } from "./pages/gamePage.js";
 import { gamePage } from "./pages/gamePage.js";
 
 export function nextTurn() {
-    if (enemies.length == 0) {
+    if (enemies.length == enemyDefeated) {
         levelEnd();
+        return;
     }
     if (isPlayerturn) {
         updateTurnText();

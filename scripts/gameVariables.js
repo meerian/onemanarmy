@@ -1,4 +1,5 @@
 //User reference and functions
+var gamelevel = 1;
 var player = 0;
 const playerVal = {
     maxap: 3,
@@ -9,10 +10,14 @@ const playerVal = {
     rangemodifier: 0,
     mindmgmodifier: 0,
     maxdmgmodifier: 0,
+    clipmodifier: 0,
+    weapon: 0,
 }
+var playerInventory = [];
 
 var enemies = [];
 var enemyTurnCounter = 0;
+var enemyDefeated = 0;
 
 function resetenemyTurn() {
     enemyTurnCounter = 0;

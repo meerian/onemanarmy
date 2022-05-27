@@ -24,8 +24,12 @@ const textStyle = new PIXI.TextStyle({
     fontFamily: "Pixel",
     fontSize: 16,
     fill: "0x00FF2A",
-    //dropShadow: true,
-    //dropShadowAlpha: 0.1
+});
+
+const textStyleCrit = new PIXI.TextStyle({
+    fontFamily: "Pixel",
+    fontSize: 16,
+    fill: "0xFFDB2B",
 });
 
 const textStyleHelper = new PIXI.TextStyle({
@@ -34,6 +38,12 @@ const textStyleHelper = new PIXI.TextStyle({
     fill: "0xFFFFFF",
     dropShadow: true,
     dropShadowAlpha: 0.1
+});
+
+const textStyleUpgrade = new PIXI.TextStyle({
+    fontFamily: "Pixel",
+    fontSize: 12,
+    fill: "0x00FF2A",
 });
 
 //Default method to draw text with or without anchor
@@ -113,7 +123,7 @@ const rh = 16;
 //enemy textures and animations
 const houndssheet = new PIXI.BaseTexture.from("images/enemy/hound_spritesheet.png");
 
-
+const upgradessheet = new PIXI.BaseTexture.from("images/upgrade/upgrades_ssheet.png");
 
 
 
@@ -130,7 +140,6 @@ class gameObject {
         this.health = health;
         this.sprite = sprite;
         this.sprite.animationSpeed = .5;
-        this.sprite.loop = false;
         this.sprite.anchor.set(0.5);
         this.sprite.scale.set(3, 3);;
         this.sprite.autoUpdate = true;
@@ -147,14 +156,27 @@ class gameObject {
 }
 
 class weapon {
-    constructor(name, mindmg, maxdmg, clip, range) {
+    constructor(name, mindmg, maxdmg, clip, range, flavourtext, texture, critchance = 0) {
+        this.className = "Weapon";
         this.name = name;
-        this.weapontext = "(damage:" + mindmg + "-" + maxdmg + ", range:" + range + ")";
         this.mindmg = mindmg;
         this.maxdmg = maxdmg;
+        this.weapontext = `(damage:${mindmg}-${maxdmg}, range:${range})`;
         this.clip = clip;
         this.bullets = clip;
         this.range = range;
+        this.flavourtext = flavourtext;
+        this.texture = texture;
+        this.critchance = critchance;
+    }
+
+    update() {
+        this.mindmg = Math.max(this.mindmg + playerVal.mindmgmodifier, 1);
+        this.maxdmg = Math.max(this.maxdmg + playerVal.maxdmgmodifier, this.mindmg);
+        this.clip = this.clip + playerVal.clipmodifier;
+        this.bullets = this.clip;
+        this.range = this.range + playerVal.rangemodifier;
+        this.weapontext = `(damage:${this.mindmg}-${this.maxdmg}, range:${this.range})`;
     }
 
     attack() {
@@ -162,7 +184,12 @@ class weapon {
         let rand = Math.random();
         rand = Math.floor(rand * difference);
         this.bullets--;
-        return rand + this.mindmg;
+        let ccroll = Math.random();
+        if (ccroll < this.critchance) {
+            return [(rand + this.mindmg) * 2, true];
+        } else {
+            return[rand + this.mindmg, false];
+        }
     }
 
     reload() {
@@ -175,10 +202,12 @@ class weapon {
 }
 
 class upgrade {
-    constructor(type, name, flavourtext) {
+    constructor(type, name, flavourtext, shortdesc, texture) {
         this.className = type;
         this.name = name;
         this.flavourtext = flavourtext;
+        this.shortdesc = shortdesc;
+        this.texture = texture;
     }
 }
 

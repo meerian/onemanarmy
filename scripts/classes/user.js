@@ -1,12 +1,17 @@
 import { nextTurn } from "../turnHandler.js";
 import { moveIndicator } from "./moveIndicator.js";
-import { showString, updateAP, updateBulletText, updateHealth } from "../pages/gamePage.js";
+import { levelEnd, showString, updateAP, updateBulletText, updateHealth } from "../pages/gamePage.js";
+import { pistol } from "./mods/upgradeList.js";
 
 class user extends gameObject {
-    constructor(x, y, health, ap, weapon) {
+    constructor(x, y, health, ap) {
+        if (playerVal.weapon == 0) {
+            playerVal.weapon = new pistol();
+        }
         createSpriteSheet();
-        super(x, y, health, ap, new PIXI.AnimatedSprite(spritesheet.idleright), weapon, 5, -15);
-        playerVal.health = health;
+        super(x, y, health, ap, new PIXI.AnimatedSprite(spritesheet.idleright), playerVal.weapon, 5, -15);
+        playerVal.health = this.health;
+        this.weapon.update();
         playerVal.ap = ap;
         this.mIndicator = 0;
     }
@@ -17,12 +22,12 @@ class user extends gameObject {
                 this.mIndicator = new moveIndicator(this.x, this.y, playerVal.ap);
             }
             this.mIndicator.update(direction);
-        }   
+        }
     }
 
     takeDamage(val) {
-        playerVal.health -= val;
-        updateHealth(val);
+        playerVal.health -= val[0];
+        updateHealth(val[0], val[1]);
     }
 
     attack(dir) {
@@ -59,6 +64,10 @@ class user extends gameObject {
 
     endTurn() {
         playerVal.ap = 0;
+    }
+
+    cheer() {
+        cheerAnimation();
     }
 }
 
@@ -100,7 +109,7 @@ function drawShoot(dir) {
     } else {
         player.sprite.textures = spritesheet.shootleft;
     }
-    
+
     player.sprite.play();
     const step = () => {
         if (total) {
@@ -179,6 +188,23 @@ function drawAnimation(moves) {
 
 }
 
+function cheerAnimation() {
+    let total = 200;
+    player.sprite.textures = spritesheet.cheer;
+    player.sprite.play();
+    const step = () => {
+        total--;
+        if (total == 0) {
+            levelEnd();
+            return;
+        }
+        requestAnimationFrame(() => {
+            step();
+        })
+    }
+    step();
+}
+
 var spritesheet = [];
 
 function createSpriteSheet() {
@@ -201,10 +227,15 @@ function createSpriteSheet() {
     new PIXI.Texture(userssheet, new PIXI.Rectangle(5 * rw, 0 * rh, rw, rh)),
     new PIXI.Texture(userssheet, new PIXI.Rectangle(3 * rw, 0 * rh, rw, rh))];
     spritesheet["shootleft"] = [new PIXI.Texture(userssheet, new PIXI.Rectangle(3 * rw, 1 * rh, rw, rh)),
-        new PIXI.Texture(userssheet, new PIXI.Rectangle(3 * rw, 1 * rh, rw, rh)),
-        new PIXI.Texture(userssheet, new PIXI.Rectangle(4 * rw, 1 * rh, rw, rh)),
-        new PIXI.Texture(userssheet, new PIXI.Rectangle(5 * rw, 1 * rh, rw, rh)),
-        new PIXI.Texture(userssheet, new PIXI.Rectangle(5 * rw, 1 * rh, rw, rh)),
-        new PIXI.Texture(userssheet, new PIXI.Rectangle(3 * rw, 1 * rh, rw, rh))];
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(3 * rw, 1 * rh, rw, rh)),
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(4 * rw, 1 * rh, rw, rh)),
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(5 * rw, 1 * rh, rw, rh)),
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(5 * rw, 1 * rh, rw, rh)),
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(3 * rw, 1 * rh, rw, rh))];
+    spritesheet["cheer"] = [new PIXI.Texture(userssheet, new PIXI.Rectangle(0 * rw, 2 * rh, rw, rh)),
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(1 * rw, 2 * rh, rw, rh)),
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(2 * rw, 2 * rh, rw, rh)),
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(1 * rw, 2 * rh, rw, rh)),
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(0 * rw, 2 * rh, rw, rh))];
 }
 
