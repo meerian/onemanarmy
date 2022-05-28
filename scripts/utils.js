@@ -218,11 +218,16 @@ class page {
 
     init() {
         this.createPage();
+        this.animate();
         this.stage();
     }
 
     createPage() {
         throw new Error("method createPage() not implemented.");
+    }
+
+    animate() {
+        
     }
 
     stage() {

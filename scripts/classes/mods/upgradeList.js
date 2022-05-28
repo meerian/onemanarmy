@@ -38,7 +38,7 @@ export function applyUpgrade(upgrade) {
 export class pistol extends weapon {
     constructor() {
         let flavourtext = "Starting weapon."
-        super("Pistol", 1, 3, 3, 3, flavourtext, new PIXI.Texture.from('images/placeholder.png'));
+        super("Pistol", 5, 5, 3, 3, flavourtext, new PIXI.Texture.from('images/placeholder.png'));
     }
 }
 

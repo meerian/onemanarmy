@@ -12,9 +12,12 @@ export class roundEndPage extends page {
         this.chooseUpgrades();
         this.createPage();
         this.stage();
+        this.animate();
     }
 
     createPage() {
+        let animationOffset = 950;
+
         //Create title
         drawText(new PIXI.Text("Choose A Modification", textStyle), xCentral, yCentral - 200, this.container, true);
         //Create selections
@@ -26,38 +29,43 @@ export class roundEndPage extends page {
             //Create box
             let choiceBox = new PIXI.Graphics();
             choiceBox.lineStyle(1, 0x00FF2A, 1);
-            choiceBox.drawRect(xCentral - 100 + i * 200, yCentral - 150, 200, 300);
+            choiceBox.drawRect(xCentral - 100 + i * 200, yCentral - 150 + animationOffset, 200, 300);
             choiceBox.endFill();
-            choiceBox.hitArea = new PIXI.Rectangle(xCentral - 100 + i * 200, yCentral - 150, 200, 300);
+            choiceBox.hitArea = new PIXI.Rectangle(xCentral - 100 + i * 200, yCentral - 150 + animationOffset, 200, 300);
             container.addChild(choiceBox);
+            pageElements.push(choiceBox);
 
             //Create image
             let image = new PIXI.Sprite(upgrade.texture);
             image.x = xCentral - 80 + i * 200;
-            image.y = yCentral - 125;
+            image.y = yCentral - 125 + animationOffset;
             image.scale.set(3, 3);
             image.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
             container.addChild(image);
+            pageElements.push(image);
 
             //Create text
             let textStyleChoice = { ...textStyle };
             let choiceBoxText = new PIXI.Text(`${upgrade.className}:\n${upgrade.name}`, textStyleChoice);
-            drawText(choiceBoxText, xCentral - 10 + i * 200, yCentral - 120, container, false);
+            drawText(choiceBoxText, xCentral - 10 + i * 200, yCentral - 120 + animationOffset, container, false);
+            pageElements.push(choiceBoxText);
             let choiceboxflavourText = new PIXI.Text(upgrade.flavourtext, textStyleChoice);
-            drawText(choiceboxflavourText, xCentral - 70 + i * 200, yCentral - 30, container, false);
+            drawText(choiceboxflavourText, xCentral - 70 + i * 200, yCentral - 30 + animationOffset, container, false);
+            pageElements.push(choiceboxflavourText);
             container.on("pointerdown", function (event) {
-                endPage(upgrade);
+                upgradeChosen = upgrade;
+                endPage();
             })
             container.on("mouseover", function (event) {
                 choiceBox.clear();
                 choiceBox.lineStyle(2, 0x00FF2A, 1);
-                choiceBox.drawRect(xCentral - 100 + i * 200, yCentral - 150, 200, 300);
+                choiceBox.drawRect(xCentral - 100 + i * 200, yCentral - 150 + animationOffset, 200, 300);
                 choiceBox.endFill();
             })
             container.on("mouseout", function (event) {
                 choiceBox.clear();
                 choiceBox.lineStyle(1, 0x00FF2A, 1);
-                choiceBox.drawRect(xCentral - 100 + i * 200, yCentral - 150, 200, 300);
+                choiceBox.drawRect(xCentral - 100 + i * 200, yCentral - 150 + animationOffset, 200, 300);
                 choiceBox.endFill();
             })
             this.container.addChild(container);
@@ -79,14 +87,54 @@ export class roundEndPage extends page {
             this.upgrades[i] = parseUpgrade(this.upgrades[i]);
         }
     }
+
+    animate() {
+        animatePage();
+    }
 }
 
+const roundendContainer = new PIXI.Container();
 let curPage = 0;
+let pageElements = [];
+let moveFlag = false;
+let upgradeChosen = 0;
 
-function endPage(upgrade) {
-    applyUpgrade(upgrade);
+function endPage() {
+    if (!moveFlag) {
+        animatePage(false);
+        moveFlag = true;
+        return;
+    }
+    pageElements = [];
+    applyUpgrade(upgradeChosen);
     curPage.cleanup();
     startLevel();
 }
 
-const roundendContainer = new PIXI.Container();
+//Default is moving up
+function animatePage(dir = true) {
+    let total = 40;
+    const step = () => {
+        total--;
+        if (total == 0) {
+            if (!dir) {
+                endPage();
+            }
+            return;
+        }
+        pageElements.forEach(function (element) {
+            if (dir) {
+                element.y-= 25;
+            } else {
+                element.y += 25;
+            }
+            
+        })
+
+        requestAnimationFrame(() => {
+            step();
+        })
+    }
+    step();
+}
+

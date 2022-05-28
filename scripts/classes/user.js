@@ -30,14 +30,21 @@ class user extends gameObject {
         updateHealth(val[0], val[1]);
     }
 
-    attack(dir) {
+    attack(enemy) {
+        let dmgtaken = player.weapon.attack();
+        enemy.takeDamage(dmgtaken[0], dmgtaken[1]);
         playerVal.ap--;
         if (player.mIndicator != 0) {
             player.mIndicator.ap = playerVal.ap;
         }
         updateBulletText();
         updateAP();
-        drawShoot(dir);
+        if (enemy.x < player.x) {
+            drawShoot("left");
+        } else {
+            drawShoot("right");
+        }
+        
     }
 
     reload() {

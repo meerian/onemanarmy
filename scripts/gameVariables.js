@@ -32,6 +32,15 @@ function findEnemy(x, y) {
     console.log("none found");
 }
 
+function findEnemyAlive(x, y) {
+    for (let i = 0; i < enemies.length; i++) {
+        if (enemies[i].sprite.x == x && enemies[i].sprite.y == y && enemies[i].isAlive) {
+            return enemies[i];
+        }
+    }
+    console.log("none found");
+}
+
 //For Desktop
 document.getElementById('myCanvas').addEventListener("keydown", keyDownHandler, false);
 document.getElementById('myCanvas').setAttribute("tabindex", 0);

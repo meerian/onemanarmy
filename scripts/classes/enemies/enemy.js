@@ -14,7 +14,7 @@ export class enemy extends gameObject {
         this.helpertext.x = realPositionX(this.x) + 10;
         this.helpertext.y = realPositionY(this.y) + 10;
         this.sprite.on("pointerdown", function (event) {
-            let enemy = findEnemy(this.x, this.y);
+            let enemy = findEnemyAlive(this.x, this.y);
             if (distApartObj(player, enemy) > player.weapon.range) {
                 showString("Out of range!");
                 return;
@@ -22,8 +22,7 @@ export class enemy extends gameObject {
                 showString("Out of ammo!");
                 return;
             } else if (isPlayerturn) {
-                let dmgtaken = player.weapon.attack();
-                enemy.takeDamage(dmgtaken[0], dmgtaken[1]);
+                player.attack(enemy);
             }
         })
         this.sprite.on("mouseover", function (event) {
@@ -41,12 +40,6 @@ export class enemy extends gameObject {
     }
 
     takeDamage(val, iscrit) {
-        if (this.x < player.x) {
-            player.attack("left");
-        } else {
-            player.attack("right");
-        }
-
         takeDamage(this, val, iscrit);
         this.health -= val;
         if (this.health <= 0 && this.isAlive) {
@@ -73,7 +66,7 @@ export class enemy extends gameObject {
 }
 
 function mouseover(x, y) {
-    let enemy = findEnemy(x, y);
+    let enemy = findEnemyAlive(x, y);
     detailContainer.addChild(enemy.helpertext)
     if (player.weapon.bullets == 0) {
         updateActionText("Out of ammo, reload!");
@@ -85,7 +78,7 @@ function mouseover(x, y) {
 }
 
 function mouseout(x, y) {
-    let enemy = findEnemy(x, y);
+    let enemy = findEnemyAlive(x, y);
     detailContainer.removeChild(enemy.helpertext)
     updateActionText("");
 }
