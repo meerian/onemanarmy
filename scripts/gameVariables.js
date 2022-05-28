@@ -12,9 +12,14 @@ const playerVal = {
     maxdmgmodifier: 0,
     clipmodifier: 0,
     weapon: 0,
+    nextIsCrit: false,
 }
 var playerInventory = [];
 
+var enemySpawnList = ["hound", "hound", "warrior"];
+
+//index = current Y --> mapped to next Y
+const enemySpawnCoord = [-1, 4, 3, 1, 0];
 var enemies = [];
 var enemyTurnCounter = 0;
 var enemyDefeated = 0;

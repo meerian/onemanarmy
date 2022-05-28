@@ -6,6 +6,8 @@ const gameContainer = new PIXI.Container();
 const moveContainer = new PIXI.Container();
 const detailContainer = new PIXI.Container();
 
+app.renderer.plugins.interaction.cursorStyles.default = "url('images/default_cursor.png'), auto";
+app.renderer.plugins.interaction.cursorStyles.pointer = "url('images/aim_cursor.png'), auto";
 
 let background = new PIXI.Sprite(new PIXI.Texture.from('images/backgrnd.png'));
 background.x = 0;
@@ -122,6 +124,7 @@ const rh = 16;
 
 //enemy textures and animations
 const houndssheet = new PIXI.BaseTexture.from("images/enemy/hound_spritesheet.png");
+const warriorssheet = new PIXI.BaseTexture.from("images/enemy/warrior_spritesheet.png");
 
 const upgradessheet = new PIXI.BaseTexture.from("images/upgrade/upgrades_ssheet.png");
 
@@ -179,13 +182,13 @@ class weapon {
         this.weapontext = `(damage:${this.mindmg}-${this.maxdmg}, range:${this.range})`;
     }
 
-    attack() {
+    attack(isCrit = false) {
         let difference = this.maxdmg - this.mindmg;
         let rand = Math.random();
         rand = Math.floor(rand * difference);
         this.bullets--;
         let ccroll = Math.random();
-        if (ccroll < this.critchance) {
+        if (isCrit || ccroll < this.critchance) {
             return [(rand + this.mindmg) * 2, true];
         } else {
             return[rand + this.mindmg, false];
@@ -208,6 +211,15 @@ class upgrade {
         this.flavourtext = flavourtext;
         this.shortdesc = shortdesc;
         this.texture = texture;
+    }
+
+    //Methods to be implemented for active items
+    reload() {
+
+    }
+
+    use() {
+
     }
 }
 

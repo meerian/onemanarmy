@@ -55,7 +55,7 @@ export class moveIndicator {
 
     enemyCheck(x, y) {
         for (let i = 0; i < enemies.length; i++) {
-            if (enemies[i].x == x && enemies[i].y == y) {
+            if (enemies[i].x == x && enemies[i].y == y && enemies[i].isAlive) {
                 return false;
             }
         }

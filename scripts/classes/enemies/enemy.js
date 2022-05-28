@@ -6,6 +6,7 @@ export class enemy extends gameObject {
         super(x, y, health, ap, sprite, weapon, xNudge, yNudge);
         this.name = name;
         this.sprite.interactive = true;
+        this.sprite.buttonMode = true;
         this.moves = [];
         this.isAlive = true;
 
@@ -56,6 +57,7 @@ export class enemy extends gameObject {
     death() {
         throw new Error("method death() not implemented.");
     }
+
     remove() {
         removeItem(this);
         enemyDefeated++;
@@ -64,6 +66,8 @@ export class enemy extends gameObject {
         }
     }
 }
+
+const aimcursor = PIXI.Texture.from("images/aim_cursor.png");
 
 function mouseover(x, y) {
     let enemy = findEnemyAlive(x, y);

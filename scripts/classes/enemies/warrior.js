@@ -1,12 +1,12 @@
 import { nextTurn } from "../../turnHandler.js";
 import { enemy } from "./enemy.js";
 
-class hound extends enemy {
+class warrior extends enemy {
     constructor(x, y) {
         if (spritesheet.length == 0) {
             createSpriteSheet();
         }
-        super("Hound", x, y, 3, 3, new PIXI.AnimatedSprite(spritesheet.idleleft), new weapon("claw", 1, 1, -1, 1), -2, -15);
+        super("Warrior", x, y, 5, 3, new PIXI.AnimatedSprite(spritesheet.idleleft), new weapon("sword", 2, 3, -1, 1), 0, -10);
     }
 
     nextMove() {
@@ -81,8 +81,8 @@ class hound extends enemy {
     }
 }
 
-export function addHound(x, y, health, ap, weapon) {
-    enemies.push(new hound(x, y, health, ap, weapon));
+export function addWarrior(x, y, health, ap, weapon) {
+    enemies.push(new warrior(x, y, health, ap, weapon));
 }
 
 function checkValidity(x, y) {
@@ -107,17 +107,17 @@ function endTurn(enemy) {
 }
 
 var spritesheet = [];
-let ssheet = houndssheet;
+let ssheet = warriorssheet;
 
 function createSpriteSheet() {
     spritesheet["idleleft"] = [new PIXI.Texture(ssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh))];
     spritesheet["walkleft"] = [new PIXI.Texture(ssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(1 * rw, 0 * rh, rw, rh))];
-    spritesheet["attackleft"] = [new PIXI.Texture(ssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(2 * rw, 0 * rh, rw, rh))];
-    spritesheet["dieleft"] = [new PIXI.Texture(ssheet, new PIXI.Rectangle(3 * rw, 0 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(4 * rw, 0 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(5 * rw, 0 * rh, rw, rh))];
+    spritesheet["attackleft"] = [new PIXI.Texture(ssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(2 * rw, 0 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(3 * rw, 0 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(4 * rw, 0 * rh, rw, rh))];
+    spritesheet["dieleft"] = [new PIXI.Texture(ssheet, new PIXI.Rectangle(5 * rw, 0 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(6 * rw, 0 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(7 * rw, 0 * rh, rw, rh))];
     spritesheet["idleright"] = [new PIXI.Texture(ssheet, new PIXI.Rectangle(0 * rw, 1 * rh, rw, rh))];
     spritesheet["walkright"] = [new PIXI.Texture(ssheet, new PIXI.Rectangle(0 * rw, 1 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(1 * rw, 1 * rh, rw, rh))];
-    spritesheet["attackright"] = [new PIXI.Texture(ssheet, new PIXI.Rectangle(0 * rw, 1 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(2 * rw, 1 * rh, rw, rh))];
-    spritesheet["dieright"] = [new PIXI.Texture(ssheet, new PIXI.Rectangle(3 * rw, 1 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(4 * rw, 1 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(5 * rw, 1 * rh, rw, rh))];
+    spritesheet["attackright"] = [new PIXI.Texture(ssheet, new PIXI.Rectangle(0 * rw, 1 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(2 * rw, 1 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(3 * rw, 1 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(4 * rw, 1 * rh, rw, rh))];
+    spritesheet["dieright"] = [new PIXI.Texture(ssheet, new PIXI.Rectangle(5 * rw, 1 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(6 * rw, 1 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(7 * rw, 1 * rh, rw, rh))];
 }
 
 function ResolveMoves(enemy, moves) {

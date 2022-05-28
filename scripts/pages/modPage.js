@@ -1,15 +1,15 @@
-import { parseUpgrade, applyUpgrade } from "../classes/mods/upgradeList.js";
+import { applyMod, parseMod } from "../classes/mods/modList.js";
 import { startLevel } from "../turnHandler.js";
 
-export class roundEndPage extends page {
+class modPage extends page {
     constructor() {
-        super(roundendContainer)
-        this.upgrades = [];
+        super(modContainer);
+        this.mods = [];
         curPage = this;
     }
     
     init() {
-        this.chooseUpgrades();
+        this.chooseMods();
         this.createPage();
         this.stage();
         this.animate();
@@ -22,7 +22,7 @@ export class roundEndPage extends page {
         drawText(new PIXI.Text("Choose A Modification", textStyle), xCentral, yCentral - 200, this.container, true);
         //Create selections
         for (let i = -1; i <= 1; i++) {
-            let upgrade = this.upgrades.pop();
+            let mod = this.mods.pop();
             let container = new PIXI.Container();
             container.interactive = true;
 
@@ -36,7 +36,7 @@ export class roundEndPage extends page {
             pageElements.push(choiceBox);
 
             //Create image
-            let image = new PIXI.Sprite(upgrade.texture);
+            let image = new PIXI.Sprite(mod.texture);
             image.x = xCentral - 80 + i * 200;
             image.y = yCentral - 125 + animationOffset;
             image.scale.set(3, 3);
@@ -46,14 +46,14 @@ export class roundEndPage extends page {
 
             //Create text
             let textStyleChoice = { ...textStyle };
-            let choiceBoxText = new PIXI.Text(`${upgrade.className}:\n${upgrade.name}`, textStyleChoice);
+            let choiceBoxText = new PIXI.Text(`${mod.className}:\n${mod.name}`, textStyleChoice);
             drawText(choiceBoxText, xCentral - 10 + i * 200, yCentral - 120 + animationOffset, container, false);
             pageElements.push(choiceBoxText);
-            let choiceboxflavourText = new PIXI.Text(upgrade.flavourtext, textStyleChoice);
+            let choiceboxflavourText = new PIXI.Text(mod.flavourtext, textStyleChoice);
             drawText(choiceboxflavourText, xCentral - 70 + i * 200, yCentral - 30 + animationOffset, container, false);
             pageElements.push(choiceboxflavourText);
             container.on("pointerdown", function (event) {
-                upgradeChosen = upgrade;
+                modChosen = mod;
                 endPage();
             })
             container.on("mouseover", function (event) {
@@ -72,19 +72,19 @@ export class roundEndPage extends page {
         }
     }
 
-    chooseUpgrades() {
+    chooseMods() {
         let counter = 3;
         while (counter > 0) {
-            //Should be multiplied by number of upgrades
-            let check = Math.floor(Math.random() * 3 + 1);
-            if (!this.upgrades.includes(check)) {
-                this.upgrades.push(check);
+            //Should be multiplied by number of mods
+            let check = Math.floor(Math.random() * 1 + 1);
+            //if (!this.mods.includes(check)) {
+                this.mods.push(check);
                 counter--;
-            }
+            //}
         }
-        for (let i = 0; i < this.upgrades.length; i++) {
+        for (let i = 0; i < this.mods.length; i++) {
             
-            this.upgrades[i] = parseUpgrade(this.upgrades[i]);
+            this.mods[i] = parseMod(this.mods[i]);
         }
     }
 
@@ -93,11 +93,16 @@ export class roundEndPage extends page {
     }
 }
 
-const roundendContainer = new PIXI.Container();
+const modContainer = new PIXI.Container();
 let curPage = 0;
 let pageElements = [];
 let moveFlag = false;
-let upgradeChosen = 0;
+let modChosen = 0;
+
+export function createModpage() {
+    let page = new modPage();
+    page.init();
+}
 
 function endPage() {
     if (!moveFlag) {
@@ -106,7 +111,7 @@ function endPage() {
         return;
     }
     pageElements = [];
-    applyUpgrade(upgradeChosen);
+    applyMod(modChosen);
     curPage.cleanup();
     startLevel();
 }

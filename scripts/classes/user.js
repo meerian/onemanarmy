@@ -31,20 +31,30 @@ class user extends gameObject {
     }
 
     attack(enemy) {
-        let dmgtaken = player.weapon.attack();
-        enemy.takeDamage(dmgtaken[0], dmgtaken[1]);
-        playerVal.ap--;
-        if (player.mIndicator != 0) {
-            player.mIndicator.ap = playerVal.ap;
-        }
-        updateBulletText();
-        updateAP();
         if (enemy.x < player.x) {
             drawShoot("left");
         } else {
             drawShoot("right");
         }
-        
+        let dmgtaken = 0;
+        if (playerVal.nextIsCrit) {
+            playerVal.nextIsCrit = false;
+            dmgtaken = player.weapon.attack(true);
+        } else {
+            dmgtaken = player.weapon.attack();
+        }
+        enemy.takeDamage(dmgtaken[0], dmgtaken[1]);
+        updateBulletText();
+        let chance = Math.random() < 0.2;
+        if (chance && this.weapon.name == "SMG") {
+            showString("Free Shot!");
+        } else {
+            playerVal.ap--;
+            if (player.mIndicator != 0) {
+                player.mIndicator.ap = playerVal.ap;
+            }
+            updateAP();
+        }
     }
 
     reload() {

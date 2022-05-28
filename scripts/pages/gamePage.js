@@ -1,7 +1,7 @@
 import { addHound } from "../classes/enemies/hound.js";
+import { addWarrior } from "../classes/enemies/warrior.js";
 import { addUser } from "../classes/user.js";
-import { pistol } from "../classes/mods/upgradeList.js";
-import { roundEndPage } from "./roundEndPage.js";
+import { createUpgradepage } from "./upgradePage.js";
 
 export class gamePage extends page {
     constructor() {
@@ -24,8 +24,28 @@ export class gamePage extends page {
         player.draw(this.container);
 
         //add enemies
-        addHound(7, 2);
-        addHound(7, 3);
+        let startingY = 2;
+        let curY = 2;
+        let curX = 7;
+        enemySpawnList.forEach(function (element) {
+            switch (element) {
+                case "hound":
+                    addHound(curX, curY);
+                    break;
+                case "warrior":
+                    addWarrior(curX, curY);
+                    break;
+            }
+            curY = enemySpawnCoord[curY];
+            if (curY == -1) {
+                curX--;
+                curY = startingY;
+            }
+        });
+
+
+        // addHound(7, 2);
+        // addHound(7, 3);
         resetenemyTurn();
         for (let i = 0; i < enemies.length; i++) {
             enemies[i].draw(this.container);
@@ -47,9 +67,17 @@ export class gamePage extends page {
             image.scale.set(2, 2);
             image.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
             image.interactive = true;
-            image.on("pointerdown", function (event) {
-                console.log("click");
-            })
+            if (element.className == "Active") {
+                image.on("pointerdown", function (event) {
+                    if (element.charge > 0) {
+                        element.use();
+                        text.text = `${element.name} \n ${element.shortdesc}`;
+                        showString(`${element.name} used!`);
+                    } else {
+                        showString(`No more charges!`);
+                    }
+                })
+            }
             image.on("mouseover", function (event) {
                 gameContainer.addChild(text);
             })
@@ -222,11 +250,20 @@ export function levelEnd() {
         cheerflag = true;
         return;
     }
+    //resets values
+    gamelevel++;
     enemies = [];
     enemyTurnCounter = 0;
     enemyDefeated = 0;
     isPlayerturn = true;
-    let page = new roundEndPage();
+    playerInventory.forEach(function (element) {
+        element.reload();
+    })
     curPage.cleanup();
-    page.init();
+
+    //Adds new enemies
+    enemySpawnList.push("hound");
+
+    //load next page
+    createUpgradepage();
 }
