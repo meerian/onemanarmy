@@ -1,4 +1,4 @@
-import { applyMod, parseMod } from "../classes/mods/modList.js";
+import { parseMod } from "../classes/mods/modList.js";
 import { startLevel } from "../turnHandler.js";
 
 class modPage extends page {
@@ -53,7 +53,7 @@ class modPage extends page {
             drawText(choiceboxflavourText, xCentral - 70 + i * 200, yCentral - 30 + animationOffset, container, false);
             pageElements.push(choiceboxflavourText);
             container.on("pointerdown", function (event) {
-                modChosen = mod;
+                mod.apply();
                 endPage();
             })
             container.on("mouseover", function (event) {
@@ -76,7 +76,7 @@ class modPage extends page {
         let counter = 3;
         while (counter > 0) {
             //Should be multiplied by number of mods
-            let check = Math.floor(Math.random() * 1 + 1);
+            let check = Math.floor(Math.random() * 2 + 1);
             //if (!this.mods.includes(check)) {
                 this.mods.push(check);
                 counter--;
@@ -97,7 +97,6 @@ const modContainer = new PIXI.Container();
 let curPage = 0;
 let pageElements = [];
 let moveFlag = false;
-let modChosen = 0;
 
 export function createModpage() {
     let page = new modPage();
@@ -111,7 +110,6 @@ function endPage() {
         return;
     }
     pageElements = [];
-    applyMod(modChosen);
     curPage.cleanup();
     startLevel();
 }

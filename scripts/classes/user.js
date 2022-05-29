@@ -45,7 +45,7 @@ class user extends gameObject {
         }
         enemy.takeDamage(dmgtaken[0], dmgtaken[1]);
         updateBulletText();
-        let chance = Math.random() < 0.2;
+        let chance = Math.random() < 0.3;
         if (chance && this.weapon.name == "SMG") {
             showString("Free Shot!");
         } else {

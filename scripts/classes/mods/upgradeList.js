@@ -4,6 +4,12 @@ class longbarrel extends upgrade {
         let shortdesc = "+1 to range\n -1 to maxdmg"
         super("Passive", "Long Barrel", flavourtext, shortdesc, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh)));
     }
+
+    apply() {
+        playerVal.maxdmgmodifier--;
+        playerVal.rangemodifier++;
+        playerInventory.push(this);
+    }
 }
 
 class scope extends upgrade {
@@ -27,6 +33,11 @@ class scope extends upgrade {
             this.shortdesc = `next shot is a crit\nCharge:${this.charge}/${this.maxCharge}`;
         }
     }
+
+    apply() {
+        playerInventory.push(this);
+        return;
+    }
 }
 
 export function parseUpgrade(upgrade) {
@@ -44,33 +55,16 @@ export function parseUpgrade(upgrade) {
     }
 }
 
-export function applyUpgrade(upgrade) {
-    switch (upgrade.name) {
-        case "Long Barrel":
-            playerVal.maxdmgmodifier--;
-            playerVal.rangemodifier++;
-            playerInventory.push(upgrade);
-            return;
-        case "Machinegun":
-            playerVal.weapon = upgrade;
-            return;
-        case "Assault Rifle":
-            playerVal.weapon = upgrade;
-            return;
-        case "SMG":
-            playerVal.weapon = upgrade;
-        case "Scope":
-            playerInventory.push(upgrade);
-            return;
-    }
-}
-
 //Weapons: (name, mindmg, maxdmg, clip, range, texture, critchance)
 
 export class pistol extends weapon {
     constructor() {
         let flavourtext = "Starting weapon."
         super("Pistol", 5, 5, 3, 3, flavourtext, new PIXI.Texture.from('images/placeholder.png'));
+    }
+
+    apply() {
+        playerVal.weapon = this;
     }
 }
 
@@ -79,6 +73,10 @@ class machinegun extends weapon {
         let flavourtext = "Deals 1-3 dmg\n Clipsize: 10 \nRange:2"
         super("Machinegun", 1, 3, 10, 2, flavourtext, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(1 * rw, 0 * rh, rw, rh)));
     }
+
+    apply() {
+        playerVal.weapon = this;
+    }
 }
 
 class assaultrifle extends weapon {
@@ -86,11 +84,19 @@ class assaultrifle extends weapon {
         let flavourtext = "Deals 2-4 dmg\n Clipsize: 3 \nRange:4 \n\nEach shot has a \n20% chance to crit \nfor double the damage"
         super("Assault Rifle", 2, 3, 3, 4, flavourtext, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(2 * rw, 0 * rh, rw, rh)), 0.2);
     }
+
+    apply() {
+        playerVal.weapon = this;
+    }
 }
 
 class smg extends weapon {
     constructor() {
-        let flavourtext = "Deals 2-3 dmg\n Clipsize: 4 \nRange:3 \n\n20% chance for \neach shot to cost 0 AP"
-        super("SMG", 2, 3, 4, 3, flavourtext, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(3 * rw, 0 * rh, rw, rh)));
+        let flavourtext = "Deals 1-3 dmg\n Clipsize: 4 \nRange:3 \n\nEach shot has a \n30% change to cost 0 AP"
+        super("SMG", 1, 3, 4, 3, flavourtext, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(3 * rw, 0 * rh, rw, rh)));
+    }
+
+    apply() {
+        playerVal.weapon = this;
     }
 }

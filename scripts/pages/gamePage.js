@@ -10,18 +10,20 @@ export class gamePage extends page {
     }
 
     createPage() {
+        let animationOffset = 980;
+
         //Add grid
         let grid = new PIXI.Sprite(new PIXI.Texture.from('images/grid.png'));
         grid.x = xCentral;
-        grid.y = yCentral;
+        grid.y = yCentral + animationOffset;
         grid.anchor.set(0.5);
         grid.scale.set(3, 3);
         grid.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
         this.container.addChild(grid);
+        pageElements.push(grid);
 
         //add user
         addUser(1, 2, playerVal.maxhealth, playerVal.maxap);
-        player.draw(this.container);
 
         //add enemies
         let startingY = 2;
@@ -43,13 +45,7 @@ export class gamePage extends page {
             }
         });
 
-
-        // addHound(7, 2);
-        // addHound(7, 3);
         resetenemyTurn();
-        for (let i = 0; i < enemies.length; i++) {
-            enemies[i].draw(this.container);
-        }
 
         //Draw Level
         drawText(new PIXI.Text(`Level ${gamelevel}`, textStyle), xCentral, yCentral - 200, this.container, true);
@@ -156,8 +152,25 @@ export class gamePage extends page {
         app.stage.addChild(moveContainer);
         app.stage.addChild(detailContainer);
     }
+
+    animate() {
+        animatePage();
+    }
+
+    drawEnemies() {
+        if (drawIndex >= enemies.length) {
+            clearInterval(drawInterval);
+            return;
+        } else {
+            enemies[drawIndex].draw(gameContainer);
+            drawIndex++;
+        }
+    }
 }
 
+var drawInterval = 0;
+var drawIndex = 0;
+var pageElements = [];
 var bTextContainer = 0
 var endTurnButton = 0;
 var curPage = 0;
@@ -252,6 +265,7 @@ export function levelEnd() {
     }
     //resets values
     gamelevel++;
+    drawIndex = 0;
     enemies = [];
     enemyTurnCounter = 0;
     enemyDefeated = 0;
@@ -266,4 +280,34 @@ export function levelEnd() {
 
     //load next page
     createUpgradepage();
+}
+
+//Default is moving up
+function animatePage(dir = true) {
+    let total = 40;
+    const step = () => {
+        total--;
+        if (total == 0) {
+            setTimeout(drawUser, 100);
+            return;
+        }
+        pageElements.forEach(function (element) {
+            if (dir) {
+                element.y-= 25;
+            } else {
+                element.y += 25;
+            }
+            
+        })
+
+        requestAnimationFrame(() => {
+            step();
+        })
+    }
+    step();
+}
+
+function drawUser() {
+    player.draw(gameContainer);
+    drawInterval = setInterval(curPage.drawEnemies, 100);
 }

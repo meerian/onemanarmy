@@ -5,7 +5,7 @@ class removeHaddW extends upgrade {
         super("Modification", "Enemy Swap", flavourtext, "", new PIXI.Texture.from('images/placeholder.png'));
     }
 
-    swap() {
+    apply() {
         const index = enemySpawnList.indexOf("hound");
         if (index > -1) {
             enemySpawnList.splice(index, 2);
@@ -14,17 +14,22 @@ class removeHaddW extends upgrade {
     }
 }
 
+class sharperClaws extends upgrade {
+    constructor() {
+        let flavourtext = "All hounds do \n +1 MAX damage"
+        super("Modification", "Sharper Claws", flavourtext, "", new PIXI.Texture.from('images/placeholder.png'));
+    }
+
+    apply() {
+        enemyVal.sharperclaw++;
+    }
+}
+
 export function parseMod(mod) {
     switch (mod) {
         case 1:
             return new removeHaddW();
-    }
-}
-
-export function applyMod(mod) {
-    switch (mod.name) {
-        case "Enemy Swap":
-            mod.swap();
-            return;
+        case 2:
+            return new sharperClaws();
     }
 }

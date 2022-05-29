@@ -23,6 +23,10 @@ const enemySpawnCoord = [-1, 4, 3, 1, 0];
 var enemies = [];
 var enemyTurnCounter = 0;
 var enemyDefeated = 0;
+const enemyVal = {
+    sharperclaw: 0,
+}
+
 
 function resetenemyTurn() {
     enemyTurnCounter = 0;

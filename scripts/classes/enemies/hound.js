@@ -6,7 +6,7 @@ class hound extends enemy {
         if (spritesheet.length == 0) {
             createSpriteSheet();
         }
-        super("Hound", x, y, 3, 3, new PIXI.AnimatedSprite(spritesheet.idleleft), new weapon("claw", 1, 1, -1, 1), -2, -15);
+        super("Hound", x, y, 3, 3, new PIXI.AnimatedSprite(spritesheet.idleleft), new weapon("claw", 1, 1 + enemyVal.sharperclaw, -1, 1), -2, -15);
     }
 
     nextMove() {

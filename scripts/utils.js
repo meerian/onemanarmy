@@ -213,6 +213,10 @@ class upgrade {
         this.texture = texture;
     }
 
+    apply() {
+        throw new Error("method apply() not implemented.");
+    }
+
     //Methods to be implemented for active items
     reload() {
 
@@ -230,8 +234,8 @@ class page {
 
     init() {
         this.createPage();
-        this.animate();
         this.stage();
+        this.animate();
     }
 
     createPage() {

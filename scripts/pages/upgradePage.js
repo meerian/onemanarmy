@@ -1,4 +1,4 @@
-import { parseUpgrade, applyUpgrade } from "../classes/mods/upgradeList.js";
+import { parseUpgrade } from "../classes/mods/upgradeList.js";
 import { createModpage } from "./modPage.js";
 
 class upgradePage extends page {
@@ -53,7 +53,7 @@ class upgradePage extends page {
             drawText(choiceboxflavourText, xCentral - 70 + i * 200, yCentral - 30 + animationOffset, container, false);
             pageElements.push(choiceboxflavourText);
             container.on("pointerdown", function (event) {
-                upgradeChosen = upgrade;
+                upgrade.apply();
                 endPage();
             })
             container.on("mouseover", function (event) {
@@ -111,7 +111,6 @@ function endPage() {
         return;
     }
     pageElements = [];
-    applyUpgrade(upgradeChosen);
     curPage.cleanup();
     createModpage();
 }
