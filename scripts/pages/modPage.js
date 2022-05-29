@@ -76,11 +76,11 @@ class modPage extends page {
         let counter = 3;
         while (counter > 0) {
             //Should be multiplied by number of mods
-            let check = Math.floor(Math.random() * 2 + 1);
-            //if (!this.mods.includes(check)) {
+            let check = Math.floor(Math.random() * 3 + 1);
+            if (!this.mods.includes(check)) {
                 this.mods.push(check);
                 counter--;
-            //}
+            }
         }
         for (let i = 0; i < this.mods.length; i++) {
             

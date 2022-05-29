@@ -183,15 +183,13 @@ class weapon {
     }
 
     attack(isCrit = false) {
-        let difference = this.maxdmg - this.mindmg;
-        let rand = Math.random();
-        rand = Math.floor(rand * difference);
+        let dmg = Math.floor(Math.random() * (this.maxdmg - this.mindmg + 1) + this.mindmg);
         this.bullets--;
         let ccroll = Math.random();
         if (isCrit || ccroll < this.critchance) {
-            return [(rand + this.mindmg) * 2, true];
+            return [dmg * 2, true];
         } else {
-            return[rand + this.mindmg, false];
+            return[dmg, false];
         }
     }
 

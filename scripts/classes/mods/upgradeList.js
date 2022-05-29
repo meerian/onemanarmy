@@ -1,6 +1,6 @@
 class longbarrel extends upgrade {
     constructor() {
-        let flavourtext = "Increases your range\n by +1\n but decreases maxdmg \nby -1 (minimum 1)"
+        let flavourtext = "Increases your range\n by +1\n Decreases maxdmg\n by -1 \n(To a minimum of 1)"
         let shortdesc = "+1 to range\n -1 to maxdmg"
         super("Passive", "Long Barrel", flavourtext, shortdesc, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh)));
     }
@@ -92,8 +92,8 @@ class assaultrifle extends weapon {
 
 class smg extends weapon {
     constructor() {
-        let flavourtext = "Deals 1-3 dmg\n Clipsize: 4 \nRange:3 \n\nEach shot has a \n30% change to cost 0 AP"
-        super("SMG", 1, 3, 4, 3, flavourtext, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(3 * rw, 0 * rh, rw, rh)));
+        let flavourtext = "Deals 1-2 dmg\n Clipsize: 4 \nRange:3 \n\nEach shot has a \n30% change to cost 0 AP"
+        super("SMG", 1, 2, 4, 3, flavourtext, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(3 * rw, 0 * rh, rw, rh)));
     }
 
     apply() {

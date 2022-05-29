@@ -1,16 +1,16 @@
 
 class removeHaddW extends upgrade {
     constructor() {
-        let flavourtext = "Removes 2 hounds \n Adds 1 warrior"
+        let flavourtext = "Remove up to 2 hounds \n\n Add 1 warrior"
         super("Modification", "Enemy Swap", flavourtext, "", new PIXI.Texture.from('images/placeholder.png'));
     }
 
     apply() {
-        const index = enemySpawnList.indexOf("hound");
+        const index = curSpawn.indexOf("hound");
         if (index > -1) {
-            enemySpawnList.splice(index, 2);
+            curSpawn.splice(index, 2);
           }
-          enemySpawnList.push("warrior");
+          curSpawn.push("warrior");
     }
 }
 
@@ -25,11 +25,24 @@ class sharperClaws extends upgrade {
     }
 }
 
+class addH extends upgrade {
+    constructor() {
+        let flavourtext = "Add one hound"
+        super("Modification", "Add Enemy", flavourtext, "", new PIXI.Texture.from('images/placeholder.png'));
+    }
+
+    apply() {
+        curSpawn.push("hound");
+    }
+}
+
 export function parseMod(mod) {
     switch (mod) {
         case 1:
             return new removeHaddW();
         case 2:
             return new sharperClaws();
+        case 3:
+            return new addH();
     }
 }

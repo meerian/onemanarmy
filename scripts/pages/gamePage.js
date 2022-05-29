@@ -2,6 +2,7 @@ import { addHound } from "../classes/enemies/hound.js";
 import { addWarrior } from "../classes/enemies/warrior.js";
 import { addUser } from "../classes/user.js";
 import { createUpgradepage } from "./upgradePage.js";
+import { nextTurn } from "../turnHandler.js";
 
 export class gamePage extends page {
     constructor() {
@@ -11,6 +12,9 @@ export class gamePage extends page {
 
     createPage() {
         let animationOffset = 980;
+
+        //Draw Level
+        drawText(new PIXI.Text(`Level ${gamelevel}`, textStyle), xCentral, yCentral - 200, this.container, true);
 
         //Add grid
         let grid = new PIXI.Sprite(new PIXI.Texture.from('images/grid.png'));
@@ -29,7 +33,7 @@ export class gamePage extends page {
         let startingY = 2;
         let curY = 2;
         let curX = 7;
-        enemySpawnList.forEach(function (element) {
+        curSpawn.forEach(function (element) {
             switch (element) {
                 case "hound":
                     addHound(curX, curY);
@@ -44,22 +48,39 @@ export class gamePage extends page {
                 curY = startingY;
             }
         });
+    }
+    stage() {
+        app.stage.addChild(gameContainer);
+        app.stage.addChild(moveContainer);
+        app.stage.addChild(detailContainer);
+    }
 
-        resetenemyTurn();
+    animate() {
+        animatePage();
+    }
 
-        //Draw Level
-        drawText(new PIXI.Text(`Level ${gamelevel}`, textStyle), xCentral, yCentral - 200, this.container, true);
+    drawEnemies() {
+        if (drawIndex >= enemies.length) {
+            clearInterval(drawInterval);
+            nextTurn();
+            return;
+        } else {
+            enemies[drawIndex].draw(gameContainer);
+            drawIndex++;
+        }
+    }
 
+    drawUI() {
         //Draw inventory
         drawText(new PIXI.Text("Inventory:", textStyle), xCentral - 300, yCentral - 115, this.container, true);
         playerInventory.forEach(function (element, index) {
             //Create image
             let text = new PIXI.Text(`${element.name} \n ${element.shortdesc}`, textStyleUpgrade);
-            text.x = xCentral - 300 + index%2 * 50;
-            text.y = yCentral - 80 + Math.floor(index/2) * 40;
+            text.x = xCentral - 300 + index % 2 * 50;
+            text.y = yCentral - 80 + Math.floor(index / 2) * 40;
             let image = new PIXI.Sprite(element.texture);
-            image.x = xCentral - 350 + index%2 * 50;
-            image.y = yCentral - 90 + Math.floor(index/2) * 40;
+            image.x = xCentral - 350 + index % 2 * 50;
+            image.y = yCentral - 90 + Math.floor(index / 2) * 40;
             image.scale.set(2, 2);
             image.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
             image.interactive = true;
@@ -147,25 +168,6 @@ export class gamePage extends page {
         })
         drawText(endTurnButton, xCentral + 350, yCentral + 110, this.container, true);
     }
-    stage() {
-        app.stage.addChild(gameContainer);
-        app.stage.addChild(moveContainer);
-        app.stage.addChild(detailContainer);
-    }
-
-    animate() {
-        animatePage();
-    }
-
-    drawEnemies() {
-        if (drawIndex >= enemies.length) {
-            clearInterval(drawInterval);
-            return;
-        } else {
-            enemies[drawIndex].draw(gameContainer);
-            drawIndex++;
-        }
-    }
 }
 
 var drawInterval = 0;
@@ -181,6 +183,37 @@ var weaponText = 0;
 var actionText = 0;
 var bulletText = 0;
 var cheerflag = false;
+
+//Default is moving up
+function animatePage(dir = true) {
+    let total = 40;
+    const step = () => {
+        total--;
+        if (total == 0) {
+            curPage.drawUI();
+            setTimeout(drawPage, 200);
+            return;
+        }
+        pageElements.forEach(function (element) {
+            if (dir) {
+                element.y -= 25;
+            } else {
+                element.y += 25;
+            }
+
+        })
+
+        requestAnimationFrame(() => {
+            step();
+        })
+    }
+    step();
+}
+
+function drawPage() {
+    player.draw(gameContainer);
+    drawInterval = setInterval(curPage.drawEnemies, 200);
+}
 
 export function updateAP() {
     apText.text = playerVal.ap;
@@ -264,6 +297,7 @@ export function levelEnd() {
         return;
     }
     //resets values
+    resetenemyTurn();
     gamelevel++;
     drawIndex = 0;
     enemies = [];
@@ -276,38 +310,8 @@ export function levelEnd() {
     curPage.cleanup();
 
     //Adds new enemies
-    enemySpawnList.push("hound");
+    curSpawn = enemySpawnList[gamelevel].concat(curSpawn);
 
     //load next page
     createUpgradepage();
-}
-
-//Default is moving up
-function animatePage(dir = true) {
-    let total = 40;
-    const step = () => {
-        total--;
-        if (total == 0) {
-            setTimeout(drawUser, 100);
-            return;
-        }
-        pageElements.forEach(function (element) {
-            if (dir) {
-                element.y-= 25;
-            } else {
-                element.y += 25;
-            }
-            
-        })
-
-        requestAnimationFrame(() => {
-            step();
-        })
-    }
-    step();
-}
-
-function drawUser() {
-    player.draw(gameContainer);
-    drawInterval = setInterval(curPage.drawEnemies, 100);
 }

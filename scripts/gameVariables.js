@@ -16,7 +16,17 @@ const playerVal = {
 }
 var playerInventory = [];
 
-var enemySpawnList = ["hound", "hound", "warrior"];
+var enemySpawnList = {
+    1: ["hound", "hound"],
+    2: ["hound"],
+    3: ["warrior"],
+    4: ["warrior"],
+    5: ["warrior"],
+    6: ["warrior"],
+    7: ["warrior"],
+}
+
+var curSpawn = [...enemySpawnList[1]];
 
 //index = current Y --> mapped to next Y
 const enemySpawnCoord = [-1, 4, 3, 1, 0];
