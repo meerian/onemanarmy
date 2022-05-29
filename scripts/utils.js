@@ -25,7 +25,7 @@ font.load();
 const textStyle = new PIXI.TextStyle({
     fontFamily: "Pixel",
     fontSize: 16,
-    fill: "0x00FF2A",
+    fill: "0x40FF40",
 });
 
 const textStyleCrit = new PIXI.TextStyle({
@@ -37,7 +37,7 @@ const textStyleCrit = new PIXI.TextStyle({
 const textStyleHelper = new PIXI.TextStyle({
     fontFamily: "Pixel",
     fontSize: 16,
-    fill: "0xFFFFFF",
+    fill: "0xE0E0E0",
     dropShadow: true,
     dropShadowAlpha: 0.1
 });
@@ -45,7 +45,7 @@ const textStyleHelper = new PIXI.TextStyle({
 const textStyleUpgrade = new PIXI.TextStyle({
     fontFamily: "Pixel",
     fontSize: 12,
-    fill: "0x00FF2A",
+    fill: "0xFFFFFF",
 });
 
 //Default method to draw text with or without anchor
@@ -125,9 +125,10 @@ const rh = 16;
 //enemy textures and animations
 const houndssheet = new PIXI.BaseTexture.from("images/enemy/hound_spritesheet.png");
 const warriorssheet = new PIXI.BaseTexture.from("images/enemy/warrior_spritesheet.png");
+const sniperssheet = new PIXI.BaseTexture.from("images/enemy/sniper_spritesheet.png");
 
 const upgradessheet = new PIXI.BaseTexture.from("images/upgrade/upgrades_ssheet.png");
-
+const modssheet = new PIXI.BaseTexture.from("images/upgrade/mods_ssheet.png");
 
 
 // -------------------------------------------------------------------------------
@@ -173,12 +174,23 @@ class weapon {
         this.critchance = critchance;
     }
 
-    update() {
-        this.mindmg = Math.max(this.mindmg + playerVal.mindmgmodifier, 1);
-        this.maxdmg = Math.max(this.maxdmg + playerVal.maxdmgmodifier, this.mindmg);
-        this.clip = this.clip + playerVal.clipmodifier;
+    updateCchance(crit) {
+        this.critchance = this.critchance + crit;
+    }
+
+    updateDmg(mindmg = 0, maxdmg = 0) {
+        this.mindmg = Math.max(this.mindmg + mindmg, 1);
+        this.maxdmg = Math.max(this.maxdmg + maxdmg, this.mindmg);
+        this.weapontext = `(damage:${this.mindmg}-${this.maxdmg}, range:${this.range})`;
+    }
+
+    updateAmmo(clip) {
+        this.clip = this.clip + clip;
         this.bullets = this.clip;
-        this.range = this.range + playerVal.rangemodifier;
+    }
+
+    updateRange(range) {
+        this.range = this.range + range;
         this.weapontext = `(damage:${this.mindmg}-${this.maxdmg}, range:${this.range})`;
     }
 

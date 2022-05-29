@@ -81,8 +81,8 @@ class hound extends enemy {
     }
 }
 
-export function addHound(x, y, health, ap, weapon) {
-    enemies.push(new hound(x, y, health, ap, weapon));
+export function addHound(x, y) {
+    enemies.push(new hound(x, y));
 }
 
 function checkValidity(x, y) {

@@ -2,22 +2,26 @@
 class removeHaddW extends upgrade {
     constructor() {
         let flavourtext = "Remove up to 2 hounds \n\n Add 1 warrior"
-        super("Modification", "Enemy Swap", flavourtext, "", new PIXI.Texture.from('images/placeholder.png'));
+        super("Modification", "Enemy Swap", flavourtext, "", new PIXI.Texture(modssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh)));
     }
 
     apply() {
-        const index = curSpawn.indexOf("hound");
+        let index = curSpawn.indexOf("hound");
         if (index > -1) {
-            curSpawn.splice(index, 2);
-          }
-          curSpawn.push("warrior");
+            curSpawn.splice(index, 1);
+        }
+        index = curSpawn.indexOf("hound");
+        if (index > -1) {
+            curSpawn.splice(index, 1);
+        }
+        curSpawn.push("warrior");
     }
 }
 
-class sharperClaws extends upgrade {
+class sharperTeeth extends upgrade {
     constructor() {
         let flavourtext = "All hounds do \n +1 MAX damage"
-        super("Modification", "Sharper Claws", flavourtext, "", new PIXI.Texture.from('images/placeholder.png'));
+        super("Modification", "Sharper Teeth", flavourtext, "", new PIXI.Texture(modssheet, new PIXI.Rectangle(2 * rw, 0 * rh, rw, rh)));
     }
 
     apply() {
@@ -28,7 +32,7 @@ class sharperClaws extends upgrade {
 class addH extends upgrade {
     constructor() {
         let flavourtext = "Add one hound"
-        super("Modification", "Add Enemy", flavourtext, "", new PIXI.Texture.from('images/placeholder.png'));
+        super("Modification", "Add Enemy", flavourtext, "", new PIXI.Texture(modssheet, new PIXI.Rectangle(1 * rw, 0 * rh, rw, rh)));
     }
 
     apply() {
@@ -41,7 +45,7 @@ export function parseMod(mod) {
         case 1:
             return new removeHaddW();
         case 2:
-            return new sharperClaws();
+            return new sharperTeeth();
         case 3:
             return new addH();
     }

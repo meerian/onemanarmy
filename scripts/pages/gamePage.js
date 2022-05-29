@@ -3,6 +3,7 @@ import { addWarrior } from "../classes/enemies/warrior.js";
 import { addUser } from "../classes/user.js";
 import { createUpgradepage } from "./upgradePage.js";
 import { nextTurn } from "../turnHandler.js";
+import { addSniper } from "../classes/enemies/sniper.js";
 
 export class gamePage extends page {
     constructor() {
@@ -40,6 +41,9 @@ export class gamePage extends page {
                     break;
                 case "warrior":
                     addWarrior(curX, curY);
+                    break;
+                case "sniper":
+                    addSniper(curX, curY);
                     break;
             }
             curY = enemySpawnCoord[curY];
@@ -89,7 +93,6 @@ export class gamePage extends page {
                     if (element.charge > 0) {
                         element.use();
                         text.text = `${element.name} \n ${element.shortdesc}`;
-                        showString(`${element.name} used!`);
                     } else {
                         showString(`No more charges!`);
                     }
@@ -141,7 +144,7 @@ export class gamePage extends page {
 
         //Draw end turn button
         let endTurnBox = new PIXI.Graphics();
-        endTurnBox.lineStyle(1, 0x00FF2A, 1);
+        endTurnBox.lineStyle(1, 0x40FF40, 1);
         endTurnBox.drawRect(xCentral + 308, yCentral + 93, 80, 30);
         endTurnBox.endFill();
         this.container.addChild(endTurnBox);
@@ -155,14 +158,14 @@ export class gamePage extends page {
         })
         endTurnButton.on("mouseover", function (event) {
             endTurnButton.style.fill = "0x160805";
-            endTurnBox.beginFill(0x00FF2A);
+            endTurnBox.beginFill(0x40FF40);
             endTurnBox.drawRect(xCentral + 308, yCentral + 93, 80, 30);
             endTurnBox.endFill();
         })
         endTurnButton.on("mouseout", function (event) {
-            endTurnButton.style.fill = "0x00FF2A";
+            endTurnButton.style.fill = "0x40FF40";
             endTurnBox.clear();
-            endTurnBox.lineStyle(1, 0x00FF2A, 1);
+            endTurnBox.lineStyle(1, 0x40FF40, 1);
             endTurnBox.drawRect(xCentral + 308, yCentral + 93, 80, 30);
             endTurnBox.endFill();
         })
@@ -246,6 +249,12 @@ export function takeDamage(enemy, val, iscrit) {
 export function showString(str) {
     let text = new PIXI.Text(str, textStyle);
     drawText(text, player.sprite.x, player.sprite.y - 20, gameContainer, true);
+    drawAnimation(text);
+}
+
+export function showStringEnemy(str, enemy) {
+    let text = new PIXI.Text(str, textStyle);
+    drawText(text, enemy.sprite.x, enemy.sprite.y - 20, gameContainer, true);
     drawAnimation(text);
 }
 

@@ -11,8 +11,8 @@ class user extends gameObject {
         createSpriteSheet();
         super(x, y, health, ap, new PIXI.AnimatedSprite(spritesheet.idleright), playerVal.weapon, 5, -15);
         playerVal.health = this.health;
-        this.weapon.update();
         playerVal.ap = ap;
+        this.weapon.reload();
         this.mIndicator = 0;
     }
 
@@ -26,8 +26,13 @@ class user extends gameObject {
     }
 
     takeDamage(val) {
-        playerVal.health -= val[0];
-        updateHealth(val[0], val[1]);
+        if (playerVal.nextNoDmg) {
+            showString("Damage Negated!");
+            playerVal.nextNoDmg = false;
+        } else {
+            playerVal.health -= val[0];
+            updateHealth(val[0], val[1]);
+        }
     }
 
     attack(enemy) {
@@ -57,13 +62,15 @@ class user extends gameObject {
         }
     }
 
-    reload() {
+    reload(isFree = false) {
         if (isPlayerturn) {
             if (player.weapon.bullets == player.weapon.clip) {
                 showString("Ammo Full!");
                 return;
             }
-            playerVal.ap--;
+            if (!isFree) {
+                playerVal.ap--;
+            }
             this.weapon.reload();
             updateBulletText();
             updateAP();

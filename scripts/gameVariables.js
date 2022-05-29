@@ -11,13 +11,15 @@ const playerVal = {
     mindmgmodifier: 0,
     maxdmgmodifier: 0,
     clipmodifier: 0,
+    critmodifier: 0,
     weapon: 0,
     nextIsCrit: false,
+    nextNoDmg: false,
 }
 var playerInventory = [];
 
 var enemySpawnList = {
-    1: ["hound", "hound"],
+    1: ["warrior", "sniper"],
     2: ["hound"],
     3: ["warrior"],
     4: ["warrior"],

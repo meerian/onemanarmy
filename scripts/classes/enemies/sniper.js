@@ -1,12 +1,13 @@
+import { showStringEnemy } from "../../pages/gamePage.js";
 import { nextTurn } from "../../turnHandler.js";
 import { enemy } from "./enemy.js";
 
-class warrior extends enemy {
+class sniper extends enemy {
     constructor(x, y) {
         if (spritesheet.length == 0) {
             createSpriteSheet();
         }
-        super("Warrior", x, y, 5, 3, new PIXI.AnimatedSprite(spritesheet.idleleft), new weapon("sword", 2, 3, -1, 1), 0, -10);
+        super("Sniper", x, y, 3, 1, new PIXI.AnimatedSprite(spritesheet.idleleft), new weapon("sniper", 2, 3, 1, 7), 3, -13);
     }
 
     nextMove() {
@@ -20,6 +21,10 @@ class warrior extends enemy {
         let xFlag = true;
         while (curAP) {
             curAP--;
+            if (this.weapon.bullets <= 0) {
+                this.moves.push("reload");
+                break;
+            }
             if (this.weapon.range >= distApartCoord(player, curX, curY)) {
                 this.moves.push("attack");
                 break;
@@ -81,8 +86,8 @@ class warrior extends enemy {
     }
 }
 
-export function addWarrior(x, y) {
-    enemies.push(new warrior(x, y));
+export function addSniper(x, y) {
+    enemies.push(new sniper(x, y));
 }
 
 function checkValidity(x, y) {
@@ -107,7 +112,7 @@ function endTurn(enemy) {
 }
 
 var spritesheet = [];
-let ssheet = warriorssheet;
+let ssheet = sniperssheet;
 
 function createSpriteSheet() {
     spritesheet["idleleft"] = [new PIXI.Texture(ssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh))];
@@ -121,7 +126,6 @@ function createSpriteSheet() {
 }
 
 function ResolveMoves(enemy, moves) {
-    if (moves[0]) {
         let str = moves.shift();
         if (str == "attack") {
             if (player.x > enemy.x) {
@@ -137,21 +141,25 @@ function ResolveMoves(enemy, moves) {
         } else if (str == "left"){
             enemy.sprite.textures = spritesheet.walkleft;
             enemy.sprite.loop = true;
-        } else {
+        } else if (str =="right") {
             enemy.sprite.textures = spritesheet.walkright;
             enemy.sprite.loop = true;
+        } else if (str =="reload") {
+            enemy.weapon.reload();
+            showStringEnemy("reloaded", enemy);
         }
         let total = 48;
         enemy.sprite.play();
         const step = () => {
             if (total == 0 || !enemy.sprite.playing) {
-                if (str == "left" || str == "attackleft") {
+                if (str == "reload") {
+                    return;
+                } else if (str == "left" || str == "attackleft") {
                     enemy.sprite.textures = spritesheet.idleleft;
                 } else {
                     enemy.sprite.textures = spritesheet.idleright;
                 }
-            }
-            if (total) {
+            } else if (total) {
                 total--;
                 switch (str) {
                     case "up":
@@ -186,9 +194,6 @@ function ResolveMoves(enemy, moves) {
             }
         }
         step();
-        setTimeout(function () { ResolveMoves(enemy, moves) }, 170);
-    }
-
 }
 
 function deathanimation(enemy) {
