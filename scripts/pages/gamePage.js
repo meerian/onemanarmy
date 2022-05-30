@@ -1,9 +1,10 @@
 import { addHound } from "../classes/enemies/hound.js";
 import { addWarrior } from "../classes/enemies/warrior.js";
-import { addUser } from "../classes/user.js";
+import { addUser, playerTurn } from "../classes/user.js";
 import { createUpgradepage } from "./upgradePage.js";
 import { nextTurn } from "../turnHandler.js";
 import { addSniper } from "../classes/enemies/sniper.js";
+import { addSlime } from "../classes/enemies/slime.js";
 
 export class gamePage extends page {
     constructor() {
@@ -28,7 +29,7 @@ export class gamePage extends page {
         pageElements.push(grid);
 
         //add user
-        addUser(1, 2, playerVal.maxhealth, playerVal.maxap);
+        addUser(1, 2);
 
         //add enemies
         let startingY = 2;
@@ -44,6 +45,9 @@ export class gamePage extends page {
                     break;
                 case "sniper":
                     addSniper(curX, curY);
+                    break;
+                case "slime":
+                    addSlime(curX, curY);
                     break;
             }
             curY = enemySpawnCoord[curY];
@@ -66,6 +70,7 @@ export class gamePage extends page {
     drawEnemies() {
         if (drawIndex >= enemies.length) {
             clearInterval(drawInterval);
+            isPlayerturn = true;
             nextTurn();
             return;
         } else {
@@ -88,14 +93,10 @@ export class gamePage extends page {
             image.scale.set(2, 2);
             image.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
             image.interactive = true;
-            if (element.className == "Active") {
+            if (element.className != "Passive") {
                 image.on("pointerdown", function (event) {
-                    if (element.charge > 0) {
-                        element.use();
-                        text.text = `${element.name} \n ${element.shortdesc}`;
-                    } else {
-                        showString(`No more charges!`);
-                    }
+                    element.use();
+                    text.text = `${element.name} \n ${element.shortdesc}`;
                 })
             }
             image.on("mouseover", function (event) {
@@ -298,6 +299,10 @@ export function updateTurnText() {
 
 export function levelEnd() {
     if (!cheerflag) {
+        isPlayerturn = false;
+        if (player.mIndicator != 0) {
+            player.mIndicator.cleanup();
+        }
         bTextContainer.interactive = false;
         endTurnButton.interactive = false;
         turnText.text = "Level Cleared!"
@@ -312,7 +317,6 @@ export function levelEnd() {
     enemies = [];
     enemyTurnCounter = 0;
     enemyDefeated = 0;
-    isPlayerturn = true;
     playerInventory.forEach(function (element) {
         element.reload();
     })

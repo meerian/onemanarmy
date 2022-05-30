@@ -29,6 +29,17 @@ class sharperTeeth extends upgrade {
     }
 }
 
+class extrabullet extends upgrade {
+    constructor() {
+        let flavourtext = "All enemy snipers\n gain +1 bullet \n to clip"
+        super("Modification", "Extra Bullet", flavourtext, "", new PIXI.Texture(modssheet, new PIXI.Rectangle(3 * rw, 0 * rh, rw, rh)));
+    }
+
+    apply() {
+        enemyVal.extrabullet++;
+    }
+}
+
 class addH extends upgrade {
     constructor() {
         let flavourtext = "Add one hound"
@@ -48,5 +59,7 @@ export function parseMod(mod) {
             return new sharperTeeth();
         case 3:
             return new addH();
+        case 4:
+            return new extrabullet();
     }
 }

@@ -1,4 +1,4 @@
-import { parseUpgrade } from "../classes/mods/upgradeList.js";
+import { checkValidity, parseUpgrade } from "../classes/mods/upgradeList.js";
 import { createModpage } from "./modPage.js";
 
 class upgradePage extends page {
@@ -50,7 +50,7 @@ class upgradePage extends page {
             drawText(choiceBoxText, xCentral - 10 + i * 200, yCentral - 120 + animationOffset, container, false);
             pageElements.push(choiceBoxText);
             let choiceboxflavourText = new PIXI.Text(upgrade.flavourtext, textStyleChoice);
-            drawText(choiceboxflavourText, xCentral - 70 + i * 200, yCentral - 30 + animationOffset, container, false);
+            drawText(choiceboxflavourText, xCentral - 70 + i * 200, yCentral - 50 + animationOffset, container, false);
             pageElements.push(choiceboxflavourText);
             container.on("pointerdown", function (event) {
                 upgrade.apply();
@@ -76,8 +76,8 @@ class upgradePage extends page {
         let counter = 3;
         while (counter > 0) {
             //Should be multiplied by number of upgrades
-            let check = Math.floor(Math.random() * 9 + 1);
-            if (!this.upgrades.includes(check)) {
+            let check = Math.floor(Math.random() * 12 + 1);
+            if (!this.upgrades.includes(check) && checkValidity(check)) {
                 this.upgrades.push(check);
                 counter--;
             }
@@ -97,7 +97,6 @@ const upgradeContainer = new PIXI.Container();
 let curPage = 0;
 let pageElements = [];
 let moveFlag = false;
-let upgradeChosen = 0;
 
 export function createUpgradepage() {
     let page = new upgradePage();

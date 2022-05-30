@@ -26,5 +26,5 @@ export function nextTurn() {
 export function startLevel() {
     let page = new gamePage();
     page.init();
-    nextTurn();
+    //nextTurn();
 }

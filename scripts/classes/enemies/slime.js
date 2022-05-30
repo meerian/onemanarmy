@@ -1,13 +1,14 @@
-import { showStringEnemy } from "../../pages/gamePage.js";
 import { nextTurn } from "../../turnHandler.js";
 import { enemy } from "./enemy.js";
+import { updateActionText, takeDamage } from "../../pages/gamePage.js";
 
-class sniper extends enemy {
+class slime extends enemy {
     constructor(x, y) {
         if (spritesheet.length == 0) {
             createSpriteSheet();
         }
-        super("Sniper", x, y, 3, 1, new PIXI.AnimatedSprite(spritesheet.idleleft), new weapon("sniper", 2, 3, 1 + enemyVal.extrabullet, 7), 3, -13);
+        super("Slime", x, y, 8, 2, new PIXI.AnimatedSprite(spritesheet.idleleft), new weapon("slime", 1, 1, -1, 1), 0, -10);
+        this.helpertext.text = `${this.name}  (${this.health}HP)\nRange:${this.weapon.range} Dmg:1 AP\nAP:${this.ap}`;
     }
 
     nextMove() {
@@ -21,10 +22,6 @@ class sniper extends enemy {
         let xFlag = true;
         while (curAP) {
             curAP--;
-            if (this.weapon.bullets <= 0) {
-                this.moves.push("reload");
-                break;
-            }
             if (this.weapon.range >= distApartCoord(player, curX, curY)) {
                 this.moves.push("attack");
                 break;
@@ -71,6 +68,20 @@ class sniper extends enemy {
         this.move(curX, curY, this.moves);
     }
 
+    takeDamage(val, iscrit) {
+        takeDamage(this, val, iscrit);
+        this.health -= val;
+        if (this.health <= 0 && this.isAlive) {
+            this.isAlive = false;
+            this.sprite.interactive = false;
+            detailContainer.removeChild(this.helpertext);
+            updateActionText("");
+            this.death();
+        } else {
+            this.helpertext.text = `${this.name}  (${this.health}HP)\nRange:${this.weapon.range} Dmg:1 AP\nAP:${this.ap}`;
+        }
+    }
+
     move(x, y, moves) {
         this.x = x;
         this.y = y;
@@ -86,8 +97,8 @@ class sniper extends enemy {
     }
 }
 
-export function addSniper(x, y) {
-    enemies.push(new sniper(x, y));
+export function addSlime(x, y) {
+    enemies.push(new slime(x, y));
 }
 
 function checkValidity(x, y) {
@@ -112,7 +123,7 @@ function endTurn(enemy) {
 }
 
 var spritesheet = [];
-let ssheet = sniperssheet;
+let ssheet = slimessheet;
 
 function createSpriteSheet() {
     spritesheet["idleleft"] = [new PIXI.Texture(ssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh))];
@@ -126,6 +137,7 @@ function createSpriteSheet() {
 }
 
 function ResolveMoves(enemy, moves) {
+    if (moves[0]) {
         let str = moves.shift();
         if (str == "attack") {
             if (player.x > enemy.x) {
@@ -137,29 +149,25 @@ function ResolveMoves(enemy, moves) {
                 str = "attackleft";
                 enemy.sprite.loop = false;
             }
-            player.takeDamage(enemy.weapon.attack());
+            player.takeDamage(enemy.weapon.attack(), true);
         } else if (str == "left"){
             enemy.sprite.textures = spritesheet.walkleft;
             enemy.sprite.loop = true;
-        } else if (str =="right") {
+        } else {
             enemy.sprite.textures = spritesheet.walkright;
             enemy.sprite.loop = true;
-        } else if (str =="reload") {
-            enemy.weapon.reload();
-            showStringEnemy("reloaded", enemy);
         }
         let total = 48;
         enemy.sprite.play();
         const step = () => {
             if (total == 0 || !enemy.sprite.playing) {
-                if (str == "reload") {
-                    return;
-                } else if (str == "left" || str == "attackleft") {
+                if (str == "left" || str == "attackleft") {
                     enemy.sprite.textures = spritesheet.idleleft;
                 } else {
                     enemy.sprite.textures = spritesheet.idleright;
                 }
-            } else if (total) {
+            }
+            if (total) {
                 total--;
                 switch (str) {
                     case "up":
@@ -194,6 +202,9 @@ function ResolveMoves(enemy, moves) {
             }
         }
         step();
+        setTimeout(function () { ResolveMoves(enemy, moves) }, 170);
+    }
+
 }
 
 function deathanimation(enemy) {

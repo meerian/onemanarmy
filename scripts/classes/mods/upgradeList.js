@@ -1,5 +1,7 @@
 import { showString } from "../../pages/gamePage.js"
 
+//Passives
+
 class longbarrel extends upgrade {
     constructor() {
         let flavourtext = "Increases your range\n by +1\n Decreases maxdmg\n by -1 \n(To a minimum of 1)"
@@ -16,6 +18,23 @@ class longbarrel extends upgrade {
     }
 }
 
+class shortbarrel extends upgrade {
+    constructor() {
+        let flavourtext = "Increases your mindmg\n by +1\n Decreases your range\n by -1 \n(To a minimum of 1)"
+        let shortdesc = "+1 to mindmg\n -1 to range"
+        super("Passive", "Shorter Barrel", flavourtext, shortdesc, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(9 * rw, 0 * rh, rw, rh)));
+    }
+
+    apply() {
+        playerVal.mindmgmodifier++;
+        playerVal.rangemodifier--;
+        playerVal.weapon.updateRange(-1);
+        playerVal.weapon.updateDmg(1,0);
+        playerInventory.push(this);
+    }
+}
+
+
 class extendedmag extends upgrade {
     constructor() {
         let flavourtext = "Increases your \nclipsize by +1"
@@ -25,7 +44,7 @@ class extendedmag extends upgrade {
 
     apply() {
         playerVal.clipmodifier++;
-        playerVal.weapon.updateAmmo();
+        playerVal.weapon.updateAmmo(1);
         playerInventory.push(this);
     }
 }
@@ -43,6 +62,21 @@ class sharperbullet extends upgrade {
         playerInventory.push(this);
     }
 }
+
+class meat extends upgrade {
+    constructor() {
+        let flavourtext = "Increases your HP\n by +5"
+        let shortdesc = "+5 to HP"
+        super("Passive", "Meat", flavourtext, shortdesc, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(1 * rw, 1 * rh, rw, rh)));
+    }
+
+    apply() {
+        playerVal.maxhealth += 5;
+        playerInventory.push(this);
+    }
+}
+
+//Actives
 
 class scope extends upgrade {
     constructor() {
@@ -64,6 +98,8 @@ class scope extends upgrade {
             this.charge--;
             this.shortdesc = `next shot is a crit\nCharge:${this.charge}/${this.maxCharge}`;
             showString(`Scope used!`);
+        } else {
+            showString(`No more charges!`);
         }
     }
 
@@ -96,6 +132,8 @@ class extraclip extends upgrade {
             player.reload(true);
             this.charge--;
             this.shortdesc = `Reloads your gun\nCharge:${this.charge}/${this.maxCharge}`;
+        } else {
+            showString(`No more charges!`);
         }
     }
 
@@ -108,7 +146,7 @@ class extraclip extends upgrade {
 class protectioncharm extends upgrade {
     constructor() {
         let flavourtext = "Once per battle on \nuse, negate next \ndamage taken "
-        super("Active", "Protection \nCharm", flavourtext, "", new PIXI.Texture(upgradessheet, new PIXI.Rectangle(5 * rw, 0 * rh, rw, rh)));
+        super("Active", "Protection \nCharm", flavourtext, "", new PIXI.Texture(upgradessheet, new PIXI.Rectangle(8 * rw, 0 * rh, rw, rh)));
         this.maxCharge = 1;
         this.charge = this.maxCharge;
         this.shortdesc = `Negate next damage\nCharge:${this.charge}/${this.maxCharge}`;
@@ -125,6 +163,8 @@ class protectioncharm extends upgrade {
             this.charge--;
             this.shortdesc = `Negate next damage\nCharge:${this.charge}/${this.maxCharge}`;
             showString(`Protection Charm used!`);
+        } else {
+            showString(`No more charges!`);
         }
     }
 
@@ -137,7 +177,7 @@ class protectioncharm extends upgrade {
 export function parseUpgrade(upgrade) {
     switch (upgrade) {
         case 1:
-            return new longbarrel();
+            return new sniperrifle();
         case 2:
             return new machinegun();
         case 3:
@@ -153,8 +193,30 @@ export function parseUpgrade(upgrade) {
         case 8:
             return new protectioncharm();
         case 9:
+            return new shortbarrel();
+        case 10:
             return new sharperbullet();
+        case 11:
+            return new longbarrel();
+        case 12:
+            return new meat();
     }
+}
+
+export function checkValidity(upgrade) {
+    switch (upgrade) {
+        case 1:
+            return playerVal.weapon.name != "Sniper Rifle";
+        case 2:
+            return playerVal.weapon.name != "Machinegun";
+        case 3:
+            return playerVal.weapon.name != "Assault Rifle";
+        case 4:
+            return playerVal.weapon.name != "SMG";
+        default:
+            return true;
+    }
+    
 }
 
 //Weapons: (name, mindmg, maxdmg, clip, range, texture, critchance)
@@ -163,6 +225,7 @@ export class pistol extends weapon {
     constructor() {
         let flavourtext = "Starting weapon."
         super("Pistol", 5, 5, 3, 3, flavourtext, new PIXI.Texture.from('images/placeholder.png'), playerVal.critmodifier);
+        this.update();
     }
 
     apply() {
@@ -173,7 +236,8 @@ export class pistol extends weapon {
 class machinegun extends weapon {
     constructor() {
         let flavourtext = "Deals 1-3 dmg\n Clipsize: 10 \nRange:2"
-        super("Machinegun", 1, 3, 10, 2, flavourtext, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(1 * rw, 0 * rh, rw, rh)), playerVal.critmodifier);
+        super("Machinegun", 1, 3, 10, 2, flavourtext, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(1 * rw, 0 * rh, rw, rh)));
+        this.update();
     }
 
     apply() {
@@ -184,7 +248,8 @@ class machinegun extends weapon {
 class assaultrifle extends weapon {
     constructor() {
         let flavourtext = "Deals 2-4 dmg\n Clipsize: 3 \nRange:4 \n\nEach shot has a \n20% chance to crit \nfor double the damage"
-        super("Assault Rifle", 2, 3, 3, 4, flavourtext, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(2 * rw, 0 * rh, rw, rh)), 0.2 + playerVal.critmodifier);
+        super("Assault Rifle", 2, 3, 3, 4, flavourtext, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(2 * rw, 0 * rh, rw, rh)), 0.2);
+        this.update();
     }
 
     apply() {
@@ -195,10 +260,32 @@ class assaultrifle extends weapon {
 class smg extends weapon {
     constructor() {
         let flavourtext = "Deals 1-2 dmg\n Clipsize: 4 \nRange:3 \n\nEach shot has a \n30% change to cost 0 AP"
-        super("SMG", 1, 2, 4, 3, flavourtext, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(3 * rw, 0 * rh, rw, rh)), playerVal.critmodifier);
+        super("SMG", 1, 2, 4, 3, flavourtext, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(3 * rw, 0 * rh, rw, rh)));
+        this.update();
     }
 
     apply() {
         playerVal.weapon = this;
+    }
+}
+
+class sniperrifle extends weapon {
+    constructor() {
+        let flavourtext = "Deals 3-5 dmg\n Clipsize: 1 \nRange:6 \n\nGain a scope that \non use, your next\n bullet will be a \nguaranteed crit \n(for double damage)\n Costs 1 AP"
+        super("Sniper Rifle", 3, 5, 1, 6, flavourtext, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(0 * rw, 1 * rh, rw, rh)));
+        this.update();
+        this.shortdesc = "next shot is a crit\nCosts 1 AP";
+    }
+
+    apply() {
+        playerVal.weapon = this;
+        playerInventory.push(this);
+    }
+    
+    use() {
+        playerVal.nextIsCrit = true;
+        playerVal.ap--;
+        player.updateAP();
+        showString(`Sniper scope used!`);
     }
 }

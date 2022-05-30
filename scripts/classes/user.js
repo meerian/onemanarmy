@@ -4,14 +4,14 @@ import { levelEnd, showString, updateAP, updateBulletText, updateHealth } from "
 import { pistol } from "./mods/upgradeList.js";
 
 class user extends gameObject {
-    constructor(x, y, health, ap) {
+    constructor(x, y) {
         if (playerVal.weapon == 0) {
             playerVal.weapon = new pistol();
         }
         createSpriteSheet();
-        super(x, y, health, ap, new PIXI.AnimatedSprite(spritesheet.idleright), playerVal.weapon, 5, -15);
+        super(x, y, playerVal.maxhealth, playerVal.maxap, new PIXI.AnimatedSprite(spritesheet.idleright), playerVal.weapon, 5, -15);
         playerVal.health = this.health;
-        playerVal.ap = ap;
+        playerVal.ap = this.ap;
         this.weapon.reload();
         this.mIndicator = 0;
     }
@@ -25,10 +25,14 @@ class user extends gameObject {
         }
     }
 
-    takeDamage(val) {
+    takeDamage(val, toAP = false) {
         if (playerVal.nextNoDmg) {
             showString("Damage Negated!");
             playerVal.nextNoDmg = false;
+        } else if (toAP) {
+            playerVal.ap = Math.max(1, playerVal.ap - val[0]);
+            this.updateAP();
+            showString("-1 AP!");
         } else {
             playerVal.health -= val[0];
             updateHealth(val[0], val[1]);
@@ -56,6 +60,7 @@ class user extends gameObject {
         } else {
             playerVal.ap--;
             if (player.mIndicator != 0) {
+                player.mIndicator.cleanup();
                 player.mIndicator.ap = playerVal.ap;
             }
             updateAP();
@@ -78,6 +83,13 @@ class user extends gameObject {
         }
     }
 
+    updateAP() {
+        if (this.mIndicator != 0) {
+            this.mIndicator.ap = playerVal.ap;
+        }
+        updateAP();
+    }
+
     move(x, y, moves) {
         this.x = x;
         this.y = y;
@@ -98,8 +110,8 @@ class user extends gameObject {
 // -------------------------------------------------------------------------------
 
 //Public methods
-export function addUser(x, y, health, ap, weapon) {
-    player = new user(x, y, health, ap, weapon);
+export function addUser(x, y) {
+    player = new user(x, y);
 }
 
 export function drawUser(container) {

@@ -17,10 +17,12 @@ const playerVal = {
     nextNoDmg: false,
 }
 var playerInventory = [];
+//Turn handling
+var isPlayerturn = false;
 
 var enemySpawnList = {
-    1: ["warrior", "sniper"],
-    2: ["hound"],
+    1: ["warrior", "slime"],
+    2: ["sniper"],
     3: ["warrior"],
     4: ["warrior"],
     5: ["warrior"],
@@ -37,6 +39,7 @@ var enemyTurnCounter = 0;
 var enemyDefeated = 0;
 const enemyVal = {
     sharperclaw: 0,
+    extrabullet: 0,
 }
 
 
@@ -83,6 +86,3 @@ function keyDownHandler(e) {
         player.displayMove("down");
     }
 }
-
-//Turn handling
-var isPlayerturn = true;

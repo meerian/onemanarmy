@@ -76,7 +76,7 @@ class modPage extends page {
         let counter = 3;
         while (counter > 0) {
             //Should be multiplied by number of mods
-            let check = Math.floor(Math.random() * 3 + 1);
+            let check = Math.floor(Math.random() * 4 + 1);
             if (!this.mods.includes(check)) {
                 this.mods.push(check);
                 counter--;

@@ -126,6 +126,7 @@ const rh = 16;
 const houndssheet = new PIXI.BaseTexture.from("images/enemy/hound_spritesheet.png");
 const warriorssheet = new PIXI.BaseTexture.from("images/enemy/warrior_spritesheet.png");
 const sniperssheet = new PIXI.BaseTexture.from("images/enemy/sniper_spritesheet.png");
+const slimessheet = new PIXI.BaseTexture.from("images/enemy/slime_spritesheet.png");
 
 const upgradessheet = new PIXI.BaseTexture.from("images/upgrade/upgrades_ssheet.png");
 const modssheet = new PIXI.BaseTexture.from("images/upgrade/mods_ssheet.png");
@@ -174,12 +175,22 @@ class weapon {
         this.critchance = critchance;
     }
 
+    update() {
+        this.mindmg = Math.min(Math.max(this.mindmg + playerVal.mindmgmodifier, 1), this.maxdmg + playerVal.maxdmgmodifier);
+        this.maxdmg = Math.max(this.maxdmg + playerVal.maxdmgmodifier, this.mindmg);
+        this.critchance = this.critchance + playerVal.critmodifier;
+        this.clip = this.clip + playerVal.clipmodifier;
+        this.bullets = this.clip;
+        this.range = this.range + playerVal.rangemodifier;
+        this.weapontext = `(damage:${this.mindmg}-${this.maxdmg}, range:${this.range})`;
+    }
+
     updateCchance(crit) {
         this.critchance = this.critchance + crit;
     }
 
     updateDmg(mindmg = 0, maxdmg = 0) {
-        this.mindmg = Math.max(this.mindmg + mindmg, 1);
+        this.mindmg = Math.min(Math.max(this.mindmg + mindmg, 1), this.maxdmg + maxdmg);
         this.maxdmg = Math.max(this.maxdmg + maxdmg, this.mindmg);
         this.weapontext = `(damage:${this.mindmg}-${this.maxdmg}, range:${this.range})`;
     }

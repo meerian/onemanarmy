@@ -11,7 +11,7 @@ export class enemy extends gameObject {
         this.isAlive = true;
 
         //Draw text
-        this.helpertext = new PIXI.Text(this.name + " (" + this.health + "HP)\nRange:" + this.weapon.range + " Dmg:" + this.weapon.mindmg + "-" + this.weapon.maxdmg + "\nAP:" + this.ap, textStyleHelper);
+        this.helpertext = new PIXI.Text(`${this.name}  (${this.health}HP)\nRange:${this.weapon.range} Dmg:${this.weapon.mindmg}-${this.weapon.maxdmg}\nAP:${this.ap}`, textStyleHelper);
         this.helpertext.x = realPositionX(this.x) + 10;
         this.helpertext.y = realPositionY(this.y) + 10;
         this.sprite.on("pointerdown", function (event) {
@@ -50,7 +50,7 @@ export class enemy extends gameObject {
             updateActionText("");
             this.death();
         } else {
-            this.helpertext.text = this.name + " (" + this.health + "HP)\nRange:" + this.weapon.range + " Dmg:" + this.weapon.mindmg + "-" + this.weapon.maxdmg + "\nAP:" + this.ap;
+            this.helpertext.text = `${this.name}  (${this.health}HP)\nRange:${this.weapon.range} Dmg:${this.weapon.mindmg}-${this.weapon.maxdmg}\nAP:${this.ap}`;
         }
     }
 
