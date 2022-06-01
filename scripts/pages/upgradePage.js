@@ -76,7 +76,7 @@ class upgradePage extends page {
         let counter = 3;
         while (counter > 0) {
             //Should be multiplied by number of upgrades
-            let check = Math.floor(Math.random() * 12 + 1);
+            let check = Math.floor(Math.random() * 14 + 1);
             if (!this.upgrades.includes(check) && checkValidity(check)) {
                 this.upgrades.push(check);
                 counter--;

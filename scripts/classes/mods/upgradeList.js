@@ -76,6 +76,19 @@ class meat extends upgrade {
     }
 }
 
+class caltrops extends upgrade {
+    constructor() {
+        let flavourtext = "At the start of\n battle, deal one \n damage to each enemy"
+        let shortdesc = "Deal 1 DMG at start of battle"
+        super("Passive", "Caltrops", flavourtext, shortdesc, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(2 * rw, 1 * rh, rw, rh)));
+    }
+
+    apply() {
+        enemyVal.caltrops ++;
+        playerInventory.push(this);
+    }
+}
+
 //Actives
 
 class scope extends upgrade {
@@ -174,6 +187,38 @@ class protectioncharm extends upgrade {
     }
 }
 
+class secondwind extends upgrade {
+    constructor() {
+        let flavourtext = "On use, gain  1 AP.\n (2 charges \n per battle)"
+        super("Active", "Second Wind", flavourtext, "", new PIXI.Texture(upgradessheet, new PIXI.Rectangle(3 * rw, 1 * rh, rw, rh)));
+        this.maxCharge = 2;
+        this.charge = this.maxCharge;
+        this.shortdesc = `Gain 1 AP\nCharge:${this.charge}/${this.maxCharge}`;
+    }
+
+    reload() {
+        this.charge = this.maxCharge;
+        this.shortdesc = `Gain 1 AP\nCharge:${this.charge}/${this.maxCharge}`;
+    }
+
+    use() {
+        if (this.charge) {
+            this.charge--;
+            playerVal.ap++;
+            player.updateAP();
+            this.shortdesc = `Gain 1 AP\nCharge:${this.charge}/${this.maxCharge}`;
+            showString(`Second Wind used!`);
+        } else {
+            showString(`No more charges!`);
+        }
+    }
+
+    apply() {
+        playerInventory.push(this);
+        return;
+    }
+}
+
 export function parseUpgrade(upgrade) {
     switch (upgrade) {
         case 1:
@@ -200,6 +245,10 @@ export function parseUpgrade(upgrade) {
             return new longbarrel();
         case 12:
             return new meat();
+        case 13:
+            return new caltrops();
+        case 14:
+            return new secondwind();
     }
 }
 

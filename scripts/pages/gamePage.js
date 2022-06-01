@@ -71,6 +71,11 @@ export class gamePage extends page {
         if (drawIndex >= enemies.length) {
             clearInterval(drawInterval);
             isPlayerturn = true;
+            if (enemyVal.caltrops) {
+                enemies.forEach(function (element) {
+                    element.takeDamage(enemyVal.caltrops, false, "left");
+                })
+            }
             nextTurn();
             return;
         } else {
@@ -312,6 +317,7 @@ export function levelEnd() {
     }
     //resets values
     resetenemyTurn();
+    cheerflag = false;
     gamelevel++;
     drawIndex = 0;
     enemies = [];

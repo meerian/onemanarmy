@@ -128,8 +128,9 @@ const warriorssheet = new PIXI.BaseTexture.from("images/enemy/warrior_spriteshee
 const sniperssheet = new PIXI.BaseTexture.from("images/enemy/sniper_spritesheet.png");
 const slimessheet = new PIXI.BaseTexture.from("images/enemy/slime_spritesheet.png");
 
-const upgradessheet = new PIXI.BaseTexture.from("images/upgrade/upgrades_ssheet.png");
-const modssheet = new PIXI.BaseTexture.from("images/upgrade/mods_ssheet.png");
+const upgradessheet = new PIXI.BaseTexture.from("images/upgrade/upgrades_spritesheet.png");
+const modssheet = new PIXI.BaseTexture.from("images/upgrade/mods_spritesheet.png");
+const spawnssheet = new PIXI.BaseTexture.from("images/spawn_spritesheet.png");
 
 
 // -------------------------------------------------------------------------------
@@ -146,7 +147,7 @@ class gameObject {
         this.sprite = sprite;
         this.sprite.animationSpeed = .5;
         this.sprite.anchor.set(0.5);
-        this.sprite.scale.set(3, 3);;
+        this.sprite.scale.set(3, 3);
         this.sprite.autoUpdate = true;
         this.sprite.loop = true;
         this.sprite.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
@@ -157,7 +158,35 @@ class gameObject {
         this.sprite.x = xCentral + (this.x - 4) * 48 + this.xNudge;
         this.sprite.y = yCentral + (this.y - 2) * 48 + this.yNudge;
         container.addChild(this.sprite);
+        animateSpawn(this.sprite.x, this.sprite.y, container);
     }
+}
+
+let spritesheet = [new PIXI.Texture(spawnssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh)), new PIXI.Texture(spawnssheet, new PIXI.Rectangle(1 * rw, 0 * rh, rw, rh)), new PIXI.Texture(spawnssheet, new PIXI.Rectangle(2 * rw, 0 * rh, rw, rh))];
+
+function animateSpawn(x, y, container) {
+    let sprite = new PIXI.AnimatedSprite(spritesheet);
+    sprite.x = x;
+    sprite.y = y;
+    sprite.animationSpeed = .3;
+    sprite.anchor.set(0.5);
+    sprite.scale.set(3, 3);
+    sprite.loop = true;
+    sprite.play();
+    container.addChild(sprite);
+    let total = 50;
+    const step = () => {
+        total--;
+        if (total == 0) {
+            sprite.stop();
+            container.removeChild(sprite);
+            return;
+        }
+        requestAnimationFrame(() => {
+            step();
+        })
+    }
+    step();
 }
 
 class weapon {

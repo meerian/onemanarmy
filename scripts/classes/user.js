@@ -14,6 +14,7 @@ class user extends gameObject {
         playerVal.ap = this.ap;
         this.weapon.reload();
         this.mIndicator = 0;
+        this.attackFlag = true;
     }
 
     displayMove(direction) {
@@ -40,30 +41,35 @@ class user extends gameObject {
     }
 
     attack(enemy) {
-        if (enemy.x < player.x) {
-            drawShoot("left");
-        } else {
-            drawShoot("right");
-        }
-        let dmgtaken = 0;
-        if (playerVal.nextIsCrit) {
-            playerVal.nextIsCrit = false;
-            dmgtaken = player.weapon.attack(true);
-        } else {
-            dmgtaken = player.weapon.attack();
-        }
-        enemy.takeDamage(dmgtaken[0], dmgtaken[1]);
-        updateBulletText();
-        let chance = Math.random() < 0.3;
-        if (chance && this.weapon.name == "SMG") {
-            showString("Free Shot!");
-        } else {
-            playerVal.ap--;
-            if (player.mIndicator != 0) {
-                player.mIndicator.cleanup();
-                player.mIndicator.ap = playerVal.ap;
+        if (this.attackFlag) {
+            let dmgtaken = 0;
+            if (playerVal.nextIsCrit) {
+                playerVal.nextIsCrit = false;
+                dmgtaken = player.weapon.attack(true);
+            } else {
+                dmgtaken = player.weapon.attack();
             }
-            updateAP();
+            if (enemy.x < player.x) {
+                drawShoot("left");
+                enemy.takeDamage(dmgtaken[0], dmgtaken[1], "right");
+            } else {
+                drawShoot("right");
+                enemy.takeDamage(dmgtaken[0], dmgtaken[1], "left");
+            }
+            updateBulletText();
+            let chance = Math.random() < 0.3;
+            if (chance && this.weapon.name == "SMG") {
+                showString("Free Shot!");
+            } else {
+                playerVal.ap--;
+                if (player.mIndicator != 0) {
+                    player.mIndicator.cleanup();
+                    player.mIndicator.ap = playerVal.ap;
+                }
+                updateAP();
+            }
+            this.attackFlag = false
+            setTimeout(function() { player.attackFlag = true }, 300);
         }
     }
 

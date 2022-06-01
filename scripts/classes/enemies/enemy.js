@@ -40,20 +40,6 @@ export class enemy extends gameObject {
         this.helpertext.y = realPositionY(this.y) + 10;
     }
 
-    takeDamage(val, iscrit) {
-        takeDamage(this, val, iscrit);
-        this.health -= val;
-        if (this.health <= 0 && this.isAlive) {
-            this.isAlive = false;
-            this.sprite.interactive = false;
-            detailContainer.removeChild(this.helpertext);
-            updateActionText("");
-            this.death();
-        } else {
-            this.helpertext.text = `${this.name}  (${this.health}HP)\nRange:${this.weapon.range} Dmg:${this.weapon.mindmg}-${this.weapon.maxdmg}\nAP:${this.ap}`;
-        }
-    }
-
     death() {
         throw new Error("method death() not implemented.");
     }

@@ -1,5 +1,6 @@
 import { nextTurn } from "../../turnHandler.js";
 import { enemy } from "./enemy.js";
+import { updateActionText, takeDamage } from "../../pages/gamePage.js";
 
 class warrior extends enemy {
     constructor(x, y) {
@@ -76,6 +77,21 @@ class warrior extends enemy {
         endTurn(this);
     }
 
+    takeDamage(val, iscrit, dir) {
+        takeDamage(this, val, iscrit);
+        this.health -= val;
+        if (this.health <= 0 && this.isAlive) {
+            this.isAlive = false;
+            this.sprite.interactive = false;
+            detailContainer.removeChild(this.helpertext);
+            updateActionText("");
+            this.death();
+        } else {
+            toggleHurt(this, dir);
+            this.helpertext.text = `${this.name}  (${this.health}HP)\nRange:${this.weapon.range} Dmg:${this.weapon.mindmg}-${this.weapon.maxdmg}\nAP:${this.ap}`;
+        }
+    }
+
     death() {
         deathanimation(this);
     }
@@ -113,11 +129,30 @@ function createSpriteSheet() {
     spritesheet["idleleft"] = [new PIXI.Texture(ssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh))];
     spritesheet["walkleft"] = [new PIXI.Texture(ssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(1 * rw, 0 * rh, rw, rh))];
     spritesheet["attackleft"] = [new PIXI.Texture(ssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(2 * rw, 0 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(3 * rw, 0 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(4 * rw, 0 * rh, rw, rh))];
+    spritesheet["hurtleft"] = [new PIXI.Texture(ssheet, new PIXI.Rectangle(8 * rw, 0 * rh, rw, rh))];
     spritesheet["dieleft"] = [new PIXI.Texture(ssheet, new PIXI.Rectangle(5 * rw, 0 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(6 * rw, 0 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(7 * rw, 0 * rh, rw, rh))];
     spritesheet["idleright"] = [new PIXI.Texture(ssheet, new PIXI.Rectangle(0 * rw, 1 * rh, rw, rh))];
     spritesheet["walkright"] = [new PIXI.Texture(ssheet, new PIXI.Rectangle(0 * rw, 1 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(1 * rw, 1 * rh, rw, rh))];
     spritesheet["attackright"] = [new PIXI.Texture(ssheet, new PIXI.Rectangle(0 * rw, 1 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(2 * rw, 1 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(3 * rw, 1 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(4 * rw, 1 * rh, rw, rh))];
     spritesheet["dieright"] = [new PIXI.Texture(ssheet, new PIXI.Rectangle(5 * rw, 1 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(6 * rw, 1 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(7 * rw, 1 * rh, rw, rh))];
+    spritesheet["hurtright"] = [new PIXI.Texture(ssheet, new PIXI.Rectangle(8 * rw, 1 * rh, rw, rh))];
+}
+
+function toggleHurt(enemy, dir, flag = true) {
+    if (flag) {
+        if (dir == "left") {
+            enemy.sprite.textures = spritesheet.hurtleft;
+        } else {
+            enemy.sprite.textures = spritesheet.hurtright;
+        }
+        setTimeout(function() { toggleHurt(enemy, dir, false) }, 250);
+    } else {
+        if (dir == "left") {
+            enemy.sprite.textures = spritesheet.idleleft;
+        } else {
+            enemy.sprite.textures = spritesheet.idleright;
+        }
+    }
 }
 
 function ResolveMoves(enemy, moves) {
