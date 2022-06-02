@@ -1,10 +1,11 @@
 import { addHound } from "../classes/enemies/hound.js";
 import { addWarrior } from "../classes/enemies/warrior.js";
-import { addUser, playerTurn } from "../classes/user.js";
+import { addUser } from "../classes/user.js";
 import { createUpgradepage } from "./upgradePage.js";
 import { nextTurn } from "../turnHandler.js";
 import { addSniper } from "../classes/enemies/sniper.js";
 import { addSlime } from "../classes/enemies/slime.js";
+import { addCentaur } from "../classes/enemies/centaur.js";
 
 export class gamePage extends page {
     constructor() {
@@ -48,6 +49,9 @@ export class gamePage extends page {
                     break;
                 case "slime":
                     addSlime(curX, curY);
+                    break;
+                case "centaur":
+                    addCentaur(curX, curY);
                     break;
             }
             curY = enemySpawnCoord[curY];

@@ -42,19 +42,43 @@ class user extends gameObject {
 
     attack(enemy) {
         if (this.attackFlag) {
-            let dmgtaken = 0;
-            if (playerVal.nextIsCrit) {
-                playerVal.nextIsCrit = false;
-                dmgtaken = player.weapon.attack(true);
-            } else {
-                dmgtaken = player.weapon.attack();
+            let dmgtaken = [];
+            let enemies = [];
+            let bulletFlag = true;
+            enemies.push(enemy);
+            if (this.weapon.name == "Shotgun") {
+                let x = enemy.x;
+                let y = enemy.y;
+                let dir = 0;
+                if (enemy.y == player.y) {
+                    dir = "y";
+                } else {
+                    dir = "x";
+                }
+                // E.g. y == check y -1 and y + 1 (as enemy is aligned on x-axis)
+                checkAround(enemies, x, y, dir);
             }
+            enemies.forEach(function() {
+                if (playerVal.nextIsCrit) {
+                    playerVal.nextIsCrit = false;
+                    dmgtaken.push(player.weapon.attack(true, bulletFlag));
+                } else {
+                    dmgtaken.push(player.weapon.attack(false, bulletFlag));
+                }
+                if (bulletFlag) {
+                    bulletFlag = false;
+                }
+            })
             if (enemy.x < player.x) {
                 drawShoot("left");
-                enemy.takeDamage(dmgtaken[0], dmgtaken[1], "right");
+                enemies.forEach(function(element, index) {
+                    element.takeDamage(dmgtaken[index][0], dmgtaken[index][1], "right");
+                })
             } else {
                 drawShoot("right");
-                enemy.takeDamage(dmgtaken[0], dmgtaken[1], "left");
+                enemies.forEach(function(element, index) {
+                    element.takeDamage(dmgtaken[index][0], dmgtaken[index][1], "left");
+                })
             }
             updateBulletText();
             let chance = Math.random() < 0.3;

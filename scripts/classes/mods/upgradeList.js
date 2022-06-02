@@ -13,7 +13,7 @@ class longbarrel extends upgrade {
         playerVal.maxdmgmodifier--;
         playerVal.rangemodifier++;
         playerVal.weapon.updateRange(1);
-        playerVal.weapon.updateDmg(0,-1);
+        playerVal.weapon.updateDmg(0, -1);
         playerInventory.push(this);
     }
 }
@@ -29,7 +29,7 @@ class shortbarrel extends upgrade {
         playerVal.mindmgmodifier++;
         playerVal.rangemodifier--;
         playerVal.weapon.updateRange(-1);
-        playerVal.weapon.updateDmg(1,0);
+        playerVal.weapon.updateDmg(1, 0);
         playerInventory.push(this);
     }
 }
@@ -57,7 +57,7 @@ class sharperbullet extends upgrade {
     }
 
     apply() {
-        playerVal.critmodifier+=0.15;
+        playerVal.critmodifier += 0.15;
         playerVal.weapon.updateCchance(0.15);
         playerInventory.push(this);
     }
@@ -84,7 +84,22 @@ class caltrops extends upgrade {
     }
 
     apply() {
-        enemyVal.caltrops ++;
+        enemyVal.caltrops++;
+        playerInventory.push(this);
+    }
+}
+
+class gunpowder extends upgrade {
+    constructor() {
+        let flavourtext = "Increases your max\n damage by +1 \n Decrease your min \n damage by 1"
+        let shortdesc = "+1 to max damage \n -1 to min damage"
+        super("Passive", "Gunpowder", flavourtext, shortdesc, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(5 * rw, 1 * rh, rw, rh)));
+    }
+
+    apply() {
+        playerVal.maxdmgmodifier++;
+        playerVal.mindmgmodifier--;
+        player.weapon.updateDmg(-1, 1);
         playerInventory.push(this);
     }
 }
@@ -230,7 +245,7 @@ export function parseUpgrade(upgrade) {
         case 4:
             return new smg();
         case 5:
-            return new scope();
+            return new shotgun();
         case 6:
             return new extraclip();
         case 7:
@@ -249,6 +264,10 @@ export function parseUpgrade(upgrade) {
             return new caltrops();
         case 14:
             return new secondwind();
+        case 15:
+            return new scope();
+        case 16:
+            return new gunpowder();
     }
 }
 
@@ -262,10 +281,12 @@ export function checkValidity(upgrade) {
             return playerVal.weapon.name != "Assault Rifle";
         case 4:
             return playerVal.weapon.name != "SMG";
+        case 5:
+            return playerVal.weapon.name != "Shotgun";
         default:
             return true;
     }
-    
+
 }
 
 //Weapons: (name, mindmg, maxdmg, clip, range, texture, critchance)
@@ -330,11 +351,23 @@ class sniperrifle extends weapon {
         playerVal.weapon = this;
         playerInventory.push(this);
     }
-    
+
     use() {
         playerVal.nextIsCrit = true;
         playerVal.ap--;
         player.updateAP();
         showString(`Sniper scope used!`);
+    }
+}
+
+class shotgun extends weapon {
+    constructor() {
+        let flavourtext = "Deals 3-5 dmg\n Clipsize: 3 \nRange:1 \n\nEach shot hits \nadjacent enemies as \nwell"
+        super("Shotgun", 3, 5, 3, 1, flavourtext, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(4 * rw, 1 * rh, rw, rh)));
+        this.update();
+    }
+
+    apply() {
+        playerVal.weapon = this;
     }
 }

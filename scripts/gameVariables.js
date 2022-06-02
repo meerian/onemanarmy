@@ -21,7 +21,7 @@ var playerInventory = [];
 var isPlayerturn = false;
 
 var enemySpawnList = {
-    1: ["hound", "slime"],
+    1: ["centaur", "sniper"],
     2: ["sniper"],
     3: ["warrior"],
     4: ["warrior"],
@@ -64,6 +64,25 @@ function findEnemyAlive(x, y) {
         }
     }
     console.log("none found");
+}
+
+function checkAround(arr, x, y, dir) {
+    switch (dir) {
+        case "x":
+            for (let i = 0; i < enemies.length; i++) {
+                if (enemies[i].y == y && enemies[i].isAlive && Math.abs(enemies[i].x - x) == 1) {
+                    arr.push(enemies[i]);
+                }
+            }
+            break;
+        case "y":
+            for (let i = 0; i < enemies.length; i++) {
+                if (enemies[i].x == x && enemies[i].isAlive && Math.abs(enemies[i].y - y) == 1) {
+                    arr.push(enemies[i]);
+                }
+            }
+            break;
+    }
 }
 
 //For Desktop

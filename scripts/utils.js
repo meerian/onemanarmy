@@ -127,6 +127,7 @@ const houndssheet = new PIXI.BaseTexture.from("images/enemy/hound_spritesheet.pn
 const warriorssheet = new PIXI.BaseTexture.from("images/enemy/warrior_spritesheet.png");
 const sniperssheet = new PIXI.BaseTexture.from("images/enemy/sniper_spritesheet.png");
 const slimessheet = new PIXI.BaseTexture.from("images/enemy/slime_spritesheet.png");
+const centaurssheet = new PIXI.BaseTexture.from("images/enemy/centaur_spritesheet.png");
 
 const upgradessheet = new PIXI.BaseTexture.from("images/upgrade/upgrades_spritesheet.png");
 const modssheet = new PIXI.BaseTexture.from("images/upgrade/mods_spritesheet.png");
@@ -234,14 +235,16 @@ class weapon {
         this.weapontext = `(damage:${this.mindmg}-${this.maxdmg}, range:${this.range})`;
     }
 
-    attack(isCrit = false) {
+    attack(isCrit = false, costBullet = true) {
         let dmg = Math.floor(Math.random() * (this.maxdmg - this.mindmg + 1) + this.mindmg);
-        this.bullets--;
+        if (costBullet) {
+            this.bullets--;
+        }
         let ccroll = Math.random();
         if (isCrit || ccroll < this.critchance) {
             return [dmg * 2, true];
         } else {
-            return[dmg, false];
+            return [dmg, false];
         }
     }
 
