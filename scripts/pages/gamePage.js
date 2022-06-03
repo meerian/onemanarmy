@@ -6,6 +6,7 @@ import { nextTurn } from "../turnHandler.js";
 import { addSniper } from "../classes/enemies/sniper.js";
 import { addSlime } from "../classes/enemies/slime.js";
 import { addCentaur } from "../classes/enemies/centaur.js";
+import { addOgre } from "../classes/enemies/ogre.js";
 
 export class gamePage extends page {
     constructor() {
@@ -52,6 +53,9 @@ export class gamePage extends page {
                     break;
                 case "centaur":
                     addCentaur(curX, curY);
+                    break;
+                case "ogre":
+                    addOgre(curX, curY);
                     break;
             }
             curY = enemySpawnCoord[curY];

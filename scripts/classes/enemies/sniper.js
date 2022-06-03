@@ -8,7 +8,7 @@ class sniper extends enemy {
         if (spritesheet.length == 0) {
             createSpriteSheet();
         }
-        super("Sniper", x, y, 3, 1, new PIXI.AnimatedSprite(spritesheet.idleleft), new weapon("sniper", 2, 3, 1 + enemyVal.extrabullet, 7), 3, -15);
+        super("Sniper", x, y, 3, 1, new PIXI.AnimatedSprite(spritesheet.idleleft), new weapon("sniper", 2, 3, 1 + enemyVal.extrabullet, 7 + enemyVal.unitrange), 3, -15);
     }
 
     nextMove() {

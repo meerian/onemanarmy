@@ -21,9 +21,9 @@ var playerInventory = [];
 var isPlayerturn = false;
 
 var enemySpawnList = {
-    1: ["centaur", "sniper"],
-    2: ["sniper"],
-    3: ["warrior"],
+    1: ["ogre", "hound"],
+    2: ["hound"],
+    3: ["hound"],
     4: ["warrior"],
     5: ["warrior"],
     6: ["warrior"],
@@ -41,6 +41,7 @@ const enemyVal = {
     sharperclaw: 0,
     extrabullet: 0,
     caltrops: 0,
+    unitrange: 0,
 }
 
 

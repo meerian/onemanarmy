@@ -2,6 +2,7 @@
 const app = new PIXI.Application({
     view: document.getElementById("myCanvas"),
 });
+const bgContainer = new PIXI.Container();
 const gameContainer = new PIXI.Container();
 const moveContainer = new PIXI.Container();
 const detailContainer = new PIXI.Container();
@@ -9,12 +10,13 @@ const detailContainer = new PIXI.Container();
 app.renderer.plugins.interaction.cursorStyles.default = "url('images/default_cursor.png'), auto";
 app.renderer.plugins.interaction.cursorStyles.pointer = "url('images/aim_cursor.png'), auto";
 
+app.stage.addChild(bgContainer);
 let background = new PIXI.Sprite(new PIXI.Texture.from('images/backgrnd.png'));
 background.x = 0;
 background.y = 0;
 background.scale.set(3, 3);
 background.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
-app.stage.addChild(background);
+bgContainer.addChild(background);
 
 // -------------------------------------------------------------------------------
 
@@ -128,6 +130,7 @@ const warriorssheet = new PIXI.BaseTexture.from("images/enemy/warrior_spriteshee
 const sniperssheet = new PIXI.BaseTexture.from("images/enemy/sniper_spritesheet.png");
 const slimessheet = new PIXI.BaseTexture.from("images/enemy/slime_spritesheet.png");
 const centaurssheet = new PIXI.BaseTexture.from("images/enemy/centaur_spritesheet.png");
+const ogressheet = new PIXI.BaseTexture.from("images/enemy/ogre_spritesheet.png");
 
 const upgradessheet = new PIXI.BaseTexture.from("images/upgrade/upgrades_spritesheet.png");
 const modssheet = new PIXI.BaseTexture.from("images/upgrade/mods_spritesheet.png");
@@ -211,7 +214,7 @@ class weapon {
         this.critchance = this.critchance + playerVal.critmodifier;
         this.clip = this.clip + playerVal.clipmodifier;
         this.bullets = this.clip;
-        this.range = this.range + playerVal.rangemodifier;
+        this.range = Math.max(this.range + playerVal.rangemodifier, 1);
         this.weapontext = `(damage:${this.mindmg}-${this.maxdmg}, range:${this.range})`;
     }
 
@@ -231,7 +234,7 @@ class weapon {
     }
 
     updateRange(range) {
-        this.range = this.range + range;
+        this.range = Math.max(this.range + range, 1);
         this.weapontext = `(damage:${this.mindmg}-${this.maxdmg}, range:${this.range})`;
     }
 

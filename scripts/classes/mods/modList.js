@@ -1,7 +1,7 @@
 
 class removeHaddW extends upgrade {
     constructor() {
-        let flavourtext = "Remove up to 2 hounds \n\n Add 1 warrior"
+        let flavourtext = "Remove up to 2 hounds \n Add 1 warrior"
         super("Modification", "Enemy Swap", flavourtext, "", new PIXI.Texture(modssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh)));
     }
 
@@ -51,6 +51,32 @@ class addH extends upgrade {
     }
 }
 
+class changeHtoW extends upgrade {
+    constructor() {
+        let flavourtext = "Turn all current hounds \n into warriors"
+        super("Modification", "Enemy Swap", flavourtext, "", new PIXI.Texture(modssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh)));
+    }
+
+    apply() {
+        while (curSpawn.indexOf("hound") != -1) {
+            let index = curSpawn.indexOf("hound");
+            curSpawn.splice(index, 1);
+            curSpawn.push("warrior");
+        }
+    }
+}
+
+class extrarange extends upgrade {
+    constructor() {
+        let flavourtext = "All enemy ranged \n units gain +1 \n to range"
+        super("Modification", "Extra Range", flavourtext, "", new PIXI.Texture(modssheet, new PIXI.Rectangle(4 * rw, 0 * rh, rw, rh)));
+    }
+
+    apply() {
+        enemyVal.unitrange++;
+    }
+}
+
 export function parseMod(mod) {
     switch (mod) {
         case 1:
@@ -61,5 +87,9 @@ export function parseMod(mod) {
             return new addH();
         case 4:
             return new extrabullet();
+        case 5:
+            return new changeHtoW();
+        case 6:
+            return new extrarange();
     }
 }

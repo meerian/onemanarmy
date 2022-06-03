@@ -50,11 +50,11 @@ class user extends gameObject {
                 let x = enemy.x;
                 let y = enemy.y;
                 let dir = 0;
-                if (enemy.y == player.y) {
-                    dir = "y";
-                } else {
+                if (enemy.x == player.x) {
                     dir = "x";
-                }
+                } else {
+                    dir = "y";
+                } 
                 // E.g. y == check y -1 and y + 1 (as enemy is aligned on x-axis)
                 checkAround(enemies, x, y, dir);
             }

@@ -91,7 +91,7 @@ class caltrops extends upgrade {
 
 class gunpowder extends upgrade {
     constructor() {
-        let flavourtext = "Increases your max\n damage by +1 \n Decrease your min \n damage by 1"
+        let flavourtext = "Increases your max\n damage by 1 \n Decrease your min \n damage by 1"
         let shortdesc = "+1 to max damage \n -1 to min damage"
         super("Passive", "Gunpowder", flavourtext, shortdesc, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(5 * rw, 1 * rh, rw, rh)));
     }
@@ -100,6 +100,21 @@ class gunpowder extends upgrade {
         playerVal.maxdmgmodifier++;
         playerVal.mindmgmodifier--;
         player.weapon.updateDmg(-1, 1);
+        playerInventory.push(this);
+    }
+}
+
+class caffeinepill extends upgrade {
+    constructor() {
+        let flavourtext = "Increases your AP\n by 1 \n Decrease your range \nby 1"
+        let shortdesc = "+1 to AP \n -1 to range"
+        super("Passive", "Caffeine Pill", flavourtext, shortdesc, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(6 * rw, 1 * rh, rw, rh)));
+    }
+
+    apply() {
+        playerVal.maxap++;
+        playerVal.rangemodifier--;
+        player.weapon.updateRange(-1);
         playerInventory.push(this);
     }
 }
@@ -268,6 +283,8 @@ export function parseUpgrade(upgrade) {
             return new scope();
         case 16:
             return new gunpowder();
+        case 17:
+            return new caffeinepill();
     }
 }
 
