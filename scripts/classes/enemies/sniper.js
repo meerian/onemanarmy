@@ -83,17 +83,19 @@ class sniper extends enemy {
     }
 
     takeDamage(val, iscrit, dir) {
-        takeDamage(this, val, iscrit);
-        this.health -= val;
-        if (this.health <= 0 && this.isAlive) {
-            this.isAlive = false;
-            this.sprite.interactive = false;
-            detailContainer.removeChild(this.helpertext);
-            updateActionText("");
-            this.death();
-        } else {
-            toggleHurt(this, dir);
-            this.helpertext.text = `${this.name}  (${this.health}HP)\nRange:${this.weapon.range} Dmg:${this.weapon.mindmg}-${this.weapon.maxdmg}\nAP:${this.ap}`;
+        if (this.isAlive) {
+            takeDamage(this, val, iscrit);
+            this.health -= val;
+            if (this.health <= 0) {
+                this.isAlive = false;
+                this.sprite.interactive = false;
+                detailContainer.removeChild(this.helpertext);
+                updateActionText("");
+                this.death();
+            } else {
+                toggleHurt(this, dir);
+                this.helpertext.text = `${this.name}  (${this.health}HP)\nRange:${this.weapon.range} Dmg:${this.weapon.mindmg}-${this.weapon.maxdmg}\nAP:${this.ap}`;
+            }
         }
     }
 

@@ -8,6 +8,7 @@ class ogre extends enemy {
             createSpriteSheet();
         }
         super("Ogre", x, y, 20, 3, new PIXI.AnimatedSprite(spritesheet.idleleft), new weapon("Fist", 7, 7, -1, 1), 0, -15);
+        this.isPrep = false;
         this.sprite.scale.set(2,2);
         this.aimbox = new PIXI.AnimatedSprite(aimssheet);
         this.aimbox.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
@@ -32,7 +33,7 @@ class ogre extends enemy {
         let attackFlag = true;
         while (curAP) {
             curAP--;
-            if (attackFlag && (this.sprite.textures == spritesheet.prepleft ||this.sprite.textures == spritesheet.prepright)) {
+            if (attackFlag && this.isPrep) {
                 this.moves.push("attack");
                 attackFlag = false;
                 continue;
@@ -98,18 +99,20 @@ class ogre extends enemy {
     }
 
     takeDamage(val, iscrit, dir) {
-        takeDamage(this, val, iscrit);
-        this.health -= val;
-        if (this.health <= 0 && this.isAlive) {
-            this.isAlive = false;
-            this.sprite.interactive = false;
-            detailContainer.removeChild(this.helpertext);
-            updateActionText("");
-            this.death();
-        } else {
-            let isPrep = this.sprite.textures == spritesheet["prepleft"] || this.sprite.textures == spritesheet["prepright"];
-            toggleHurt(this, dir, isPrep);
-            this.helpertext.text = `${this.name}  (${this.health}HP)\nRange:${this.weapon.range} Dmg:${this.weapon.mindmg}-${this.weapon.maxdmg}\nAP:${this.ap}`;
+        if (this.isAlive) {
+            takeDamage(this, val, iscrit);
+            this.health -= val;
+            if (this.health <= 0) {
+                this.isAlive = false;
+                this.sprite.interactive = false;
+                detailContainer.removeChild(this.helpertext);
+                updateActionText("");
+                this.death();
+            } else {
+                let isPrep = this.sprite.textures == spritesheet["prepleft"] || this.sprite.textures == spritesheet["prepright"];
+                toggleHurt(this, dir, isPrep);
+                this.helpertext.text = `${this.name}  (${this.health}HP)\nRange:${this.weapon.range} Dmg:${this.weapon.mindmg}-${this.weapon.maxdmg}\nAP:${this.ap}`;
+            }
         }
     }
 
@@ -243,7 +246,9 @@ function ResolveMoves(enemy, moves) {
                 }
             }
             bgContainer.addChild(enemy.aimbox);
+            enemy.isPrep = true;
         } else if (str == "attack") {
+            enemy.isPrep = false;
             enemy.aimbox.play();
             if (player.x > enemy.x) {
                 enemy.sprite.textures = spritesheet.attackright;
@@ -273,13 +278,19 @@ function ResolveMoves(enemy, moves) {
                     enemy.aimbox.gotoAndStop(0);
                     bgContainer.removeChild(enemy.aimbox);
                 }   
-                if (str == "left" || str == "attackleft") {
-
-                    if (enemy.sprite.textures != spritesheet.prepleft) {
+                if (str == "prepleft") {
+                    enemy.sprite.textures = spritesheet.prepleft;
+                    return;
+                }
+                if (str == "prepright") {
+                    enemy.sprite.textures = spritesheet.prepright;
+                    return;
+                } 
+                if (str.includes("left") && !enemy.isPrep) {
                         enemy.sprite.textures = spritesheet.idleleft;
-                    }
-                } else if (str == "right" || str == "attackright") {
-                    enemy.sprite.textures = spritesheet.idleright;
+                }
+                if (str.includes("right") && !enemy.isPrep) {
+                        enemy.sprite.textures = spritesheet.idleright;
                 }
             }
             if (total) {

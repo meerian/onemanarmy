@@ -79,17 +79,19 @@ class centaur extends enemy {
     }
 
     takeDamage(val, iscrit, dir) {
-        takeDamage(this, val, iscrit);
-        this.health -= val;
-        if (this.health <= 0 && this.isAlive) {
-            this.isAlive = false;
-            this.sprite.interactive = false;
-            detailContainer.removeChild(this.helpertext);
-            updateActionText("");
-            this.death();
-        } else {
-            toggleHurt(this, dir);
-            this.helpertext.text = `${this.name}  (${this.health}HP)\nRange:${this.weapon.range} Dmg:${this.weapon.mindmg}-${this.weapon.maxdmg}\nAP:${this.ap}`;
+        if (this.isAlive) {
+            takeDamage(this, val, iscrit);
+            this.health -= val;
+            if (this.health <= 0) {
+                this.isAlive = false;
+                this.sprite.interactive = false;
+                detailContainer.removeChild(this.helpertext);
+                updateActionText("");
+                this.death();
+            } else {
+                toggleHurt(this, dir);
+                this.helpertext.text = `${this.name}  (${this.health}HP)\nRange:${this.weapon.range} Dmg:${this.weapon.mindmg}-${this.weapon.maxdmg}\nAP:${this.ap}`;
+            }
         }
     }
 
@@ -146,7 +148,7 @@ function toggleHurt(enemy, dir, flag = true) {
         } else {
             enemy.sprite.textures = spritesheet.hurtright;
         }
-        setTimeout(function() { toggleHurt(enemy, dir, false) }, 250);
+        setTimeout(function () { toggleHurt(enemy, dir, false) }, 250);
     } else {
         if (dir == "left") {
             enemy.sprite.textures = spritesheet.idleleft;
@@ -170,7 +172,7 @@ function ResolveMoves(enemy, moves) {
                 enemy.sprite.loop = false;
             }
             player.takeDamage(enemy.weapon.attack());
-        } else if (str == "left"){
+        } else if (str == "left") {
             enemy.sprite.textures = spritesheet.walkleft;
             enemy.sprite.loop = true;
         } else {

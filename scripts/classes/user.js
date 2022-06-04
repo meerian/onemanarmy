@@ -15,6 +15,7 @@ class user extends gameObject {
         this.weapon.reload();
         this.mIndicator = 0;
         this.attackFlag = true;
+        this.canShoot = true;
     }
 
     displayMove(direction) {
@@ -40,12 +41,14 @@ class user extends gameObject {
         }
     }
 
-    attack(enemy) {
-        if (this.attackFlag) {
+    attack(enemy, canShoot = this.canShoot) {
+        if (this.attackFlag && canShoot) {
             let dmgtaken = [];
             let enemies = [];
             let bulletFlag = true;
             enemies.push(enemy);
+
+            //If shotgun, adds surrounding enemies into array
             if (this.weapon.name == "Shotgun") {
                 let x = enemy.x;
                 let y = enemy.y;
@@ -58,6 +61,14 @@ class user extends gameObject {
                 // E.g. y == check y -1 and y + 1 (as enemy is aligned on x-axis)
                 checkAround(enemies, x, y, dir);
             }
+
+            //If machinegun active used, add same enemy into array = number of bullets left
+            // if (playerVal.nextExpendAll) {
+            //     for (let i = 0; i < this.weapon.bullets; i++) {
+            //         enemies.push(enemy);
+            //     }
+            //     playerVal.nextExpendAll = false;
+            // }
             enemies.forEach(function() {
                 if (playerVal.nextIsCrit) {
                     playerVal.nextIsCrit = false;
@@ -81,9 +92,18 @@ class user extends gameObject {
                 })
             }
             updateBulletText();
+            if (playerVal.nextExpendAll && player.weapon.bullets > 0) {
+                this.canShoot = false;
+                setTimeout(function() { player.attack(enemy, true) }, 200);
+                return;
+            }
             let chance = Math.random() < 0.3;
             if (chance && this.weapon.name == "SMG") {
                 showString("Free Shot!");
+            } else if (playerVal.nextExpendAll) {
+                playerVal.ap = 0;
+                playerVal.nextExpendAll = false;
+                this.canShoot = true;
             } else {
                 playerVal.ap--;
                 if (player.mIndicator != 0) {

@@ -15,6 +15,7 @@ const playerVal = {
     weapon: 0,
     nextIsCrit: false,
     nextNoDmg: false,
+    nextExpendAll: false,
 }
 var playerInventory = [];
 //Turn handling

@@ -322,13 +322,22 @@ export class pistol extends weapon {
 
 class machinegun extends weapon {
     constructor() {
-        let flavourtext = "Deals 1-3 dmg\n Clipsize: 10 \nRange:2"
-        super("Machinegun", 1, 3, 10, 2, flavourtext, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(1 * rw, 0 * rh, rw, rh)));
+        let flavourtext = "Deals 1-3 dmg\n Clipsize: 4 \nRange:2 \n\nActive: \non use, your next\n shot will expend \nthe entire clip and \n end your turn\n Costs 1 AP"
+        super("Machinegun", 1, 3, 4, 2, flavourtext, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(1 * rw, 0 * rh, rw, rh)));
         this.update();
+        this.shortdesc = "next shot expends entire clip \nCosts 1 AP";
     }
 
     apply() {
         playerVal.weapon = this;
+        playerInventory.push(this);
+    }
+
+    use() {
+        playerVal.nextExpendAll = true;
+        playerVal.ap--;
+        player.updateAP();
+        showString(`Warmed up!`);
     }
 }
 
@@ -358,7 +367,7 @@ class smg extends weapon {
 
 class sniperrifle extends weapon {
     constructor() {
-        let flavourtext = "Deals 3-5 dmg\n Clipsize: 1 \nRange:6 \n\nGain a scope that \non use, your next\n bullet will be a \nguaranteed crit \n(for double damage)\n Costs 1 AP"
+        let flavourtext = "Deals 3-5 dmg\n Clipsize: 1 \nRange:6 \n\nActive: \non use, your next\n bullet will be a \nguaranteed crit \n(for double damage)\n Costs 1 AP"
         super("Sniper Rifle", 3, 5, 1, 6, flavourtext, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(0 * rw, 1 * rh, rw, rh)));
         this.update();
         this.shortdesc = "next shot is a crit\nCosts 1 AP";
