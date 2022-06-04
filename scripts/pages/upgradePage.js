@@ -53,10 +53,14 @@ class upgradePage extends page {
             drawText(choiceboxflavourText, xCentral - 70 + i * 200, yCentral - 50 + animationOffset, container, false);
             pageElements.push(choiceboxflavourText);
             container.on("pointerdown", function (event) {
+                pointerdownAudio.currentTime = 0;
+                pointerdownAudio.play();
                 upgrade.apply();
                 endPage();
             })
             container.on("mouseover", function (event) {
+                mouseoverAudio.currentTime = 0;
+                mouseoverAudio.play();
                 choiceBox.clear();
                 choiceBox.lineStyle(2, 0x00FF2A, 1);
                 choiceBox.drawRect(xCentral - 100 + i * 200, yCentral - 150 + animationOffset, 200, 300);
@@ -76,7 +80,7 @@ class upgradePage extends page {
         let counter = 3;
         while (counter > 0) {
             //Should be multiplied by number of upgrades
-            let check = Math.floor(Math.random() * 17 + 1);
+            let check = Math.floor(Math.random() * 20 + 1);
             if (!this.upgrades.includes(check) && checkValidity(check)) {
                 this.upgrades.push(check);
                 counter--;

@@ -119,6 +119,37 @@ class caffeinepill extends upgrade {
     }
 }
 
+class guncalibrator extends upgrade {
+    constructor() {
+        let flavourtext = "All of your shots\n will now deal the \naverage between \nMIN DMG and MAX DMG"
+        let shortdesc = "All shots do avg damage"
+        super("Passive", "Gun Calibration", flavourtext, shortdesc, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(7 * rw, 1 * rh, rw, rh)));
+    }
+
+    apply() {
+        playerVal.guncalibrated = true;
+        player.weapon.updateCalibration();
+        playerInventory.push(this);
+    }
+}
+
+class protectionward extends upgrade {
+    constructor() {
+        let flavourtext = "Negate all enemy \n damage on the \nfirst turn"
+        let shortdesc = "Negate 1st term DMG"
+        super("Passive", "Protection \nWard", flavourtext, shortdesc, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(8 * rw, 1 * rh, rw, rh)));
+    }
+
+    reload() {
+        playerVal.firstturnNoDmg = true;
+    }
+
+    apply() {
+        playerVal.firstturnNoDmg = true;
+        playerInventory.push(this);
+    }
+}
+
 //Actives
 
 class scope extends upgrade {
@@ -132,6 +163,7 @@ class scope extends upgrade {
 
     reload() {
         this.charge = this.maxCharge;
+        playerVal.nextIsCrit = false;
         this.shortdesc = `next shot is a crit\nCharge:${this.charge}/${this.maxCharge}`;
     }
 
@@ -140,8 +172,12 @@ class scope extends upgrade {
             playerVal.nextIsCrit = true;
             this.charge--;
             this.shortdesc = `next shot is a crit\nCharge:${this.charge}/${this.maxCharge}`;
+            activeAudio.currentTime = 0;
+            activeAudio.play();
             showString(`Scope used!`);
         } else {
+            negativeAudio.currentTime = 0;
+            negativeAudio.play();
             showString(`No more charges!`);
         }
     }
@@ -169,13 +205,19 @@ class extraclip extends upgrade {
     use() {
         if (this.charge) {
             if (player.weapon.bullets == player.weapon.clip) {
+                negativeAudio.currentTime = 0;
+                negativeAudio.play();
                 showString("Ammo Full!");
                 return;
             }
             player.reload(true);
             this.charge--;
             this.shortdesc = `Reloads your gun\nCharge:${this.charge}/${this.maxCharge}`;
+            activeAudio.currentTime = 0;
+            activeAudio.play();
         } else {
+            negativeAudio.currentTime = 0;
+            negativeAudio.play();
             showString(`No more charges!`);
         }
     }
@@ -197,6 +239,7 @@ class protectioncharm extends upgrade {
 
     reload() {
         this.charge = this.maxCharge;
+        playerVal.nextNoDmg = false;
         this.shortdesc = `Negate next damage\nCharge:${this.charge}/${this.maxCharge}`;
     }
 
@@ -205,8 +248,12 @@ class protectioncharm extends upgrade {
             playerVal.nextNoDmg = true;
             this.charge--;
             this.shortdesc = `Negate next damage\nCharge:${this.charge}/${this.maxCharge}`;
+            activeAudio.currentTime = 0;
+            activeAudio.play();
             showString(`Protection Charm used!`);
         } else {
+            negativeAudio.currentTime = 0;
+            negativeAudio.play();
             showString(`No more charges!`);
         }
     }
@@ -237,10 +284,55 @@ class secondwind extends upgrade {
             playerVal.ap++;
             player.updateAP();
             this.shortdesc = `Gain 1 AP\nCharge:${this.charge}/${this.maxCharge}`;
+            activeAudio.currentTime = 0;
+            activeAudio.play();
             showString(`Second Wind used!`);
         } else {
+            negativeAudio.currentTime = 0;
+            negativeAudio.play();
             showString(`No more charges!`);
         }
+    }
+
+    apply() {
+        playerInventory.push(this);
+        return;
+    }
+}
+
+class bloodbullet extends upgrade {
+    constructor() {
+        let flavourtext = "On toggle, each \n bullet gains DMG + 2 \n (Cost 1HP, togglable)"
+        super("Active", "Blood Bullet", flavourtext, "", new PIXI.Texture(upgradessheet, new PIXI.Rectangle(9 * rw, 1 * rh, rw, rh)));
+        this.state = "OFF";
+        this.isOn = false;
+        this.shortdesc = `Gain 1 AP\nState: ${this.state}`;
+    }
+
+    reload() {
+        this.state = "OFF";
+        this.isOn = false;
+        player.weapon.updateBloodbullet(false);
+        this.shortdesc = `Gain 1 AP\nState: ${this.state}`;
+    }
+
+    use() {
+        if (!this.isOn) {
+            this.isOn = true;
+            this.state = "ON";
+            player.weapon.updateBloodbullet(true);
+            activeAudio.currentTime = 0;
+            activeAudio.play();
+            showString(`Blood Bullet on!`);
+        } else {
+            this.isOn = false;
+            this.state = "OFF";
+            player.weapon.updateBloodbullet(false);
+            activeAudio.currentTime = 0;
+            activeAudio.play();
+            showString(`Blood Bullet off!`);
+        }
+        this.shortdesc = `Gain 1 AP\nState: ${this.state}`;
     }
 
     apply() {
@@ -285,6 +377,12 @@ export function parseUpgrade(upgrade) {
             return new gunpowder();
         case 17:
             return new caffeinepill();
+        case 18:
+            return new guncalibrator();
+        case 19:
+            return new protectionward();
+        case 20:
+            return new bloodbullet();
     }
 }
 
@@ -337,6 +435,8 @@ class machinegun extends weapon {
         playerVal.nextExpendAll = true;
         playerVal.ap--;
         player.updateAP();
+        activeAudio.currentTime = 0;
+        activeAudio.play();
         showString(`Warmed up!`);
     }
 }
@@ -382,6 +482,8 @@ class sniperrifle extends weapon {
         playerVal.nextIsCrit = true;
         playerVal.ap--;
         player.updateAP();
+        activeAudio.currentTime = 0;
+        activeAudio.play();
         showString(`Sniper scope used!`);
     }
 }

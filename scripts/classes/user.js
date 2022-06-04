@@ -28,7 +28,7 @@ class user extends gameObject {
     }
 
     takeDamage(val, toAP = false) {
-        if (playerVal.nextNoDmg) {
+        if (playerVal.nextNoDmg || playerVal.firstturnNoDmg) {
             showString("Damage Negated!");
             playerVal.nextNoDmg = false;
         } else if (toAP) {
@@ -61,14 +61,6 @@ class user extends gameObject {
                 // E.g. y == check y -1 and y + 1 (as enemy is aligned on x-axis)
                 checkAround(enemies, x, y, dir);
             }
-
-            //If machinegun active used, add same enemy into array = number of bullets left
-            // if (playerVal.nextExpendAll) {
-            //     for (let i = 0; i < this.weapon.bullets; i++) {
-            //         enemies.push(enemy);
-            //     }
-            //     playerVal.nextExpendAll = false;
-            // }
             enemies.forEach(function() {
                 if (playerVal.nextIsCrit) {
                     playerVal.nextIsCrit = false;
@@ -120,10 +112,14 @@ class user extends gameObject {
     reload(isFree = false) {
         if (isPlayerturn) {
             if (player.weapon.bullets == player.weapon.clip) {
+                negativeAudio.currentTime = 0;
+                negativeAudio.play();
                 showString("Ammo Full!");
                 return;
             }
             if (!isFree) {
+                activeAudio.currentTime = 0;
+                activeAudio.play();
                 playerVal.ap--;
             }
             this.weapon.reload();
@@ -189,6 +185,8 @@ export function playerTurn() {
 }
 
 function drawShoot(dir) {
+    shootAudio.currentTime = 0;
+    shootAudio.play();
     let total = 30;
     if (dir == "right") {
         player.sprite.textures = spritesheet.shootright;
@@ -219,6 +217,8 @@ function drawShoot(dir) {
 
 function drawAnimation(moves) {
     if (moves[0]) {
+        walkAudio.currentTime = 0;
+        walkAudio.play();
         let str = moves.shift();
         if (player.sprite.textures == spritesheet.idleright) {
             player.sprite.textures = spritesheet.walkright;
@@ -231,6 +231,7 @@ function drawAnimation(moves) {
         let total = 48;
         const step = () => {
             if (total == 0) {
+                walkAudio.pause();
                 if (str == "left") {
                     player.sprite.textures = spritesheet.idleleft;
                 } else {

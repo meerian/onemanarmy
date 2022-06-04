@@ -53,10 +53,14 @@ class modPage extends page {
             drawText(choiceboxflavourText, xCentral - 70 + i * 200, yCentral - 30 + animationOffset, container, false);
             pageElements.push(choiceboxflavourText);
             container.on("pointerdown", function (event) {
+                pointerdownAudio.currentTime = 0;
+                pointerdownAudio.play();
                 mod.apply();
                 endPage();
             })
             container.on("mouseover", function (event) {
+                mouseoverAudio.currentTime = 0;
+                mouseoverAudio.play();
                 choiceBox.clear();
                 choiceBox.lineStyle(2, 0x00FF2A, 1);
                 choiceBox.drawRect(xCentral - 100 + i * 200, yCentral - 150 + animationOffset, 200, 300);
@@ -76,7 +80,7 @@ class modPage extends page {
         let counter = 3;
         while (counter > 0) {
             //Should be multiplied by number of mods
-            let check = Math.floor(Math.random() * 6 + 1);
+            let check = Math.floor(Math.random() * 7 + 1);
             if (!this.mods.includes(check)) {
                 this.mods.push(check);
                 counter--;

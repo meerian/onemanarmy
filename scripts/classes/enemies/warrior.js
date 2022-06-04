@@ -78,7 +78,7 @@ class warrior extends enemy {
     }
 
     takeDamage(val, iscrit, dir) {
-        if (this.isAlve) {
+        if (this.isAlive) {
             takeDamage(this, val, iscrit);
             this.health -= val;
             if (this.health <= 0) {
@@ -170,13 +170,19 @@ function ResolveMoves(enemy, moves) {
                 str = "attackleft";
                 enemy.sprite.loop = false;
             }
+            enemymeleeAudio.currentTime = 0;
+            enemymeleeAudio.play();
             player.takeDamage(enemy.weapon.attack());
         } else if (str == "left") {
             enemy.sprite.textures = spritesheet.walkleft;
             enemy.sprite.loop = true;
+            walkAudio.currentTime = 0;
+            walkAudio.play();
         } else {
             enemy.sprite.textures = spritesheet.walkright;
             enemy.sprite.loop = true;
+            walkAudio.currentTime = 0;
+            walkAudio.play();
         }
         let total = 48;
         enemy.sprite.play();
@@ -187,6 +193,7 @@ function ResolveMoves(enemy, moves) {
                 } else {
                     enemy.sprite.textures = spritesheet.idleright;
                 }
+                walkAudio.pause();
             }
             if (total) {
                 total--;

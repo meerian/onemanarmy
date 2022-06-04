@@ -77,6 +77,21 @@ class extrarange extends upgrade {
     }
 }
 
+class removeWaddC extends upgrade {
+    constructor() {
+        let flavourtext = "Remove up to 1 warrior \n Add 1 centaur"
+        super("Modification", "Enemy Swap", flavourtext, "", new PIXI.Texture(modssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh)));
+    }
+
+    apply() {
+        let index = curSpawn.indexOf("warrior");
+        if (index > -1) {
+            curSpawn.splice(index, 1);
+        }
+        curSpawn.push("centaur");
+    }
+}
+
 export function parseMod(mod) {
     switch (mod) {
         case 1:
@@ -91,5 +106,7 @@ export function parseMod(mod) {
             return new changeHtoW();
         case 6:
             return new extrarange();
+        case 7:
+            return new removeWaddC();
     }
 }

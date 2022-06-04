@@ -16,13 +16,15 @@ const playerVal = {
     nextIsCrit: false,
     nextNoDmg: false,
     nextExpendAll: false,
+    guncalibrated: false,
+    firstturnNoDmg: false,
 }
 var playerInventory = [];
 //Turn handling
 var isPlayerturn = false;
 
 var enemySpawnList = {
-    1: ["ogre", "hound"],
+    1: ["warrior", "centaur"],
     2: ["hound"],
     3: ["hound"],
     4: ["warrior"],

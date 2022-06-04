@@ -60,6 +60,35 @@ const drawText = (text, x, y, container, isAnchored = false) => {
 
 // -------------------------------------------------------------------------------
 
+//Audio
+
+//general audio
+const mouseoverAudio = new Audio("audio/mouseover.wav");
+const pointerdownAudio = new Audio("audio/pointerdown.wav");
+const levelclearAudio = new Audio("audio/levelclear.wav");
+levelclearAudio.playbackRate = 1.3;
+const negativeAudio = new Audio("audio/negative.wav");
+negativeAudio.volume = 0.2;
+const spawnAudio = new Audio("audio/spawn.wav");
+spawnAudio.volume = 0.2;
+
+//player audio
+const walkAudio = new Audio("audio/walk.wav");
+const shootAudio = new Audio("audio/shoot.wav");
+const noammoAudio = new Audio("audio/noammo.wav");
+const activeAudio = new Audio("audio/useactive.wav");
+activeAudio.volume = 0.2;
+
+//enemy audio
+const enemymeleeAudio = new Audio("audio/enemymelee.wav");
+enemymeleeAudio.volume = 0.5;
+const enemyshootAudio = new Audio("audio/enemyshoot.wav");
+enemyshootAudio.volume = 0.5;
+
+
+
+// -------------------------------------------------------------------------------
+
 var xCentral = app.renderer.width / 2;
 var yCentral = 2 * app.renderer.height / 3;
 
@@ -177,6 +206,8 @@ function animateSpawn(x, y, container) {
     sprite.scale.set(3, 3);
     sprite.loop = true;
     sprite.play();
+    spawnAudio.currentTime = 0;
+    spawnAudio.play();
     container.addChild(sprite);
     let total = 50;
     const step = () => {
@@ -206,6 +237,7 @@ class weapon {
         this.flavourtext = flavourtext;
         this.texture = texture;
         this.critchance = critchance;
+        this.guncalibrated = false;
     }
 
     update() {
@@ -216,10 +248,16 @@ class weapon {
         this.bullets = this.clip;
         this.range = Math.max(this.range + playerVal.rangemodifier, 1);
         this.weapontext = `(damage:${this.mindmg}-${this.maxdmg}, range:${this.range})`;
+        this.guncalibrated = playerVal.guncalibrated;
+        this.bloodbullet = false;
     }
 
     updateCchance(crit) {
         this.critchance = this.critchance + crit;
+    }
+
+    updateCalibration() {
+        this.guncalibrated = playerVal.guncalibrated;
     }
 
     updateDmg(mindmg = 0, maxdmg = 0) {
@@ -238,8 +276,21 @@ class weapon {
         this.weapontext = `(damage:${this.mindmg}-${this.maxdmg}, range:${this.range})`;
     }
 
+    updateBloodbullet(bool) {
+        this.bloodbullet = bool;
+    }
+
     attack(isCrit = false, costBullet = true) {
-        let dmg = Math.floor(Math.random() * (this.maxdmg - this.mindmg + 1) + this.mindmg);
+        let dmg = 0;
+        if (this.guncalibrated) {
+            dmg = Math.floor((this.mindmg + this.maxdmg) / 2);
+        } else {
+            dmg = Math.floor(Math.random() * (this.maxdmg - this.mindmg + 1) + this.mindmg);
+        }
+        if (this.bloodbullet) {
+            dmg += 2;
+            player.takeDamage([1, false]);
+        }
         if (costBullet) {
             this.bullets--;
         }

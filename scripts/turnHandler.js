@@ -14,6 +14,7 @@ export function nextTurn() {
     else {
         if (enemyTurnCounter == enemies.length) {
             isPlayerturn = true;
+            playerVal.firstturnNoDmg = false;
             resetenemyTurn();
             nextTurn();
             return;

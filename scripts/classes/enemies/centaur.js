@@ -7,7 +7,6 @@ class centaur extends enemy {
         if (spritesheet.length == 0) {
             createSpriteSheet();
         }
-        console.log(enemyVal.unitrange);
         super("Centaur", x, y, 6, 3, new PIXI.AnimatedSprite(spritesheet.idleleft), new weapon("bow", 2, 3, -1, 3 + enemyVal.unitrange), 0, -10);
     }
 
@@ -171,13 +170,19 @@ function ResolveMoves(enemy, moves) {
                 str = "attackleft";
                 enemy.sprite.loop = false;
             }
+            enemyshootAudio.currentTime = 0;
+            enemyshootAudio.play();
             player.takeDamage(enemy.weapon.attack());
         } else if (str == "left") {
             enemy.sprite.textures = spritesheet.walkleft;
             enemy.sprite.loop = true;
+            walkAudio.currentTime = 0;
+            walkAudio.play();
         } else {
             enemy.sprite.textures = spritesheet.walkright;
             enemy.sprite.loop = true;
+            walkAudio.currentTime = 0;
+            walkAudio.play();
         }
         let total = 48;
         enemy.sprite.play();
@@ -188,6 +193,7 @@ function ResolveMoves(enemy, moves) {
                 } else {
                     enemy.sprite.textures = spritesheet.idleright;
                 }
+                walkAudio.pause();
             }
             if (total) {
                 total--;

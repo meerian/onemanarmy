@@ -175,15 +175,23 @@ function ResolveMoves(enemy, moves) {
                 str = "attackleft";
                 enemy.sprite.loop = false;
             }
+            enemyshootAudio.currentTime = 0;
+            enemyshootAudio.play();
             player.takeDamage(enemy.weapon.attack());
         } else if (str == "left"){
             enemy.sprite.textures = spritesheet.walkleft;
             enemy.sprite.loop = true;
+            walkAudio.currentTime = 0;
+            walkAudio.play();
         } else if (str =="right") {
             enemy.sprite.textures = spritesheet.walkright;
             enemy.sprite.loop = true;
+            walkAudio.currentTime = 0;
+            walkAudio.play();
         } else if (str =="reload") {
             enemy.weapon.reload();
+            negativeAudio.currentTime = 0;
+            negativeAudio.play();
             showStringEnemy("reloaded", enemy);
         }
         let total = 48;
@@ -197,6 +205,7 @@ function ResolveMoves(enemy, moves) {
                 } else {
                     enemy.sprite.textures = spritesheet.idleright;
                 }
+                walkAudio.pause();
             } else if (total) {
                 total--;
                 switch (str) {

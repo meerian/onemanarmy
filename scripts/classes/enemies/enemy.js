@@ -17,9 +17,13 @@ export class enemy extends gameObject {
         this.sprite.on("pointerdown", function (event) {
             let enemy = findEnemyAlive(this.x, this.y);
             if (distApartObj(player, enemy) > player.weapon.range) {
+                negativeAudio.currentTime = 0;
+                negativeAudio.play();
                 showString("Out of range!");
                 return;
             } else if (player.weapon.bullets <= 0) {
+                noammoAudio.currentTime = 0;
+                noammoAudio.play();
                 showString("Out of ammo!");
                 return;
             } else if (isPlayerturn) {

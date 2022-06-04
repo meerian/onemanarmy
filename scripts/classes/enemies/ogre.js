@@ -248,6 +248,8 @@ function ResolveMoves(enemy, moves) {
             bgContainer.addChild(enemy.aimbox);
             enemy.isPrep = true;
         } else if (str == "attack") {
+            enemymeleeAudio.currentTime = 0;
+            enemymeleeAudio.play();
             enemy.isPrep = false;
             enemy.aimbox.play();
             if (player.x > enemy.x) {
@@ -265,9 +267,13 @@ function ResolveMoves(enemy, moves) {
         } else if (str == "left"){
             enemy.sprite.textures = spritesheet.walkleft;
             enemy.sprite.loop = true;
+            walkAudio.currentTime = 0;
+            walkAudio.play();
         } else {
             enemy.sprite.textures = spritesheet.walkright;
             enemy.sprite.loop = true;
+            walkAudio.currentTime = 0;
+            walkAudio.play();
         }
         let total = 48;
         enemy.sprite.play();
@@ -292,6 +298,7 @@ function ResolveMoves(enemy, moves) {
                 if (str.includes("right") && !enemy.isPrep) {
                         enemy.sprite.textures = spritesheet.idleright;
                 }
+                walkAudio.pause();
             }
             if (total) {
                 total--;

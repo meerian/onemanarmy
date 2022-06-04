@@ -157,33 +157,41 @@ export class gamePage extends page {
         drawText(turnText, xCentral, yCentral - 3 * 48, this.container, true);
 
         //Draw end turn button
+        const endTurnContainer = new PIXI.Container();
+        endTurnContainer.interactive = true;
+        endTurnContainer.hitArea = new PIXI.Rectangle(xCentral + 308, yCentral + 93, 80, 30);
         let endTurnBox = new PIXI.Graphics();
         endTurnBox.lineStyle(1, 0x40FF40, 1);
         endTurnBox.drawRect(xCentral + 308, yCentral + 93, 80, 30);
         endTurnBox.endFill();
-        this.container.addChild(endTurnBox);
+        endTurnContainer.addChild(endTurnBox);
         let textStyleEndTurn = {
             ...textStyle
         };
         endTurnButton = new PIXI.Text("End Turn", textStyleEndTurn);
         endTurnButton.interactive = true;
-        endTurnButton.on("pointerdown", function (event) {
+        endTurnContainer.on("pointerdown", function (event) {
+            pointerdownAudio.currentTime = 0;
+            pointerdownAudio.play();
             player.endTurn();
         })
-        endTurnButton.on("mouseover", function (event) {
+        endTurnContainer.on("mouseover", function (event) {
+            mouseoverAudio.currentTime = 0;
+            mouseoverAudio.play();
             endTurnButton.style.fill = "0x160805";
             endTurnBox.beginFill(0x40FF40);
             endTurnBox.drawRect(xCentral + 308, yCentral + 93, 80, 30);
             endTurnBox.endFill();
         })
-        endTurnButton.on("mouseout", function (event) {
+        endTurnContainer.on("mouseout", function (event) {
             endTurnButton.style.fill = "0x40FF40";
             endTurnBox.clear();
             endTurnBox.lineStyle(1, 0x40FF40, 1);
             endTurnBox.drawRect(xCentral + 308, yCentral + 93, 80, 30);
             endTurnBox.endFill();
         })
-        drawText(endTurnButton, xCentral + 350, yCentral + 110, this.container, true);
+        drawText(endTurnButton, xCentral + 350, yCentral + 110, endTurnContainer, true);
+        this.container.addChild(endTurnContainer);
     }
 }
 
@@ -321,6 +329,8 @@ export function levelEnd() {
         turnText.text = "Level Cleared!"
         player.cheer();
         cheerflag = true;
+        levelclearAudio.currentTime = 0;
+        levelclearAudio.play();
         return;
     }
     //resets values
