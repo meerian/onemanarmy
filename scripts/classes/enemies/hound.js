@@ -7,10 +7,15 @@ class hound extends enemy {
         if (spritesheet.length == 0) {
             createSpriteSheet();
         }
-        super("Hound", x, y, 3, 3, new PIXI.AnimatedSprite(spritesheet.idleleft), new weapon("claw", 1, 1 + enemyVal.sharperclaw, -1, 1), -2, -15);
+        super("Hound", x, y, 3, 3 + enemyVal.extramovement, new PIXI.AnimatedSprite(spritesheet.idleleft), new weapon("claw", 1, 1 + enemyVal.sharperclaw, -1, 1), -2, -15);
     }
 
     nextMove() {
+        if (this.skipTurn) {
+            this.skipTurn = false;
+            endTurn(this);
+            return;
+        }
         if (this.health <= 0) {
             endTurn(this);
             return;
@@ -100,7 +105,9 @@ class hound extends enemy {
 }
 
 export function addHound(x, y) {
-    enemies.push(new hound(x, y));
+    let spawn = new hound(x, y);
+    enemies.push(spawn);
+    return spawn;
 }
 
 function checkValidity(x, y) {

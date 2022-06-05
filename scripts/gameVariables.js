@@ -24,7 +24,7 @@ var playerInventory = [];
 var isPlayerturn = false;
 
 var enemySpawnList = {
-    1: ["warrior", "centaur"],
+    1: ["warrior", "dragon"],
     2: ["hound"],
     3: ["hound"],
     4: ["warrior"],
@@ -45,6 +45,8 @@ const enemyVal = {
     extrabullet: 0,
     caltrops: 0,
     unitrange: 0,
+    extramovement: 0,
+    ogrechange: false,
 }
 
 

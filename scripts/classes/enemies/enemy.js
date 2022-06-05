@@ -9,6 +9,7 @@ export class enemy extends gameObject {
         this.sprite.buttonMode = true;
         this.moves = [];
         this.isAlive = true;
+        this.skipTurn = false;
 
         //Draw text
         this.helpertext = new PIXI.Text(`${this.name}  (${this.health}HP)\nRange:${this.weapon.range} Dmg:${this.weapon.mindmg}-${this.weapon.maxdmg}\nAP:${this.ap}`, textStyleHelper);

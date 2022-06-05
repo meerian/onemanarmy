@@ -146,6 +146,10 @@ function distApartCoord(obj1, x, y) {
     return dist;
 }
 
+function findCoords(num) {
+    return [num % 9, ~~(num / 9)];
+}
+
 // -------------------------------------------------------------------------------
 
 //User textures and animations
@@ -160,6 +164,7 @@ const sniperssheet = new PIXI.BaseTexture.from("images/enemy/sniper_spritesheet.
 const slimessheet = new PIXI.BaseTexture.from("images/enemy/slime_spritesheet.png");
 const centaurssheet = new PIXI.BaseTexture.from("images/enemy/centaur_spritesheet.png");
 const ogressheet = new PIXI.BaseTexture.from("images/enemy/ogre_spritesheet.png");
+const dragonssheet = new PIXI.BaseTexture.from("images/enemy/dragon_spritesheet.png");
 
 const upgradessheet = new PIXI.BaseTexture.from("images/upgrade/upgrades_spritesheet.png");
 const modssheet = new PIXI.BaseTexture.from("images/upgrade/mods_spritesheet.png");

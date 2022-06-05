@@ -7,11 +7,16 @@ class slime extends enemy {
         if (spritesheet.length == 0) {
             createSpriteSheet();
         }
-        super("Slime", x, y, 8, 2, new PIXI.AnimatedSprite(spritesheet.idleleft), new weapon("slime", 1, 1, -1, 1), 0, -10);
+        super("Slime", x, y, 8, 2 + enemyVal.extramovement, new PIXI.AnimatedSprite(spritesheet.idleleft), new weapon("slime", 1, 1, -1, 1), 0, -10);
         this.helpertext.text = `${this.name}  (${this.health}HP)\nRange:${this.weapon.range} Dmg:1 AP\nAP:${this.ap}`;
     }
 
     nextMove() {
+        if (this.skipTurn) {
+            this.skipTurn = false;
+            endTurn(this);
+            return;
+        }
         if (this.health <= 0) {
             endTurn(this);
             return;
@@ -101,7 +106,9 @@ class slime extends enemy {
 }
 
 export function addSlime(x, y) {
-    enemies.push(new slime(x, y));
+    let spawn = new slime(x, y);
+    enemies.push(spawn);
+    return spawn;
 }
 
 function checkValidity(x, y) {

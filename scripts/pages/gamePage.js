@@ -7,6 +7,7 @@ import { addSniper } from "../classes/enemies/sniper.js";
 import { addSlime } from "../classes/enemies/slime.js";
 import { addCentaur } from "../classes/enemies/centaur.js";
 import { addOgre } from "../classes/enemies/ogre.js";
+import { addDragon } from "../classes/enemies/dragon.js";
 
 export class gamePage extends page {
     constructor() {
@@ -57,6 +58,8 @@ export class gamePage extends page {
                 case "ogre":
                     addOgre(curX, curY);
                     break;
+                case "dragon":
+                    addDragon();
             }
             curY = enemySpawnCoord[curY];
             if (curY == -1) {

@@ -40,14 +40,14 @@ class extrabullet extends upgrade {
     }
 }
 
-class addH extends upgrade {
+class extramovement extends upgrade {
     constructor() {
-        let flavourtext = "Add one hound"
-        super("Modification", "Add Enemy", flavourtext, "", new PIXI.Texture(modssheet, new PIXI.Rectangle(1 * rw, 0 * rh, rw, rh)));
+        let flavourtext = "All melee enemies \n gain +1 AP"
+        super("Modification", "Extra \n Movement", flavourtext, "", new PIXI.Texture(modssheet, new PIXI.Rectangle(5 * rw, 0 * rh, rw, rh)));
     }
 
     apply() {
-        curSpawn.push("hound");
+        enemyVal.extramovement++;
     }
 }
 
@@ -63,6 +63,21 @@ class changeHtoW extends upgrade {
             curSpawn.splice(index, 1);
             curSpawn.push("warrior");
         }
+    }
+}
+
+class removeWaddO extends upgrade {
+    constructor() {
+        let flavourtext = "Remove all current \n warriors \n Add an ogre"
+        super("Modification", "Enemy Swap", flavourtext, "", new PIXI.Texture(modssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh)));
+    }
+
+    apply() {
+        while (curSpawn.indexOf("warrior") != -1) {
+            let index = curSpawn.indexOf("warrior");
+            curSpawn.splice(index, 1);
+        }
+        curSpawn.push("ogre")
     }
 }
 
@@ -92,6 +107,17 @@ class removeWaddC extends upgrade {
     }
 }
 
+class ogrechange extends upgrade {
+    constructor() {
+        let flavourtext = "Ogres no longer take\n 2 turns to attack \n DMG of ogres is halved"
+        super("Modification", "Shrink Ray", flavourtext, "", new PIXI.Texture(modssheet, new PIXI.Rectangle(6 * rw, 0 * rh, rw, rh)));
+    }
+
+    apply() {
+        enemyVal.ogrechange = true;
+    }
+}
+
 export function parseMod(mod) {
     switch (mod) {
         case 1:
@@ -99,7 +125,7 @@ export function parseMod(mod) {
         case 2:
             return new sharperTeeth();
         case 3:
-            return new addH();
+            return new extramovement();
         case 4:
             return new extrabullet();
         case 5:
@@ -108,5 +134,9 @@ export function parseMod(mod) {
             return new extrarange();
         case 7:
             return new removeWaddC();
+        case 8:
+            return new removeWaddO();
+        case 9:
+            return new ogrechange();
     }
 }

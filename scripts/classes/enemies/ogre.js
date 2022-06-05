@@ -7,12 +7,18 @@ class ogre extends enemy {
         if (spritesheet.length == 0) {
             createSpriteSheet();
         }
-        super("Ogre", x, y, 20, 3, new PIXI.AnimatedSprite(spritesheet.idleleft), new weapon("Fist", 7, 7, -1, 1), 0, -15);
+        super("Ogre", x, y, 20, 3 + enemyVal.extramovement, new PIXI.AnimatedSprite(spritesheet.idleleft), new weapon("Fist", 7, 7, -1, 1), 0, -15);
+        this.isModified = enemyVal.ogrechange;
+        this.sprite.scale.set(2, 2);
+        if (this.isModified) {
+            this.weapon.updateDmg(-3, -3);
+            this.helpertext.text = `${this.name}  (${this.health}HP)\nRange:${this.weapon.range} Dmg:${this.weapon.mindmg}-${this.weapon.maxdmg}\nAP:${this.ap}`;
+            this.sprite.scale.set(1.5, 1.5);
+        }
         this.isPrep = false;
-        this.sprite.scale.set(2,2);
         this.aimbox = new PIXI.AnimatedSprite(aimssheet);
         this.aimbox.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
-        this.aimbox.scale.set(3,3);
+        this.aimbox.scale.set(3, 3);
         this.aimbox.anchor.set(0.5);
         this.aimbox.animationSpeed = 0.15;
         this.aimbox.stop();
@@ -22,6 +28,11 @@ class ogre extends enemy {
     }
 
     nextMove() {
+        if (this.skipTurn) {
+            this.skipTurn = false;
+            endTurn(this);
+            return;
+        }
         if (this.health <= 0) {
             endTurn(this);
             return;
@@ -33,13 +44,16 @@ class ogre extends enemy {
         let attackFlag = true;
         while (curAP) {
             curAP--;
-            if (attackFlag && this.isPrep) {
+            if (!this.isModified && attackFlag && this.isPrep) {
                 this.moves.push("attack");
                 attackFlag = false;
                 continue;
             }
             if (attackFlag && this.weapon.range >= distApartCoord(player, curX, curY)) {
                 this.moves.push("prep");
+                if (this.isModified) {
+                    this.moves.push("attack");
+                }
                 break;
             }
             if (this.weapon.range >= distApartCoord(player, curX, curY)) {
@@ -83,7 +97,7 @@ class ogre extends enemy {
                 }
                 continue;
             }
-            
+
         }
         this.move(curX, curY, this.moves);
     }
@@ -123,7 +137,9 @@ class ogre extends enemy {
 }
 
 export function addOgre(x, y) {
-    enemies.push(new ogre(x, y));
+    let spawn = new ogre(x, y);
+    enemies.push(spawn);
+    return spawn;
 }
 
 function checkValidity(x, y) {
@@ -189,7 +205,7 @@ function toggleHurt(enemy, dir, isPrep, flag = true) {
                 enemy.sprite.textures = spritesheet.hurtright;
             }
         }
-        setTimeout(function() { toggleHurt(enemy, dir, isPrep, false) }, 250);
+        setTimeout(function () { toggleHurt(enemy, dir, isPrep, false) }, 250);
     } else {
         if (isPrep) {
             if (dir == "left") {
@@ -225,24 +241,24 @@ function ResolveMoves(enemy, moves) {
                     enemy.aimbox.x = player.sprite.x - 5 - 48;
                     enemy.aimbox.y = player.sprite.y + 20;
                     enemy.attackX = player.x - 1;
-                    enemy.attackY =  player.y;
+                    enemy.attackY = player.y;
                 } else {
                     enemy.aimbox.x = player.sprite.x - 5 + 48;
                     enemy.aimbox.y = player.sprite.y + 20;
                     enemy.attackX = player.x + 1;
-                    enemy.attackY =  player.y;
+                    enemy.attackY = player.y;
                 }
             } else {
                 if (player.y > enemy.y) {
                     enemy.aimbox.x = player.sprite.x - 5;
                     enemy.aimbox.y = player.sprite.y + 20 + 48;
                     enemy.attackX = player.x;
-                    enemy.attackY =  player.y + 1;
+                    enemy.attackY = player.y + 1;
                 } else {
                     enemy.aimbox.x = player.sprite.x - 5;
                     enemy.aimbox.y = player.sprite.y + 20 - 48;
                     enemy.attackX = player.x;
-                    enemy.attackY =  player.y - 1;
+                    enemy.attackY = player.y - 1;
                 }
             }
             bgContainer.addChild(enemy.aimbox);
@@ -264,7 +280,7 @@ function ResolveMoves(enemy, moves) {
             if (Math.abs(player.x - enemy.attackX) <= 1 && Math.abs(player.y - enemy.attackY) <= 1) {
                 player.takeDamage(enemy.weapon.attack());
             }
-        } else if (str == "left"){
+        } else if (str == "left") {
             enemy.sprite.textures = spritesheet.walkleft;
             enemy.sprite.loop = true;
             walkAudio.currentTime = 0;
@@ -283,7 +299,7 @@ function ResolveMoves(enemy, moves) {
                 if (str.includes("attack")) {
                     enemy.aimbox.gotoAndStop(0);
                     bgContainer.removeChild(enemy.aimbox);
-                }   
+                }
                 if (str == "prepleft") {
                     enemy.sprite.textures = spritesheet.prepleft;
                     return;
@@ -291,12 +307,15 @@ function ResolveMoves(enemy, moves) {
                 if (str == "prepright") {
                     enemy.sprite.textures = spritesheet.prepright;
                     return;
-                } 
+                }
                 if (str.includes("left") && !enemy.isPrep) {
-                        enemy.sprite.textures = spritesheet.idleleft;
+                    enemy.sprite.textures = spritesheet.idleleft;
                 }
                 if (str.includes("right") && !enemy.isPrep) {
-                        enemy.sprite.textures = spritesheet.idleright;
+                    enemy.sprite.textures = spritesheet.idleright;
+                }
+                if (str == "up" || str == "down") {
+                    enemy.sprite.textures = spritesheet.idleright;
                 }
                 walkAudio.pause();
             }

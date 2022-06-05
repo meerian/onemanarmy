@@ -7,10 +7,15 @@ class warrior extends enemy {
         if (spritesheet.length == 0) {
             createSpriteSheet();
         }
-        super("Warrior", x, y, 5, 3, new PIXI.AnimatedSprite(spritesheet.idleleft), new weapon("sword", 2, 3, -1, 1), 0, -10);
+        super("Warrior", x, y, 5, 3 + enemyVal.extramovement, new PIXI.AnimatedSprite(spritesheet.idleleft), new weapon("sword", 2, 3, -1, 1), 0, -10);
     }
 
     nextMove() {
+        if (this.skipTurn) {
+            this.skipTurn = false;
+            endTurn(this);
+            return;
+        }
         if (this.health <= 0) {
             endTurn(this);
             return;
@@ -100,7 +105,9 @@ class warrior extends enemy {
 }
 
 export function addWarrior(x, y) {
-    enemies.push(new warrior(x, y));
+    let spawn = new warrior(x, y);
+    enemies.push(spawn);
+    return spawn;
 }
 
 function checkValidity(x, y) {

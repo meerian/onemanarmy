@@ -12,6 +12,11 @@ class sniper extends enemy {
     }
 
     nextMove() {
+        if (this.skipTurn) {
+            this.skipTurn = false;
+            endTurn(this);
+            return;
+        }
         if (this.health <= 0) {
             endTurn(this);
             return;
@@ -106,7 +111,9 @@ class sniper extends enemy {
 }
 
 export function addSniper(x, y) {
-    enemies.push(new sniper(x, y));
+    let spawn = new sniper(x, y);
+    enemies.push(spawn);
+    return spawn;
 }
 
 function checkValidity(x, y) {
