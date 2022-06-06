@@ -1,6 +1,7 @@
 //Main application
 const app = new PIXI.Application({
     view: document.getElementById("myCanvas"),
+    backgroundColor: 0x160805,
 });
 const bgContainer = new PIXI.Container();
 const gameContainer = new PIXI.Container();

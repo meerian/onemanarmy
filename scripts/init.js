@@ -1,5 +1,6 @@
 import { gamePage } from "./pages/gamePage.js";
+import { createMenuPage } from "./pages/MenuPage.js";
 import { nextTurn } from "./turnHandler.js";
 
-let page = new gamePage();
-page.init();
+let page = createMenuPage();
+//page.init();
