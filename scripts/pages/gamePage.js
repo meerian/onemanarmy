@@ -13,13 +13,14 @@ export class gamePage extends page {
     constructor() {
         super(gameContainer);
         curPage = this;
+        this.uicontainer = uiContainer;
     }
 
     createPage() {
         let animationOffset = 980;
 
         //Draw Level
-        drawText(new PIXI.Text(`Level ${gamelevel}`, textStyle), xCentral, yCentral - 200, this.container, true);
+        drawText(new PIXI.Text(`Level ${gamelevel}`, textStyle), xCentral, yCentral - 200, uiContainer, true);
 
         //Add grid
         let grid = new PIXI.Sprite(new PIXI.Texture.from('images/grid.png'));
@@ -65,10 +66,11 @@ export class gamePage extends page {
             if (curY == -1) {
                 curX--;
                 curY = startingY;
-            }
+            }    
         });
     }
     stage() {
+        app.stage.addChild(uiContainer);
         app.stage.addChild(gameContainer);
         app.stage.addChild(moveContainer);
         app.stage.addChild(detailContainer);
@@ -97,7 +99,7 @@ export class gamePage extends page {
 
     drawUI() {
         //Draw inventory
-        drawText(new PIXI.Text("Inventory:", textStyle), xCentral - 300, yCentral - 115, this.container, true);
+        drawText(new PIXI.Text("Inventory:", textStyle), xCentral - 300, yCentral - 115, uiContainer, true);
         playerInventory.forEach(function (element, index) {
             //Create image
             let text = new PIXI.Text(`${element.name} \n ${element.shortdesc}`, textStyleUpgrade);
@@ -125,19 +127,19 @@ export class gamePage extends page {
         });
 
         //Draw user health
-        drawText(new PIXI.Text("Health:", textStyle), xCentral - 300, yCentral + 155, this.container, true);
+        drawText(new PIXI.Text("Health:", textStyle), xCentral - 300, yCentral + 155, uiContainer, true);
         healthText = new PIXI.Text(playerVal.health, textStyle);
-        drawText(healthText, xCentral - 300, yCentral + 175, this.container, true);
+        drawText(healthText, xCentral - 300, yCentral + 175, uiContainer, true);
 
         //Draw user AP
-        drawText(new PIXI.Text("AP:", textStyle), xCentral - 225, yCentral + 155, this.container, true);
+        drawText(new PIXI.Text("AP:", textStyle), xCentral - 225, yCentral + 155, uiContainer, true);
         apText = new PIXI.Text(playerVal.ap, textStyle);
-        drawText(apText, xCentral - 228, yCentral + 175, this.container, true);
+        drawText(apText, xCentral - 228, yCentral + 175, uiContainer, true);
 
         //Draw user weapon
-        drawText(new PIXI.Text(`Weapon: ${player.weapon.name}`, textStyle), xCentral - 100, yCentral + 155, this.container, true);
+        drawText(new PIXI.Text(`Weapon: ${player.weapon.name}`, textStyle), xCentral - 100, yCentral + 155, uiContainer, true);
         weaponText = new PIXI.Text(player.weapon.weapontext, textStyle);
-        drawText(weaponText, xCentral - 103, yCentral + 175, this.container, true);
+        drawText(weaponText, xCentral - 103, yCentral + 175, uiContainer, true);
 
         //Draw clip
         bTextContainer = new PIXI.Container();
@@ -148,16 +150,16 @@ export class gamePage extends page {
         bulletText = new PIXI.Text("Ammo: " + player.weapon.bullets, textStyle);
         drawText(bulletText, xCentral + 50, yCentral + 155, bTextContainer, true);
         drawText(new PIXI.Text("(Click to reload)", textStyle), xCentral + 50, yCentral + 175, bTextContainer, true);
-        gameContainer.addChild(bTextContainer);
+        uiContainer.addChild(bTextContainer);
 
         //Draw Action
-        drawText(new PIXI.Text("Action:", textStyle), xCentral + 250, yCentral + 155, this.container, true);
+        drawText(new PIXI.Text("Action:", textStyle), xCentral + 250, yCentral + 155, uiContainer, true);
         actionText = new PIXI.Text("", textStyle);
-        drawText(actionText, xCentral + 250, yCentral + 175, this.container, true);
+        drawText(actionText, xCentral + 250, yCentral + 175, uiContainer, true);
 
         //Draw current turn
         turnText = new PIXI.Text("Player's Turn", textStyle);
-        drawText(turnText, xCentral, yCentral - 3 * 48, this.container, true);
+        drawText(turnText, xCentral, yCentral - 3 * 48, uiContainer, true);
 
         //Draw end turn button
         const endTurnContainer = new PIXI.Container();
@@ -194,7 +196,18 @@ export class gamePage extends page {
             endTurnBox.endFill();
         })
         drawText(endTurnButton, xCentral + 350, yCentral + 110, endTurnContainer, true);
-        this.container.addChild(endTurnContainer);
+        uiContainer.addChild(endTurnContainer);
+    }
+
+    cleanup() {
+        while (this.container.children[0]) {
+            this.container.removeChild(this.container.children[0]);
+        }
+        while (this.uicontainer.children[0]) {
+            this.uicontainer.removeChild(this.uicontainer.children[0]);
+        }
+        app.stage.removeChild(this.container);
+        app.stage.removeChild(this.uicontainer);
     }
 }
 
@@ -319,6 +332,24 @@ export function updateTurnText() {
         turnText.text = "Enemy's Turn";
     }
 
+}
+
+export function shakeScreen() {
+    let total = 6;
+    const step = () => {
+        total--;
+        if (total == 0) {
+            gameContainer.x = 0;
+            return;
+        }
+        if (total % 2 == 0) {
+            gameContainer.x = 3;
+        } else {
+            gameContainer.x = -3;
+        }
+        setTimeout(step, 100);
+    }
+    step();
 }
 
 export function levelEnd() {

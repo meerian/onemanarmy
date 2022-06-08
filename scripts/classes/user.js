@@ -1,6 +1,6 @@
 import { nextTurn } from "../turnHandler.js";
 import { moveIndicator } from "./moveIndicator.js";
-import { levelEnd, showString, updateAP, updateBulletText, updateHealth } from "../pages/gamePage.js";
+import { levelEnd, shakeScreen, showString, updateAP, updateBulletText, updateHealth } from "../pages/gamePage.js";
 import { pistol } from "./mods/upgradeList.js";
 
 class user extends gameObject {
@@ -38,6 +38,7 @@ class user extends gameObject {
         } else {
             playerVal.health -= val[0];
             updateHealth(val[0], val[1]);
+            shakeScreen();
         }
     }
 
@@ -180,7 +181,7 @@ export function playerTurn() {
         }
         updateAP();
         isPlayerturn = false;
-        nextTurn();
+        setTimeout(nextTurn, 250);
     }
 }
 

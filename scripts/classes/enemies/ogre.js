@@ -1,6 +1,6 @@
 import { nextTurn } from "../../turnHandler.js";
 import { enemy } from "./enemy.js";
-import { updateActionText, takeDamage } from "../../pages/gamePage.js";
+import { updateActionText, takeDamage, shakeScreen } from "../../pages/gamePage.js";
 
 class ogre extends enemy {
     constructor(x, y) {
@@ -160,7 +160,7 @@ function endTurn(enemy) {
         return;
     }
     enemyTurnCounter++;
-    nextTurn();
+    setTimeout(nextTurn, 250);
 }
 
 var spritesheet = [];
@@ -280,6 +280,7 @@ function ResolveMoves(enemy, moves) {
             if (Math.abs(player.x - enemy.attackX) <= 1 && Math.abs(player.y - enemy.attackY) <= 1) {
                 player.takeDamage(enemy.weapon.attack());
             }
+            shakeScreen();
         } else if (str == "left") {
             enemy.sprite.textures = spritesheet.walkleft;
             enemy.sprite.loop = true;

@@ -92,9 +92,9 @@ class extrarange extends upgrade {
     }
 }
 
-class removeWaddC extends upgrade {
+class removeWaddS extends upgrade {
     constructor() {
-        let flavourtext = "Remove up to 1 warrior \n Add 1 centaur"
+        let flavourtext = "Remove up to 1 warrior \n Add 1 slime"
         super("Modification", "Enemy Swap", flavourtext, "", new PIXI.Texture(modssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh)));
     }
 
@@ -103,7 +103,7 @@ class removeWaddC extends upgrade {
         if (index > -1) {
             curSpawn.splice(index, 1);
         }
-        curSpawn.push("centaur");
+        curSpawn.push("slime");
     }
 }
 
@@ -118,25 +118,51 @@ class ogrechange extends upgrade {
     }
 }
 
+class addogre extends upgrade {
+    constructor() {
+        let flavourtext = "The ogre is\n here!"
+        super("Modification", "Ogre!", flavourtext, "", new PIXI.Texture(modssheet, new PIXI.Rectangle(7 * rw, 0 * rh, rw, rh)));
+    }
+
+    apply() {
+        curSpawn.unshift("ogre");
+    }
+}
+
+class adddragon extends upgrade {
+    constructor() {
+        let flavourtext = "The dragon is\n coming!"
+        super("Modification", "Dragon!", flavourtext, "", new PIXI.Texture(modssheet, new PIXI.Rectangle(8 * rw, 0 * rh, rw, rh)));
+    }
+
+    apply() {
+        curSpawn = ["dragon"];
+    }
+}
+
 export function parseMod(mod) {
     switch (mod) {
         case 1:
-            return new removeHaddW();
+            return new removeHaddW(); //base
         case 2:
-            return new sharperTeeth();
+            return new sharperTeeth(); //base
         case 3:
-            return new extramovement();
+            return new extramovement(); //base
         case 4:
-            return new extrabullet();
+            return new changeHtoW(); //lvl 2: warrior
         case 5:
-            return new changeHtoW();
+            return new removeWaddS(); //lvl 3: centaur
         case 6:
-            return new extrarange();
+            return new extrarange(); //lvl 5: sniper
         case 7:
-            return new removeWaddC();
+            return new ogrechange(); //lvl 5: sniper
         case 8:
-            return new removeWaddO();
+            return new removeWaddO(); //lvl 6: slime
         case 9:
-            return new ogrechange();
+            return new extrabullet(); //lvl 7
+        case -1:
+            return new addogre(); //lvl 4: ogre
+        case -2:
+            return new adddragon(); //lvl 8: dragon
     }
 }

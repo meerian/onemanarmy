@@ -24,13 +24,14 @@ var playerInventory = [];
 var isPlayerturn = false;
 
 var enemySpawnList = {
-    1: ["warrior", "dragon"],
-    2: ["hound"],
-    3: ["hound"],
-    4: ["warrior"],
-    5: ["warrior"],
-    6: ["warrior"],
-    7: ["warrior"],
+    1: ["hound", "hound"],
+    2: ["warrior"],
+    3: ["centaur"],
+    4: [],
+    5: ["sniper"],
+    6: ["slime"],
+    7: ["centaur"],
+    8: [],
 }
 
 var curSpawn = [...enemySpawnList[1]];

@@ -121,7 +121,7 @@ class caffeinepill extends upgrade {
 
 class guncalibrator extends upgrade {
     constructor() {
-        let flavourtext = "All of your shots\n will now deal the \naverage between \nMIN DMG and MAX DMG"
+        let flavourtext = "All of your shots\n will now deal the \naverage damage"
         let shortdesc = "All shots do avg damage"
         super("Passive", "Gun Calibration", flavourtext, shortdesc, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(7 * rw, 1 * rh, rw, rh)));
     }
@@ -409,7 +409,7 @@ export function checkValidity(upgrade) {
 export class pistol extends weapon {
     constructor() {
         let flavourtext = "Starting weapon."
-        super("Pistol", 5, 5, 3, 3, flavourtext, new PIXI.Texture.from('images/placeholder.png'), playerVal.critmodifier);
+        super("Pistol", 1, 3, 3, 3, flavourtext, new PIXI.Texture.from('images/placeholder.png'), playerVal.critmodifier);
         this.update();
     }
 
@@ -455,8 +455,8 @@ class assaultrifle extends weapon {
 
 class smg extends weapon {
     constructor() {
-        let flavourtext = "Deals 1-2 dmg\n Clipsize: 4 \nRange:3 \n\nEach shot has a \n30% change to cost 0 AP"
-        super("SMG", 1, 2, 4, 3, flavourtext, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(3 * rw, 0 * rh, rw, rh)));
+        let flavourtext = "Deals 1-3 dmg\n Clipsize: 4 \nRange:3 \n\nEach shot has a \n30% change to cost 0 AP"
+        super("SMG", 1, 3, 4, 3, flavourtext, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(3 * rw, 0 * rh, rw, rh)));
         this.update();
     }
 

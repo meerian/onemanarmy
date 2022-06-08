@@ -1,6 +1,6 @@
 import { nextTurn } from "../../turnHandler.js";
 import { enemy } from "./enemy.js";
-import { updateActionText, takeDamage, showStringEnemy } from "../../pages/gamePage.js";
+import { updateActionText, takeDamage, showStringEnemy, shakeScreen } from "../../pages/gamePage.js";
 import { addHound } from "./hound.js";
 import { addWarrior } from "./warrior.js";
 import { addSniper } from "./sniper.js";
@@ -133,7 +133,7 @@ function endTurn(enemy) {
         return;
     }
     enemyTurnCounter++;
-    nextTurn();
+    setTimeout(nextTurn, 250);
 }
 
 function checkValidity(x, y) {
@@ -282,6 +282,7 @@ function ResolveMoves(enemy, move) {
             });
             break;
     }
+    shakeScreen();
     let total = 100;
     enemy.sprite.play();
     enemy.sprite.animationSpeed = .5;

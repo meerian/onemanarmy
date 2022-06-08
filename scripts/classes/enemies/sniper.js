@@ -134,7 +134,7 @@ function endTurn(enemy) {
         return;
     }
     enemyTurnCounter++;
-    nextTurn();
+    setTimeout(nextTurn, 250);
 }
 
 var spritesheet = [];

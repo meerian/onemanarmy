@@ -5,6 +5,7 @@ const app = new PIXI.Application({
 });
 const bgContainer = new PIXI.Container();
 const gameContainer = new PIXI.Container();
+const uiContainer = new PIXI.Container();
 const moveContainer = new PIXI.Container();
 const detailContainer = new PIXI.Container();
 

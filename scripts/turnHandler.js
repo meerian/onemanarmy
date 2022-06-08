@@ -4,7 +4,10 @@ import { gamePage } from "./pages/gamePage.js";
 
 export function nextTurn() {
     if (enemies.length == enemyDefeated) {
-        levelEnd();
+        if (flag) {
+            levelEnd();
+            flag = false;
+        }
         return;
     }
     if (isPlayerturn) {
@@ -24,7 +27,10 @@ export function nextTurn() {
     }
 }
 
+var flag = true;
+
 export function startLevel() {
+    flag = true;
     let page = new gamePage();
     page.init();
     //nextTurn();
