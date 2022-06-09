@@ -22,8 +22,11 @@ export function nextTurn() {
             nextTurn();
             return;
         }
-        updateTurnText();
-        enemies[enemyTurnCounter].nextMove();
+        let curEnemy = enemies[enemyTurnCounter];
+        if (curEnemy.isAlive) {
+            updateTurnText(curEnemy.name);
+        }
+        curEnemy.nextMove();
     }
 }
 

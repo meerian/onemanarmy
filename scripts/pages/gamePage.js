@@ -178,7 +178,9 @@ export class gamePage extends page {
         endTurnContainer.on("pointerdown", function (event) {
             pointerdownAudio.currentTime = 0;
             pointerdownAudio.play();
-            player.endTurn();
+            if (isPlayerturn) {
+                player.endTurn();
+            }
         })
         endTurnContainer.on("mouseover", function (event) {
             mouseoverAudio.currentTime = 0;
@@ -325,13 +327,8 @@ export function removeItem(item) {
     gameContainer.removeChild(item.sprite);
 }
 
-export function updateTurnText() {
-    if (isPlayerturn) {
-        turnText.text = "Player's Turn";
-    } else {
-        turnText.text = "Enemy's Turn";
-    }
-
+export function updateTurnText(str = "Player") {
+    turnText.text = `${str}'s Turn`;
 }
 
 export function shakeScreen() {

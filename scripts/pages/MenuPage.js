@@ -20,7 +20,14 @@ class menuPage extends page {
         let animationOffset = 950;
 
         //Create title
-        drawText(new PIXI.Text("One Man Army", textStyle), xCentral, yCentral - 200, this.container, true);
+        //drawText(new PIXI.Text("One Man Army", textStyle), xCentral, yCentral - 200, this.container, true);
+        let logo = new PIXI.Sprite(new PIXI.Texture.from('images/logo.png'));
+        logo.x = xCentral;
+        logo.y = yCentral - 200;
+        logo.anchor.set(0.5);
+        logo.scale.set(3, 3);
+        logo.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+        this.container.addChild(logo);
 
         //Create start container
         this.startContainer = new PIXI.Container();
@@ -29,16 +36,16 @@ class menuPage extends page {
         //Create start box
         let startBox = new PIXI.Graphics();
         startBox.lineStyle(1, 0x00FF2A, 1);
-        startBox.drawRect(xCentral - 80, yCentral - 100 + animationOffset, 160, 30);
+        startBox.drawRect(xCentral - 80, yCentral - 50 + animationOffset, 160, 30);
         startBox.endFill();
-        startBox.hitArea = new PIXI.Rectangle(xCentral - 80, yCentral - 100 + animationOffset, 160, 30);
+        startBox.hitArea = new PIXI.Rectangle(xCentral - 80, yCentral - 50 + animationOffset, 160, 30);
         this.startContainer.addChild(startBox);
         pageElements.push(startBox);
 
         //Create start Text
         let textStyleStart = { ...textStyle };
         let StartBoxText = new PIXI.Text(`Start`, textStyleStart);
-        drawText(StartBoxText, xCentral, yCentral - 85 + animationOffset, this.startContainer, true);
+        drawText(StartBoxText, xCentral, yCentral - 35 + animationOffset, this.startContainer, true);
         pageElements.push(StartBoxText);
         this.startContainer.on("pointerdown", function (event) {
             pointerdownAudio.currentTime = 0;
@@ -50,13 +57,13 @@ class menuPage extends page {
             mouseoverAudio.play();
             startBox.clear();
             startBox.lineStyle(2, 0x00FF2A, 1);
-            startBox.drawRect(xCentral - 80, yCentral - 100 + animationOffset, 160, 30);
+            startBox.drawRect(xCentral - 80, yCentral - 50 + animationOffset, 160, 30);
             startBox.endFill();
         })
         this.startContainer.on("mouseout", function (event) {
             startBox.clear();
             startBox.lineStyle(1, 0x00FF2A, 1);
-            startBox.drawRect(xCentral - 80, yCentral - 100 + animationOffset, 160, 30);
+            startBox.drawRect(xCentral - 80, yCentral - 50 + animationOffset, 160, 30);
             startBox.endFill();
         })
         this.container.addChild(this.startContainer);
@@ -68,16 +75,16 @@ class menuPage extends page {
         //Create control box
         let controlBox = new PIXI.Graphics();
         controlBox.lineStyle(1, 0x00FF2A, 1);
-        controlBox.drawRect(xCentral - 80, yCentral - 30 + animationOffset, 160, 30);
+        controlBox.drawRect(xCentral - 80, yCentral + 30 + animationOffset, 160, 30);
         controlBox.endFill();
-        controlBox.hitArea = new PIXI.Rectangle(xCentral - 80, yCentral - 30 + animationOffset, 160, 30);
+        controlBox.hitArea = new PIXI.Rectangle(xCentral - 80, yCentral + 30 + animationOffset, 160, 30);
         this.helpContainer.addChild(controlBox);
         pageElements.push(controlBox);
 
         //Create control Text
         let textStyleControl = { ...textStyle };
         let ControlBoxText = new PIXI.Text(`How to Play`, textStyleControl);
-        drawText(ControlBoxText, xCentral, yCentral - 15 + animationOffset, this.helpContainer, true);
+        drawText(ControlBoxText, xCentral, yCentral + 45 + animationOffset, this.helpContainer, true);
         pageElements.push(ControlBoxText);
         this.helpContainer.on("pointerdown", function (event) {
             pointerdownAudio.currentTime = 0;
@@ -91,13 +98,13 @@ class menuPage extends page {
             mouseoverAudio.play();
             controlBox.clear();
             controlBox.lineStyle(2, 0x00FF2A, 1);
-            controlBox.drawRect(xCentral - 80, yCentral - 30 + animationOffset, 160, 30);
+            controlBox.drawRect(xCentral - 80, yCentral + 30 + animationOffset, 160, 30);
             controlBox.endFill();
         })
         this.helpContainer.on("mouseout", function (event) {
             controlBox.clear();
             controlBox.lineStyle(1, 0x00FF2A, 1);
-            controlBox.drawRect(xCentral - 80, yCentral - 30 + animationOffset, 160, 30);
+            controlBox.drawRect(xCentral - 80, yCentral + 30 + animationOffset, 160, 30);
             controlBox.endFill();
         })
         this.container.addChild(this.helpContainer);

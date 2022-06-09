@@ -7,7 +7,7 @@ class warrior extends enemy {
         if (spritesheet.length == 0) {
             createSpriteSheet();
         }
-        super("Warrior", x, y, 5, 3 + enemyVal.extramovement, new PIXI.AnimatedSprite(spritesheet.idleleft), new weapon("sword", 2, 3, -1, 1), 0, -10);
+        super("Warrior", x, y, 5, 3 + enemyVal.extramovement, new PIXI.AnimatedSprite(spritesheet.idleleft), new weapon("sword", 1, 3, -1, 1), 0, -10);
     }
 
     nextMove() {
