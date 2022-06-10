@@ -7,7 +7,7 @@ class centaur extends enemy {
         if (spritesheet.length == 0) {
             createSpriteSheet();
         }
-        super("Centaur", x, y, 6, 3, new PIXI.AnimatedSprite(spritesheet.idleleft), new weapon("bow", 2, 3, -1, 3 + enemyVal.unitrange), 0, -10);
+        super("Centaur", x, y, 6, 3, new PIXI.AnimatedSprite(spritesheet.idleleft), new weapon("bow", 1, 3, -1, 3 + enemyVal.unitrange), 0, -10);
     }
 
     nextMove() {

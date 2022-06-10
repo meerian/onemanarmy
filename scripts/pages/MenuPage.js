@@ -20,7 +20,6 @@ class menuPage extends page {
         let animationOffset = 950;
 
         //Create title
-        //drawText(new PIXI.Text("One Man Army", textStyle), xCentral, yCentral - 200, this.container, true);
         let logo = new PIXI.Sprite(new PIXI.Texture.from('images/logo.png'));
         logo.x = xCentral;
         logo.y = yCentral - 200;

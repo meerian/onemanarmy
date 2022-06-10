@@ -13,6 +13,8 @@ export class moveIndicator {
     }
 
     update(str) {
+        pointerdownAudio.currentTime = 0;
+        pointerdownAudio.play();
         if (this.moves.length > 0 && this.backCheck(str)) {
             this.removeHelper();
             this.moves.pop();

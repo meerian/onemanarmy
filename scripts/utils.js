@@ -63,6 +63,51 @@ const drawText = (text, x, y, container, isAnchored = false) => {
 // -------------------------------------------------------------------------------
 
 //Audio
+let volumeToggle = true;
+let volumeonTexture = new PIXI.Texture.from('images/volume_button.png');
+let volumeoffTexture = new PIXI.Texture.from('images/volume_mute.png');
+let volumeButton = new PIXI.Sprite(volumeonTexture);
+volumeButton.x = app.renderer.width - 30;
+volumeButton.y = 30;
+volumeButton.anchor.set(0.5);
+volumeButton.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+volumeButton.interactive = true;
+volumeButton.on("pointerdown", function (event) {
+    if (volumeToggle) {
+        this.texture = volumeoffTexture
+    } else {
+        this.texture = volumeonTexture
+    }
+    toggleVolume();
+    volumeToggle = !volumeToggle;
+    pointerdownAudio.currentTime = 0;
+    pointerdownAudio.play();
+})
+volumeButton.on("mouseover", function (event) {
+    mouseoverAudio.currentTime = 0;
+    mouseoverAudio.play();
+})
+app.stage.addChild(volumeButton);
+
+function toggleVolume() {
+    //general audio
+    mouseoverAudio.muted = volumeToggle;
+    pointerdownAudio.muted = volumeToggle;
+    levelclearAudio.muted = volumeToggle;
+    negativeAudio.muted = volumeToggle;
+    spawnAudio.muted = volumeToggle;
+
+    //player audio
+    walkAudio.muted = volumeToggle;
+    shootAudio.muted = volumeToggle;
+    noammoAudio.muted = volumeToggle;
+    activeAudio.muted = volumeToggle;
+
+    //enemy audio
+    enemymeleeAudio.muted = volumeToggle;
+    enemyshootAudio.muted = volumeToggle;
+}
+
 
 //general audio
 const mouseoverAudio = new Audio("audio/mouseover.wav");
@@ -77,6 +122,7 @@ spawnAudio.volume = 0.2;
 //player audio
 const walkAudio = new Audio("audio/walk.wav");
 const shootAudio = new Audio("audio/shoot.wav");
+shootAudio.volume = 0.2;
 const noammoAudio = new Audio("audio/noammo.wav");
 const activeAudio = new Audio("audio/useactive.wav");
 activeAudio.volume = 0.2;
@@ -357,7 +403,7 @@ class page {
     }
 
     animate() {
-        
+
     }
 
     stage() {
