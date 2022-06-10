@@ -82,7 +82,7 @@ class warrior extends enemy {
         endTurn(this);
     }
 
-    takeDamage(val, iscrit, dir) {
+    takeDamage(val, iscrit, dir) {   
         if (this.isAlive) {
             takeDamage(this, val, iscrit);
             this.health -= val;

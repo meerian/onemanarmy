@@ -420,13 +420,17 @@ export class pistol extends weapon {
 
 class machinegun extends weapon {
     constructor() {
-        let flavourtext = "Deals 1-3 dmg\n Clipsize: 4 \nRange:2 \n\nActive: \non use, your next\n shot will expend \nthe entire clip and \n end your turn\n Costs 1 AP"
-        super("Machinegun", 1, 3, 4, 2, flavourtext, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(1 * rw, 0 * rh, rw, rh)));
+        let flavourtext = "Deals 1-3 dmg\n Clipsize: 4 \nRange:3 \n\nActive: \non use, your next\n shot will expend \nthe entire clip and \n end your turn\n Costs 1 AP"
+        super("Machinegun", 1, 3, 4, 3, flavourtext, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(1 * rw, 0 * rh, rw, rh)));
         this.update();
         this.shortdesc = "next shot expends entire clip \nCosts 1 AP";
     }
 
     apply() {
+        if (playerVal.weapon.name == "Sniper Rifle" || playerVal.weapon.name == "Machinegun") {
+            let index = playerInventory.indexOf(playerVal.weapon);
+            playerInventory.splice(index, 1);
+        }
         playerVal.weapon = this;
         playerInventory.push(this);
     }
@@ -443,12 +447,16 @@ class machinegun extends weapon {
 
 class assaultrifle extends weapon {
     constructor() {
-        let flavourtext = "Deals 2-4 dmg\n Clipsize: 3 \nRange:4 \n\nEach shot has a \n20% chance to crit \nfor double the damage"
+        let flavourtext = "Deals 2-3 dmg\n Clipsize: 3 \nRange:4 \n\nEach shot has a \n20% chance to crit \nfor double the damage"
         super("Assault Rifle", 2, 3, 3, 4, flavourtext, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(2 * rw, 0 * rh, rw, rh)), 0.2);
         this.update();
     }
 
     apply() {
+        if (playerVal.weapon.name == "Sniper Rifle" || playerVal.weapon.name == "Machinegun") {
+            let index = playerInventory.indexOf(playerVal.weapon);
+            playerInventory.splice(index, 1);
+        }
         playerVal.weapon = this;
     }
 }
@@ -461,6 +469,10 @@ class smg extends weapon {
     }
 
     apply() {
+        if (playerVal.weapon.name == "Sniper Rifle" || playerVal.weapon.name == "Machinegun") {
+            let index = playerInventory.indexOf(playerVal.weapon);
+            playerInventory.splice(index, 1);
+        }
         playerVal.weapon = this;
     }
 }
@@ -474,6 +486,10 @@ class sniperrifle extends weapon {
     }
 
     apply() {
+        if (playerVal.weapon.name == "Sniper Rifle" || playerVal.weapon.name == "Machinegun") {
+            let index = playerInventory.indexOf(playerVal.weapon);
+            playerInventory.splice(index, 1);
+        }
         playerVal.weapon = this;
         playerInventory.push(this);
     }
@@ -496,6 +512,10 @@ class shotgun extends weapon {
     }
 
     apply() {
+        if (playerVal.weapon.name == "Sniper Rifle" || playerVal.weapon.name == "Machinegun") {
+            let index = playerInventory.indexOf(playerVal.weapon);
+            playerInventory.splice(index, 1);
+        }
         playerVal.weapon = this;
     }
 }

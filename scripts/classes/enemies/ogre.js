@@ -7,7 +7,7 @@ class ogre extends enemy {
         if (spritesheet.length == 0) {
             createSpriteSheet();
         }
-        super("Ogre", x, y, 20, 3 + enemyVal.extramovement, new PIXI.AnimatedSprite(spritesheet.idleleft), new weapon("Fist", 7, 7, -1, 1), 0, -15);
+        super("Ogre", x, y, 20, 3 + enemyVal.extramovement, new PIXI.AnimatedSprite(spritesheet.idleleft), new weapon("Fist", 6, 6, -1, 1), 0, -15);
         this.isModified = enemyVal.ogrechange;
         this.sprite.scale.set(2, 2);
         if (this.isModified) {

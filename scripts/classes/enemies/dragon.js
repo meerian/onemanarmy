@@ -6,7 +6,6 @@ import { addWarrior } from "./warrior.js";
 import { addSniper } from "./sniper.js";
 import { addSlime } from "./slime.js";
 import { addCentaur } from "./centaur.js";
-import { addOgre } from "./ogre.js";
 
 class dragon extends enemy {
     constructor(x, y) {
@@ -222,7 +221,7 @@ function ResolveMoves(enemy, move) {
             break;
         case "attack2":
             enemy.attack2coords.forEach(function (element) {
-                let random = Math.floor(Math.random() * 6 + 1);
+                let random = Math.floor(Math.random() * 5 + 1);
                 let spawn = 0;
                 switch (random) {
                     case 1:
@@ -239,9 +238,6 @@ function ResolveMoves(enemy, move) {
                         break;
                     case 5:
                         spawn = addCentaur(element[0], element[1]);
-                        break;
-                    case 6:
-                        spawn = addOgre(element[0], element[1]);
                         break;
                 }
                 spawn.skipTurn = true;

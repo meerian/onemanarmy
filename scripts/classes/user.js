@@ -1,6 +1,6 @@
 import { nextTurn } from "../turnHandler.js";
 import { moveIndicator } from "./moveIndicator.js";
-import { levelEnd, shakeScreen, showString, updateAP, updateBulletText, updateHealth } from "../pages/gamePage.js";
+import { levelEnd, levelFail, shakeScreen, showString, updateAP, updateBulletText, updateHealth } from "../pages/gamePage.js";
 import { pistol } from "./mods/upgradeList.js";
 
 class user extends gameObject {
@@ -16,6 +16,7 @@ class user extends gameObject {
         this.mIndicator = 0;
         this.attackFlag = true;
         this.canShoot = true;
+        this.isAlive = true;
     }
 
     displayMove(direction) {
@@ -39,6 +40,10 @@ class user extends gameObject {
             playerVal.health -= val[0];
             updateHealth(val[0], val[1]);
             shakeScreen();
+            if (playerVal.health <= 0) {
+                this.isAlive = false;
+                deathAnimation();
+            }
         }
     }
 
@@ -58,11 +63,11 @@ class user extends gameObject {
                     dir = "x";
                 } else {
                     dir = "y";
-                } 
+                }
                 // E.g. y == check y -1 and y + 1 (as enemy is aligned on x-axis)
                 checkAround(enemies, x, y, dir);
             }
-            enemies.forEach(function() {
+            enemies.forEach(function () {
                 if (playerVal.nextIsCrit) {
                     playerVal.nextIsCrit = false;
                     dmgtaken.push(player.weapon.attack(true, bulletFlag));
@@ -75,19 +80,19 @@ class user extends gameObject {
             })
             if (enemy.x < player.x) {
                 drawShoot("left");
-                enemies.forEach(function(element, index) {
+                enemies.forEach(function (element, index) {
                     element.takeDamage(dmgtaken[index][0], dmgtaken[index][1], "right");
                 })
             } else {
                 drawShoot("right");
-                enemies.forEach(function(element, index) {
+                enemies.forEach(function (element, index) {
                     element.takeDamage(dmgtaken[index][0], dmgtaken[index][1], "left");
                 })
             }
             updateBulletText();
             if (playerVal.nextExpendAll && player.weapon.bullets > 0) {
                 this.canShoot = false;
-                setTimeout(function() { player.attack(enemy, true) }, 200);
+                setTimeout(function () { player.attack(enemy, true) }, 300);
                 return;
             }
             let chance = Math.random() < 0.3;
@@ -106,7 +111,7 @@ class user extends gameObject {
                 updateAP();
             }
             this.attackFlag = false
-            setTimeout(function() { player.attackFlag = true }, 300);
+            setTimeout(function () { player.attackFlag = true }, 300);
         }
     }
 
@@ -122,6 +127,10 @@ class user extends gameObject {
                 activeAudio.currentTime = 0;
                 activeAudio.play();
                 playerVal.ap--;
+                if (player.mIndicator != 0) {
+                    player.mIndicator.cleanup();
+                    player.mIndicator.ap = playerVal.ap;
+                }
             }
             this.weapon.reload();
             updateBulletText();
@@ -132,7 +141,8 @@ class user extends gameObject {
 
     updateAP() {
         if (this.mIndicator != 0) {
-            this.mIndicator.ap = playerVal.ap;
+            player.mIndicator.cleanup();
+            player.mIndicator.ap = playerVal.ap;
         }
         updateAP();
     }
@@ -279,6 +289,7 @@ function drawAnimation(moves) {
 function cheerAnimation() {
     let total = 200;
     player.sprite.textures = spritesheet.cheer;
+    player.sprite.animationSpeed = 0.2;
     player.sprite.play();
     const step = () => {
         total--;
@@ -291,6 +302,29 @@ function cheerAnimation() {
         })
     }
     step();
+}
+
+function deathAnimation() {
+    let total = 150;
+    if (player.sprite.textures == spritesheet.idleleft) {
+        player.sprite.textures = spritesheet.dieleft;
+    } else {
+        player.sprite.textures = spritesheet.dieright;
+    }
+    player.sprite.loop = false;
+    player.sprite.play();
+    const step = () => {
+        total--;
+        if (total == 0) {
+            levelFail();
+            return;
+        }
+        requestAnimationFrame(() => {
+            step();
+        })
+    }
+    step();
+
 }
 
 var spritesheet = [];
@@ -325,5 +359,13 @@ function createSpriteSheet() {
     new PIXI.Texture(userssheet, new PIXI.Rectangle(2 * rw, 2 * rh, rw, rh)),
     new PIXI.Texture(userssheet, new PIXI.Rectangle(1 * rw, 2 * rh, rw, rh)),
     new PIXI.Texture(userssheet, new PIXI.Rectangle(0 * rw, 2 * rh, rw, rh))];
+    spritesheet["dieright"] = [new PIXI.Texture(userssheet, new PIXI.Rectangle(0 * rw, 3 * rh, rw, rh)),
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(1 * rw, 3 * rh, rw, rh)),
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(2 * rw, 3 * rh, rw, rh)),
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(3 * rw, 3 * rh, rw, rh))];
+    spritesheet["dieleft"] = [new PIXI.Texture(userssheet, new PIXI.Rectangle(0 * rw, 4 * rh, rw, rh)),
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(1 * rw, 4 * rh, rw, rh)),
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(2 * rw, 4 * rh, rw, rh)),
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(3 * rw, 4 * rh, rw, rh))];
 }
 

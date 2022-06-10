@@ -51,18 +51,14 @@ class extramovement extends upgrade {
     }
 }
 
-class changeHtoW extends upgrade {
+class addH extends upgrade {
     constructor() {
-        let flavourtext = "Turn all current hounds \n into warriors"
+        let flavourtext = "Add a hound"
         super("Modification", "Enemy Swap", flavourtext, "", new PIXI.Texture(modssheet, new PIXI.Rectangle(0 * rw, 0 * rh, rw, rh)));
     }
 
     apply() {
-        while (curSpawn.indexOf("hound") != -1) {
-            let index = curSpawn.indexOf("hound");
-            curSpawn.splice(index, 1);
-            curSpawn.push("warrior");
-        }
+        curSpawn.push("hound");
     }
 }
 
@@ -149,7 +145,7 @@ export function parseMod(mod) {
         case 3:
             return new extramovement(); //base
         case 4:
-            return new changeHtoW(); //lvl 2: warrior
+            return new addH(); //lvl 2: warrior
         case 5:
             return new removeWaddS(); //lvl 3: centaur
         case 6:

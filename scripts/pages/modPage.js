@@ -84,7 +84,7 @@ class modPage extends page {
             this.mods = [-2, -2, -2];
         } else while (counter > 0) {
             //Should be multiplied by number of mods
-            let check = Math.floor(Math.random() * (2 + gamelevel) + 1);
+            let check = Math.floor(Math.random() * (2 + gamelevel - gamelevel + 1) + gamelevel);
             if (!this.mods.includes(check)) {
                 this.mods.push(check);
                 counter--;

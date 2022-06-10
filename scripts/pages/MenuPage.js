@@ -35,16 +35,16 @@ class menuPage extends page {
         //Create start box
         let startBox = new PIXI.Graphics();
         startBox.lineStyle(1, 0x00FF2A, 1);
-        startBox.drawRect(xCentral - 80, yCentral - 50 + animationOffset, 160, 30);
+        startBox.drawRect(xCentral - 80, yCentral - 30 + animationOffset, 160, 30);
         startBox.endFill();
-        startBox.hitArea = new PIXI.Rectangle(xCentral - 80, yCentral - 50 + animationOffset, 160, 30);
+        startBox.hitArea = new PIXI.Rectangle(xCentral - 80, yCentral - 30 + animationOffset, 160, 30);
         this.startContainer.addChild(startBox);
         pageElements.push(startBox);
 
         //Create start Text
         let textStyleStart = { ...textStyle };
         let StartBoxText = new PIXI.Text(`Start`, textStyleStart);
-        drawText(StartBoxText, xCentral, yCentral - 35 + animationOffset, this.startContainer, true);
+        drawText(StartBoxText, xCentral, yCentral - 15 + animationOffset, this.startContainer, true);
         pageElements.push(StartBoxText);
         this.startContainer.on("pointerdown", function (event) {
             pointerdownAudio.currentTime = 0;
@@ -56,13 +56,13 @@ class menuPage extends page {
             mouseoverAudio.play();
             startBox.clear();
             startBox.lineStyle(2, 0x00FF2A, 1);
-            startBox.drawRect(xCentral - 80, yCentral - 50 + animationOffset, 160, 30);
+            startBox.drawRect(xCentral - 80, yCentral - 30 + animationOffset, 160, 30);
             startBox.endFill();
         })
         this.startContainer.on("mouseout", function (event) {
             startBox.clear();
             startBox.lineStyle(1, 0x00FF2A, 1);
-            startBox.drawRect(xCentral - 80, yCentral - 50 + animationOffset, 160, 30);
+            startBox.drawRect(xCentral - 80, yCentral - 30 + animationOffset, 160, 30);
             startBox.endFill();
         })
         this.container.addChild(this.startContainer);
@@ -129,7 +129,7 @@ class menuPage extends page {
             "2) Shoot an enemy by clicking the enemy targeted \n" +
             "3) Reload your gun by clicking the reload button at the bottom\n" +
             "4) Use your items by clicking on their icons in your inventory\n\n" +
-            "Fight your way through the 6 levels in the forest\n and escape the demon horde! \n";
+            "Fight your way through the 8 levels in the forest\n and escape the demon horde! \n";
 
         let text = new PIXI.Text(help, textStyle);
         drawText(text, xCentral, yCentral, this.helperContainer, true);

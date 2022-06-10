@@ -2,12 +2,13 @@ import { addHound } from "../classes/enemies/hound.js";
 import { addWarrior } from "../classes/enemies/warrior.js";
 import { addUser } from "../classes/user.js";
 import { createUpgradepage } from "./upgradePage.js";
-import { nextTurn } from "../turnHandler.js";
+import { nextTurn, startLevel } from "../turnHandler.js";
 import { addSniper } from "../classes/enemies/sniper.js";
 import { addSlime } from "../classes/enemies/slime.js";
 import { addCentaur } from "../classes/enemies/centaur.js";
 import { addOgre } from "../classes/enemies/ogre.js";
 import { addDragon } from "../classes/enemies/dragon.js";
+import { createMenuPage } from "./MenuPage.js";
 
 export class gamePage extends page {
     constructor() {
@@ -66,7 +67,7 @@ export class gamePage extends page {
             if (curY == -1) {
                 curX--;
                 curY = startingY;
-            }    
+            }
         });
     }
     stage() {
@@ -170,10 +171,7 @@ export class gamePage extends page {
         endTurnBox.drawRect(xCentral + 308, yCentral + 93, 80, 30);
         endTurnBox.endFill();
         endTurnContainer.addChild(endTurnBox);
-        let textStyleEndTurn = {
-            ...textStyle
-        };
-        endTurnButton = new PIXI.Text("End Turn", textStyleEndTurn);
+        endTurnButton = new PIXI.Text("End Turn", textStyle);
         endTurnButton.interactive = true;
         endTurnContainer.on("pointerdown", function (event) {
             pointerdownAudio.currentTime = 0;
@@ -185,16 +183,15 @@ export class gamePage extends page {
         endTurnContainer.on("mouseover", function (event) {
             mouseoverAudio.currentTime = 0;
             mouseoverAudio.play();
-            endTurnButton.style.fill = "0x160805";
-            endTurnBox.beginFill(0x40FF40);
+            endTurnBox.clear();
+            endTurnBox.lineStyle(2, 0x00FF2A, 1);
             endTurnBox.drawRect(xCentral + 308, yCentral + 93, 80, 30);
             endTurnBox.endFill();
         })
         endTurnContainer.on("mouseout", function (event) {
-            endTurnButton.style.fill = "0x40FF40";
             endTurnBox.clear();
-            endTurnBox.lineStyle(1, 0x40FF40, 1);
-            endTurnBox.drawRect(xCentral + 308, yCentral + 93, 80, 30);
+            endTurnBox.lineStyle(1, 0x00FF2A, 1);
+            endTurnBox.drawRect(xCentral + 308,yCentral + 93, 80, 30);
             endTurnBox.endFill();
         })
         drawText(endTurnButton, xCentral + 350, yCentral + 110, endTurnContainer, true);
@@ -350,6 +347,10 @@ export function shakeScreen() {
 }
 
 export function levelEnd() {
+    if (gamelevel == 8) {
+        gameWin();
+        return;
+    }
     if (!cheerflag) {
         isPlayerturn = false;
         if (player.mIndicator != 0) {
@@ -378,8 +379,196 @@ export function levelEnd() {
     curPage.cleanup();
 
     //Adds new enemies
+    if (gamelevel % 2 == 1) {
+        removeEnemy();
+    }
     curSpawn = enemySpawnList[gamelevel].concat(curSpawn);
 
     //load next page
     createUpgradepage();
+}
+
+function gameWin() {
+    bTextContainer.interactive = false;
+    endTurnButton.interactive = false;
+
+    let container = new PIXI.Container();
+    let box = new PIXI.Graphics();
+    box.lineStyle(1, 0x00FF2A, 1);
+    box.beginFill(0x160805);
+    box.drawRect(xCentral - 85, yCentral - 80, 170, 80);
+    box.endFill();
+    container.addChild(box);
+
+    let gameoverText = new PIXI.Text("You escaped the forest!\n Thanks for playing!", textStyle);
+    drawText(gameoverText, xCentral, yCentral - 40, container, true);
+
+    let yesContainer = new PIXI.Container();
+    yesContainer.interactive = true;
+    //Create yes box
+    let yesBox = new PIXI.Graphics();
+    yesBox.lineStyle(1, 0x00FF2A, 1);
+    yesBox.beginFill(0x160805);
+    yesBox.drawRect(xCentral - 50, yCentral + 20, 90, 30);
+    yesBox.endFill();
+    yesBox.hitArea = new PIXI.Rectangle(xCentral - 50, yCentral + 20, 100, 30);
+    yesContainer.addChild(yesBox);
+    //Create yes text
+    let YesBoxText = new PIXI.Text(`Main Menu`, textStyle);
+    drawText(YesBoxText, xCentral - 5, yCentral + 35, yesContainer, true);
+    yesContainer.on("pointerdown", function (event) {
+        pointerdownAudio.currentTime = 0;
+        pointerdownAudio.play();
+        resetGame();
+        createMenuPage();
+    })
+    yesContainer.on("mouseover", function (event) {
+        mouseoverAudio.currentTime = 0;
+        mouseoverAudio.play();
+        yesBox.clear();
+        yesBox.beginFill(0x160805);
+        yesBox.lineStyle(2, 0x00FF2A, 1);
+        yesBox.drawRect(xCentral - 50, yCentral + 20, 90, 30);
+        yesBox.endFill();
+    })
+    yesContainer.on("mouseout", function (event) {
+        yesBox.clear();
+        yesBox.beginFill(0x160805);
+        yesBox.lineStyle(1, 0x00FF2A, 1);
+        yesBox.drawRect(xCentral - 50, yCentral + 20, 90, 30);
+        yesBox.endFill();
+    })
+    container.addChild(yesContainer);
+
+    gameContainer.addChild(container);
+
+    let spritesheet = [];
+    spritesheet["cheerright"] = [new PIXI.Texture(userssheet, new PIXI.Rectangle(0 * rw, 2 * rh, rw, rh)),
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(1 * rw, 2 * rh, rw, rh)),
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(2 * rw, 2 * rh, rw, rh)),
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(1 * rw, 2 * rh, rw, rh)),
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(0 * rw, 2 * rh, rw, rh))];
+    spritesheet["cheerleft"] = [new PIXI.Texture(userssheet, new PIXI.Rectangle(3 * rw, 2 * rh, rw, rh)),
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(4 * rw, 2 * rh, rw, rh)),
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(5 * rw, 2 * rh, rw, rh)),
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(4 * rw, 2 * rh, rw, rh)),
+    new PIXI.Texture(userssheet, new PIXI.Rectangle(3 * rw, 2 * rh, rw, rh))];
+    let spriteright = new PIXI.AnimatedSprite(spritesheet.cheerright);
+    spriteright.scale.set(3, 3);
+    spriteright.animationSpeed = .2;
+    spriteright.anchor.set(0.5);
+    spriteright.x = xCentral - 110;
+    spriteright.y = yCentral - 40;
+    spriteright.loop = true;
+    spriteright.play();
+    container.addChild(spriteright);
+
+    let spriteleft = new PIXI.AnimatedSprite(spritesheet.cheerleft);
+    spriteleft.scale.set(3, 3);
+    spriteleft.animationSpeed = .2;
+    spriteleft.anchor.set(0.5);
+    spriteleft.x = xCentral + 110;
+    spriteleft.y = yCentral - 40;
+    spriteleft.loop = true;
+    spriteleft.play();
+    container.addChild(spriteleft);
+}
+
+export function levelFail() {
+    bTextContainer.interactive = false;
+    endTurnButton.interactive = false;
+
+    let container = new PIXI.Container();
+    let box = new PIXI.Graphics();
+    box.lineStyle(1, 0x00FF2A, 1);
+    box.beginFill(0x160805);
+    box.drawRect(xCentral - 75, yCentral - 80, 150, 80);
+    box.endFill();
+    container.addChild(box);
+
+    let gameoverText = new PIXI.Text("You Died!\n Try again?", textStyle);
+    drawText(gameoverText, xCentral, yCentral - 40, container, true);
+
+    let yesContainer = new PIXI.Container();
+    yesContainer.interactive = true;
+    //Create yes box
+    let yesBox = new PIXI.Graphics();
+    yesBox.lineStyle(1, 0x00FF2A, 1);
+    yesBox.beginFill(0x160805);
+    yesBox.drawRect(xCentral - 110, yCentral + 20, 90, 30);
+    yesBox.endFill();
+    yesBox.hitArea = new PIXI.Rectangle(xCentral - 110, yCentral + 20, 90, 30);
+    yesContainer.addChild(yesBox);
+    //Create yes text
+    let YesBoxText = new PIXI.Text(`Yes`, textStyle);
+    drawText(YesBoxText, xCentral - 65, yCentral + 35, yesContainer, true);
+    yesContainer.on("pointerdown", function (event) {
+        pointerdownAudio.currentTime = 0;
+        pointerdownAudio.play();
+        resetGame();
+        startLevel();
+    })
+    yesContainer.on("mouseover", function (event) {
+        mouseoverAudio.currentTime = 0;
+        mouseoverAudio.play();
+        yesBox.clear();
+        yesBox.beginFill(0x160805);
+        yesBox.lineStyle(2, 0x00FF2A, 1);
+        yesBox.drawRect(xCentral - 110, yCentral + 20, 90, 30);
+        yesBox.endFill();
+    })
+    yesContainer.on("mouseout", function (event) {
+        yesBox.clear();
+        yesBox.beginFill(0x160805);
+        yesBox.lineStyle(1, 0x00FF2A, 1);
+        yesBox.drawRect(xCentral - 110, yCentral + 20, 90, 30);
+        yesBox.endFill();
+    })
+    container.addChild(yesContainer);
+
+    let noContainer = new PIXI.Container();
+    noContainer.interactive = true;
+    //Create no box
+    let noBox = new PIXI.Graphics();
+    noBox.lineStyle(1, 0x00FF2A, 1);
+    noBox.beginFill(0x160805);
+    noBox.drawRect(xCentral + 10, yCentral + 20, 90, 30);
+    noBox.endFill();
+    noBox.hitArea = new PIXI.Rectangle(xCentral + 10, yCentral + 20, 90, 30);
+    noContainer.addChild(noBox);
+    //Create no text
+    let noBoxText = new PIXI.Text(`Main Menu`, textStyle);
+    drawText(noBoxText, xCentral + 55, yCentral + 35, noContainer, true);
+    noContainer.on("pointerdown", function (event) {
+        pointerdownAudio.currentTime = 0;
+        pointerdownAudio.play();
+        resetGame();
+        createMenuPage();
+    })
+    noContainer.on("mouseover", function (event) {
+        mouseoverAudio.currentTime = 0;
+        mouseoverAudio.play();
+        noBox.clear();
+        noBox.beginFill(0x160805);
+        noBox.lineStyle(2, 0x00FF2A, 1);
+        noBox.drawRect(xCentral + 10, yCentral + 20, 90, 30);
+        noBox.endFill();
+    })
+    noContainer.on("mouseout", function (event) {
+        noBox.clear();
+        noBox.beginFill(0x160805);
+        noBox.lineStyle(1, 0x00FF2A, 1);
+        noBox.drawRect(xCentral + 10, yCentral + 20, 90, 30);
+        noBox.endFill();
+    })
+    container.addChild(noContainer);
+
+    gameContainer.addChild(container);
+}
+
+function resetGame() {
+    //resets values
+    resetAll();
+    drawIndex = 0;
+    curPage.cleanup();
 }
