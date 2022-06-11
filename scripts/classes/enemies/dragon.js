@@ -15,7 +15,7 @@ class dragon extends enemy {
         super("Dragon", x, y, 30, 1, new PIXI.AnimatedSprite(spritesheet.idle), new weapon("Breath", 7, 7, -1, 1), 10, -20);
         this.isModified = enemyVal.ogrechange;
         this.isPrep = false;
-        this.curAttack = 2;
+        this.curAttack = 3;
         this.attack1Sprite = new PIXI.AnimatedSprite(attack1Ssheet);
         this.attack1Sprite.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
         this.attack1Sprite.scale.set(3, 3);
@@ -59,9 +59,16 @@ class dragon extends enemy {
                     move = "prep2";
                     this.isPrep = true;
                     while (this.attack2coords.length < 3) {
-                        let check = Math.floor(Math.random() * 44);
+                        let check = Math.floor(Math.random() * 3);
                         let coords = findCoords(check);
-                        if (check != player.x + player.y * 9 && !this.attack2coords.includes(coords) && checkValidity(coords[0], coords[1])) {
+                        let flag = true;
+                        for (let i = 0; i < this.attack2coords.length; i++) {
+                            if (this.attack2coords[i][0] == coords[0] && this.attack2coords[i][1] == coords[1]) {
+                                flag = false;
+                                break;
+                            }
+                        }
+                        if (check != player.x + player.y * 9 && checkValidity(coords[0], coords[1]) && flag) {
                             this.attack2coords.push(coords);
                         }
                     }
@@ -71,15 +78,46 @@ class dragon extends enemy {
                 if (this.isPrep) {
                     move = "attack3";
                     this.isPrep = false;
-                    this.curAttack = 1;
+                    this.curAttack++;
                 } else {
                     move = "prep3";
                     this.isPrep = true;
-                    while (this.attack3coords.length < 5) {
+                    while (this.attack3coords.length < 10) {
                         let check = Math.floor(Math.random() * 44);
                         let coords = findCoords(check);
-                        if (check != player.x + player.y * 9 && !this.attack2coords.includes(check) && checkValidity(coords[0], coords[1])) {
+                        let flag = true;
+                        for (let i = 0; i < this.attack3coords.length; i++) {
+                            if (this.attack3coords[i][0] == coords[0] && this.attack3coords[i][1] == coords[1]) {
+                                flag = false;
+                                break;
+                            }
+                        }
+                        if (check != player.x + player.y * 9 && checkValidity(coords[0], coords[1]) && flag) {
                             this.attack3coords.push(coords);
+                        }
+                    }
+                }
+                break;
+            case 4:
+                if (this.isPrep) {
+                    move = "attack2";
+                    this.isPrep = false;
+                    this.curAttack = 1;
+                } else {
+                    move = "prep2";
+                    this.isPrep = true;
+                    while (this.attack2coords.length < 3) {
+                        let check = Math.floor(Math.random() * 44);
+                        let coords = findCoords(check);
+                        let flag = true;
+                        for (let i = 0; i < this.attack2coords.length; i++) {
+                            if (this.attack2coords[i][0] == coords[0] && this.attack2coords[i][1] == coords[1]) {
+                                flag = false;
+                                break;
+                            }
+                        }
+                        if (check != player.x + player.y * 9 && checkValidity(coords[0], coords[1]) && flag) {
+                            this.attack2coords.push(coords);
                         }
                     }
                 }
@@ -151,11 +189,11 @@ var spritesheet = [];
 let ssheet = dragonssheet;
 const attack1Texture = new PIXI.BaseTexture.from('images/enemy/dragonattack1_spritesheet.png');
 const attack1Ssheet = [new PIXI.Texture(attack1Texture, new PIXI.Rectangle(0 * 144, 0 * 48, 144, 48)), new PIXI.Texture(attack1Texture, new PIXI.Rectangle(0 * 144, 1 * 48, 144, 48)),
-    new PIXI.Texture(attack1Texture, new PIXI.Rectangle(0 * 144, 2 * 48, 144, 48)), new PIXI.Texture(attack1Texture, new PIXI.Rectangle(0 * 144, 3 * 48, 144, 48))]
+new PIXI.Texture(attack1Texture, new PIXI.Rectangle(0 * 144, 2 * 48, 144, 48)), new PIXI.Texture(attack1Texture, new PIXI.Rectangle(0 * 144, 3 * 48, 144, 48))]
 const spawnTexture = new PIXI.Texture.from('images/enemy/spawn_warning.png');
 const attack3Texture = new PIXI.BaseTexture.from('images/enemy/dragonattack3_spritesheet.png');
 const attack3Ssheet = [new PIXI.Texture(attack3Texture, new PIXI.Rectangle(0 * 16, 0 * 16, 16, 16)), new PIXI.Texture(attack3Texture, new PIXI.Rectangle(1 * 16, 0 * 16, 16, 16)),
-    new PIXI.Texture(attack3Texture, new PIXI.Rectangle(2 * 16, 0 * 16, 16, 16)), new PIXI.Texture(attack3Texture, new PIXI.Rectangle(3 * 16, 0 * 16, 16, 16))]
+new PIXI.Texture(attack3Texture, new PIXI.Rectangle(2 * 16, 0 * 16, 16, 16)), new PIXI.Texture(attack3Texture, new PIXI.Rectangle(3 * 16, 0 * 16, 16, 16))]
 const rw = 32;
 const rh = 32;
 
@@ -166,7 +204,7 @@ function createSpriteSheet() {
     spritesheet["hurt"] = [new PIXI.Texture(ssheet, new PIXI.Rectangle(2 * rw, 0 * rh, rw, rh))];
     spritesheet["hurtprep"] = [new PIXI.Texture(ssheet, new PIXI.Rectangle(3 * rw, 0 * rh, rw, rh))];
     spritesheet["die"] = [new PIXI.Texture(ssheet, new PIXI.Rectangle(0 * rw, 1 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(1 * rw, 1 * rh, rw, rh)), new PIXI.Texture(ssheet, new PIXI.Rectangle(2 * rw, 1 * rh, rw, rh))];
-  
+
 }
 
 
@@ -290,7 +328,7 @@ function ResolveMoves(enemy, move) {
             dragonimpactAudio.play();
             break;
     }
-    
+
     let total = 100;
     enemy.sprite.play();
     enemy.sprite.animationSpeed = .5;
