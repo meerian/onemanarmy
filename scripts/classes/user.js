@@ -7,6 +7,7 @@ class user extends gameObject {
     constructor(x, y) {
         if (playerVal.weapon == 0) {
             playerVal.weapon = new pistol();
+            playerVal.weapon.apply();
         }
         createSpriteSheet();
         super(x, y, playerVal.maxhealth, playerVal.maxap, new PIXI.AnimatedSprite(spritesheet.idleright), playerVal.weapon, 5, -15);
@@ -306,6 +307,8 @@ function cheerAnimation() {
 
 function deathAnimation() {
     let total = 150;
+    loseAudio.currentTime = 0;
+    loseAudio.play();
     if (player.sprite.textures == spritesheet.idleleft) {
         player.sprite.textures = spritesheet.dieleft;
     } else {

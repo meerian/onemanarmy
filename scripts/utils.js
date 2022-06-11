@@ -96,6 +96,7 @@ function toggleVolume() {
     levelclearAudio.muted = volumeToggle;
     negativeAudio.muted = volumeToggle;
     spawnAudio.muted = volumeToggle;
+    loseAudio.muted = volumeToggle;
 
     //player audio
     walkAudio.muted = volumeToggle;
@@ -106,6 +107,8 @@ function toggleVolume() {
     //enemy audio
     enemymeleeAudio.muted = volumeToggle;
     enemyshootAudio.muted = volumeToggle;
+    dragonchargeAudio.muted = volumeToggle;
+    dragonimpactAudio.muted = volumeToggle;
 }
 
 
@@ -118,6 +121,8 @@ const negativeAudio = new Audio("audio/negative.wav");
 negativeAudio.volume = 0.2;
 const spawnAudio = new Audio("audio/spawn.wav");
 spawnAudio.volume = 0.2;
+const loseAudio = new Audio("audio/levelfail.wav");
+loseAudio.volume = 0.2;
 
 //player audio
 const walkAudio = new Audio("audio/walk.wav");
@@ -132,6 +137,10 @@ const enemymeleeAudio = new Audio("audio/enemymelee.wav");
 enemymeleeAudio.volume = 0.5;
 const enemyshootAudio = new Audio("audio/enemyshoot.wav");
 enemyshootAudio.volume = 0.5;
+const dragonchargeAudio = new Audio("audio/dragoncharge.wav");
+dragonchargeAudio.volume = 0.5;
+const dragonimpactAudio = new Audio("audio/dragonimpact.wav");
+dragonimpactAudio.volume = 0.2;
 
 
 
@@ -291,6 +300,17 @@ class weapon {
         this.texture = texture;
         this.critchance = critchance;
         this.guncalibrated = false;
+    }
+
+    apply() {
+        let index = playerInventory.indexOf(playerVal.weapon);
+        playerInventory.splice(index, 1);
+        playerVal.weapon = this;
+        playerInventory.push(this);
+    }
+
+    use() {
+
     }
 
     update() {

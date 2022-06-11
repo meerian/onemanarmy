@@ -409,12 +409,14 @@ export function checkValidity(upgrade) {
 export class pistol extends weapon {
     constructor() {
         let flavourtext = "Starting weapon."
-        super("Pistol", 1, 3, 3, 3, flavourtext, new PIXI.Texture.from('images/placeholder.png'), playerVal.critmodifier);
+        super("Pistol", 1, 3, 3, 3, flavourtext, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(10 * rw, 0 * rh, rw, rh)), playerVal.critmodifier);
         this.update();
+        this.shortdesc = "Basic starting weapon";
     }
 
     apply() {
         playerVal.weapon = this;
+        playerInventory.push(this);
     }
 }
 
@@ -424,15 +426,6 @@ class machinegun extends weapon {
         super("Machinegun", 1, 3, 4, 3, flavourtext, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(1 * rw, 0 * rh, rw, rh)));
         this.update();
         this.shortdesc = "next shot expends entire clip \nCosts 1 AP";
-    }
-
-    apply() {
-        if (playerVal.weapon.name == "Sniper Rifle" || playerVal.weapon.name == "Machinegun") {
-            let index = playerInventory.indexOf(playerVal.weapon);
-            playerInventory.splice(index, 1);
-        }
-        playerVal.weapon = this;
-        playerInventory.push(this);
     }
 
     use() {
@@ -450,14 +443,7 @@ class assaultrifle extends weapon {
         let flavourtext = "Deals 2-3 dmg\n Clipsize: 3 \nRange:4 \n\nEach shot has a \n20% chance to crit \nfor double the damage"
         super("Assault Rifle", 2, 3, 3, 4, flavourtext, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(2 * rw, 0 * rh, rw, rh)), 0.2);
         this.update();
-    }
-
-    apply() {
-        if (playerVal.weapon.name == "Sniper Rifle" || playerVal.weapon.name == "Machinegun") {
-            let index = playerInventory.indexOf(playerVal.weapon);
-            playerInventory.splice(index, 1);
-        }
-        playerVal.weapon = this;
+        this.shortdesc = "20% crit chance";
     }
 }
 
@@ -466,32 +452,16 @@ class smg extends weapon {
         let flavourtext = "Deals 1-3 dmg\n Clipsize: 4 \nRange:3 \n\nEach shot has a \n30% change to cost 0 AP"
         super("SMG", 1, 3, 4, 3, flavourtext, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(3 * rw, 0 * rh, rw, rh)));
         this.update();
-    }
-
-    apply() {
-        if (playerVal.weapon.name == "Sniper Rifle" || playerVal.weapon.name == "Machinegun") {
-            let index = playerInventory.indexOf(playerVal.weapon);
-            playerInventory.splice(index, 1);
-        }
-        playerVal.weapon = this;
+        this.shortdesc = "30% for free shot";
     }
 }
 
 class sniperrifle extends weapon {
     constructor() {
-        let flavourtext = "Deals 3-5 dmg\n Clipsize: 1 \nRange:6 \n\nActive: \non use, your next\n bullet will be a \nguaranteed crit \n(for double damage)\n Costs 1 AP"
+        let flavourtext = "Deals 3-4 dmg\n Clipsize: 1 \nRange:6 \n\nActive: \non use, your next\n bullet will be a \nguaranteed crit \n(for double damage)\n Costs 1 AP"
         super("Sniper Rifle", 3, 5, 1, 6, flavourtext, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(0 * rw, 1 * rh, rw, rh)));
         this.update();
         this.shortdesc = "next shot is a crit\nCosts 1 AP";
-    }
-
-    apply() {
-        if (playerVal.weapon.name == "Sniper Rifle" || playerVal.weapon.name == "Machinegun") {
-            let index = playerInventory.indexOf(playerVal.weapon);
-            playerInventory.splice(index, 1);
-        }
-        playerVal.weapon = this;
-        playerInventory.push(this);
     }
 
     use() {
@@ -506,16 +476,9 @@ class sniperrifle extends weapon {
 
 class shotgun extends weapon {
     constructor() {
-        let flavourtext = "Deals 3-5 dmg\n Clipsize: 3 \nRange:1 \n\nEach shot hits \nadjacent enemies as \nwell"
-        super("Shotgun", 3, 5, 3, 1, flavourtext, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(4 * rw, 1 * rh, rw, rh)));
+        let flavourtext = "Deals 3-5 dmg\n Clipsize: 2 \nRange:2 \n\nEach shot hits \nadjacent enemies as \nwell"
+        super("Shotgun", 3, 5, 2, 2, flavourtext, new PIXI.Texture(upgradessheet, new PIXI.Rectangle(4 * rw, 1 * rh, rw, rh)));
         this.update();
-    }
-
-    apply() {
-        if (playerVal.weapon.name == "Sniper Rifle" || playerVal.weapon.name == "Machinegun") {
-            let index = playerInventory.indexOf(playerVal.weapon);
-            playerInventory.splice(index, 1);
-        }
-        playerVal.weapon = this;
+        this.shortdesc = "shots hit adjacent enemies";
     }
 }

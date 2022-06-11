@@ -12,7 +12,7 @@ class dragon extends enemy {
         if (spritesheet.length == 0) {
             createSpriteSheet();
         }
-        super("Dragon", x, y, 5, 3, new PIXI.AnimatedSprite(spritesheet.idle), new weapon("Fist", 7, 7, -1, 1), 10, -20);
+        super("Dragon", x, y, 30, 1, new PIXI.AnimatedSprite(spritesheet.idle), new weapon("Breath", 7, 7, -1, 1), 10, -20);
         this.isModified = enemyVal.ogrechange;
         this.isPrep = false;
         this.curAttack = 2;
@@ -196,6 +196,8 @@ function ResolveMoves(enemy, move) {
             enemy.attack1Sprite.gotoAndStop(0);
             bgContainer.addChild(enemy.attack1Sprite);
             enemy.sprite.loop = false;
+            dragonchargeAudio.currentTime = 0;
+            dragonchargeAudio.play();
             break;
         case "attack1":
             bgContainer.removeChild(enemy.attack1Sprite);
@@ -204,6 +206,9 @@ function ResolveMoves(enemy, move) {
             if (player.y < 4 && player.y > 0 && player.x < 8) {
                 player.takeDamage(enemy.weapon.attack());
             }
+            dragonimpactAudio.currentTime = 0;
+            dragonimpactAudio.play();
+            shakeScreen();
             break;
         case "prep2":
             showStringEnemy("Summoning!", enemy);
@@ -218,6 +223,8 @@ function ResolveMoves(enemy, move) {
                 enemy.attack2container.addChild(sprite);
             });
             bgContainer.addChild(enemy.attack2container);
+            dragonchargeAudio.currentTime = 0;
+            dragonchargeAudio.play();
             break;
         case "attack2":
             enemy.attack2coords.forEach(function (element) {
@@ -268,6 +275,8 @@ function ResolveMoves(enemy, move) {
                 enemy.attack3sprites.push(sprite);
             });
             bgContainer.addChild(enemy.attack3container);
+            dragonchargeAudio.currentTime = 0;
+            dragonchargeAudio.play();
             break;
         case "attack3":
             enemy.attack3sprites.forEach(function (element, index) {
@@ -276,9 +285,12 @@ function ResolveMoves(enemy, move) {
                     player.takeDamage(enemy.weapon.attack());
                 }
             });
+            shakeScreen();
+            dragonimpactAudio.currentTime = 0;
+            dragonimpactAudio.play();
             break;
     }
-    shakeScreen();
+    
     let total = 100;
     enemy.sprite.play();
     enemy.sprite.animationSpeed = .5;

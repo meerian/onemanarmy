@@ -389,6 +389,9 @@ export function levelEnd() {
 }
 
 function gameWin() {
+    levelclearAudio.currentTime = 0;
+    levelclearAudio.play();
+
     bTextContainer.interactive = false;
     endTurnButton.interactive = false;
 

@@ -160,7 +160,7 @@ function endTurn(enemy) {
         return;
     }
     enemyTurnCounter++;
-    setTimeout(nextTurn, 250);
+    setTimeout(nextTurn, 150);
 }
 
 var spritesheet = [];
